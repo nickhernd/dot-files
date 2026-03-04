@@ -1,0 +1,20 @@
+# Ignorar todo por defecto (de mommento no)
+#*
+
+# Permitir el propio .gitignore
+!.gitignore
+
+# Permitir archivos específicos
+!.zshrc
+!.bashrc
+!.p10k.zsh
+
+# Permitir carpetas enteras (importante el /** para recursividad)
+!.config/nvim/**
+!.config/alacritty/**
+
+MiDrive/
+# También es recomendable ignorar caches y temporales de otros entornos
+.cache/
+.npm/
+.ssh/

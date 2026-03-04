@@ -1,0 +1,187 @@
+# =============================================================================
+# NANO Configuration - Optimized for Speed and Usability
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Performance Settings
+# -----------------------------------------------------------------------------
+# Don't display the help bar (faster, more screen space) - use Ctrl+G for help
+set nohelp
+
+# Smooth scrolling line by line
+set smooth
+
+# Enable mouse support
+set mouse
+
+# Don't wrap long lines (faster rendering)
+set nowrap
+
+# Fast suspend with Ctrl+Z
+set suspendable
+
+# -----------------------------------------------------------------------------
+# Visual Enhancements
+# -----------------------------------------------------------------------------
+# Show line numbers
+set linenumbers
+
+# Highlight the current line
+set cursorline
+
+# Show cursor position in status bar
+set constantshow
+
+# Display line+col+char in status bar
+set stateflags
+
+# Indicate part of a line not shown
+set softwrap
+set atblanks
+
+# Show whitespace
+# set whitespace "»·"
+
+# Use bold instead of reverse video for titles
+set boldtext
+
+# Tab size (default 4)
+set tabsize 4
+
+# Convert tabs to spaces (better for code)
+set tabstospaces
+
+# Auto-indent new lines
+set autoindent
+
+# Smart Home key
+set smarthome
+
+# Allow Ctrl+Arrow word jumps
+set wordbounds
+
+# -----------------------------------------------------------------------------
+# File Handling
+# -----------------------------------------------------------------------------
+# Make backup files
+set backup
+
+# Directory for backup files
+set backupdir "~/.nano_backups"
+
+# Remember cursor position between sessions
+set positionlog
+
+# Don't add newline at end of file
+# set nonewlines
+
+# Lock files to prevent multi-editing
+set locking
+
+# -----------------------------------------------------------------------------
+# Search & Replace
+# -----------------------------------------------------------------------------
+# Case-insensitive search by default
+set casesensitive
+
+# Regular expression search by default
+# set regexp
+
+# Remember search history
+set historylog
+
+# -----------------------------------------------------------------------------
+# Syntax Highlighting (enable all available)
+# -----------------------------------------------------------------------------
+include "/usr/share/nano/*.nanorc"
+include "/usr/share/nano/extra/*.nanorc"
+
+# -----------------------------------------------------------------------------
+# Custom Key Bindings - More Intuitive
+# -----------------------------------------------------------------------------
+# Note: nano keybindings use ^=Ctrl, M-=Alt/Meta
+
+# File operations
+bind ^S savefile main           # Ctrl+S = Save
+bind ^Q exit main               # Ctrl+Q = Quit
+bind ^O writeout main           # Ctrl+O = Save as (default)
+
+# Navigation
+bind ^G gotoline main           # Ctrl+G = Go to line
+bind M-g gotoline main          # Alt+G = Go to line
+bind ^Home firstline main       # Ctrl+Home = Top of file
+bind ^End lastline main         # Ctrl+End = Bottom of file
+bind M-/ lastline main          # Alt+/ = Bottom of file
+bind M-\ firstline main         # Alt+\ = Top of file
+
+# Word navigation
+bind ^Left prevword main        # Ctrl+Left = Previous word
+bind ^Right nextword main       # Ctrl+Right = Next word
+
+# Selection
+bind ^A mark main               # Ctrl+A = Start selection
+bind M-a selectall main         # Alt+A = Select all
+
+# Clipboard
+bind ^C copy main               # Ctrl+C = Copy
+bind ^X cut main                # Ctrl+X = Cut
+bind ^V paste main              # Ctrl+V = Paste (note: may conflict with terminal)
+
+# Undo/Redo
+bind ^Z undo main               # Ctrl+Z = Undo
+bind ^Y redo main               # Ctrl+Y = Redo
+bind M-u undo main              # Alt+U = Undo
+bind M-r redo main              # Alt+R = Redo
+
+# Search
+bind ^F whereis main            # Ctrl+F = Find
+bind ^H replace main            # Ctrl+H = Find & Replace
+bind F3 findnext main           # F3 = Find next
+bind M-n findnext main          # Alt+N = Find next
+bind M-p findprevious main      # Alt+P = Find previous
+
+# Line operations
+bind ^D cutrestoffile main      # Ctrl+D = Delete to end
+bind M-d cutwordright main      # Alt+D = Delete word right
+bind ^K cut main                # Ctrl+K = Cut line (default)
+bind M-6 copy main              # Alt+6 = Copy line
+bind ^U paste main              # Ctrl+U = Paste (default)
+
+# Indentation
+bind M-] indent main            # Alt+] = Indent
+bind M-[ unindent main          # Alt+[ = Unindent
+bind ^] indent main             # Ctrl+] = Indent
+bind ^[ unindent main           # Ctrl+[ = Unindent
+
+# Commenting (toggle comment)
+bind M-3 comment main           # Alt+3 = Toggle comment
+bind M-c comment main           # Alt+C = Toggle comment
+
+# Other useful bindings
+bind ^L refresh main            # Ctrl+L = Refresh screen
+bind M-l linenumbers main       # Alt+L = Toggle line numbers
+bind ^T spell main              # Ctrl+T = Spell check
+bind M-w nowrap main            # Alt+W = Toggle word wrap
+bind ^_ gotoline main           # Ctrl+_ = Go to line
+
+# Function keys
+bind F1 help main               # F1 = Help
+bind F2 savefile main           # F2 = Save
+bind F4 searchagain main        # F4 = Search again
+bind F5 execute main            # F5 = Execute command
+bind F6 casesens search         # F6 = Toggle case sensitivity in search
+bind F9 undo main               # F9 = Undo
+bind F10 exit main              # F10 = Exit
+
+# -----------------------------------------------------------------------------
+# Help Menu Bindings
+# -----------------------------------------------------------------------------
+bind ^X exit help               # Ctrl+X = Exit help
+bind ^Q exit help               # Ctrl+Q = Exit help
+
+# -----------------------------------------------------------------------------
+# Search Mode Bindings
+# -----------------------------------------------------------------------------
+bind ^Q cancel search           # Ctrl+Q = Cancel search
+bind M-c casesens search        # Alt+C = Toggle case sensitivity
+bind M-r regexp search          # Alt+R = Toggle regex mode

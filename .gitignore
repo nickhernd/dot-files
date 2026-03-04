@@ -1,0 +1,30 @@
+# Backups automáticos
+*.bak
+*.bak.*
+
+# Secretos y credenciales
+config/git/credentials
+home/.git-credentials
+**/.env
+**/*.key
+**/*.pem
+
+# Caché y estado temporal
+config/nvim/.netrwhist
+config/ranger/tagged
+config/ranger/bookmarks
+config/ranger/history
+config/btop/btop.log
+config/omarchy/current/
+
+# Binarios y archivos grandes
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.mp4
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
