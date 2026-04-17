@@ -5,6 +5,7 @@
 	br = branch
 	ci = commit
 	st = status
+	lg = log --oneline --graph --decorate --all
 [init]
 	defaultBranch = master
 [pull]
@@ -31,3 +32,7 @@
 	email = ramajahede@gmail.com
 [credential]
 	helper = store
+[http]
+	postBuffer = 524288000
+	lowSpeedLimit = 0
+	lowSpeedTime = 999999
