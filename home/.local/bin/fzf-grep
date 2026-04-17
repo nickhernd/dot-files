@@ -1,0 +1,36 @@
+#!/bin/bash
+# Buscar texto en archivos con ripgrep + fzf (Moon Pink Theme)
+# Uso: fzf-grep [palabra]
+
+INITIAL_QUERY="${*:-}"
+
+result=$(
+    rg --column --line-number --no-heading --color=never --smart-case -- "${INITIAL_QUERY:-.}" 2>/dev/null | \
+    fzf --ansi \
+        --query "$INITIAL_QUERY" \
+        --delimiter ':' \
+        --preview 'bat --style=numbers,changes --color=always --highlight-line {2} {1} 2>/dev/null || head -100 {1}' \
+        --preview-window 'right,60%,border-left,+{2}+3/3' \
+        --color='bg:#1a1625,bg+:#2a1f38,fg:#e6d5f0,fg+:#ffffff' \
+        --color='hl:#ff9ed2:bold:underline,hl+:#ffc2e8:bold:underline' \
+        --color='border:#d47fa6,spinner:#ff9ed2,header:#ff9ed2' \
+        --color='info:#c8b6ff,pointer:#ff9ed2,marker:#ffb3d9' \
+        --color='prompt:#ff9ed2,query:#e6d5f0:regular' \
+        --color='gutter:#1a1625,selected-bg:#d47fa6,selected-fg:#ffffff' \
+        --header '╭───────────────────────────────────────╮
+│   Buscar en proyecto                 │
+│  ENTER: abrir │ ESC: salir           │
+╰───────────────────────────────────────╯' \
+        --prompt '   ' \
+        --pointer '▶' \
+        --marker '✓' \
+        --border rounded \
+        --border-label '  Moon Search ' \
+        --border-label-pos 3
+)
+
+if [[ -n "$result" ]]; then
+    file=$(echo "$result" | cut -d':' -f1)
+    line=$(echo "$result" | cut -d':' -f2)
+    micro +"$line" "$file"
+fi

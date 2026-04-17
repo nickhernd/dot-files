@@ -1,0 +1,30 @@
+#!/bin/bash
+# Buscar archivos con fzf (Moon Pink Theme)
+# Uso: fzf-files
+
+result=$(
+    find . -type f -not -path '*/\.*' -not -path '*/node_modules/*' -not -path '*/__pycache__/*' 2>/dev/null | \
+    fzf --ansi \
+        --preview 'bat --style=numbers,changes --color=always {} 2>/dev/null || head -100 {}' \
+        --preview-window 'right,60%,border-left' \
+        --color='bg:#1a1625,bg+:#2a1f38,fg:#e6d5f0,fg+:#ffffff' \
+        --color='hl:#ff9ed2:bold:underline,hl+:#ffc2e8:bold:underline' \
+        --color='border:#d47fa6,spinner:#ff9ed2,header:#ff9ed2' \
+        --color='info:#c8b6ff,pointer:#ff9ed2,marker:#ffb3d9' \
+        --color='prompt:#ff9ed2,query:#e6d5f0:regular' \
+        --color='gutter:#1a1625,selected-bg:#d47fa6,selected-fg:#ffffff' \
+        --header '╭───────────────────────────────────────╮
+│   Buscar archivos                    │
+│  ENTER: abrir │ ESC: salir           │
+╰───────────────────────────────────────╯' \
+        --prompt '   ' \
+        --pointer '▶' \
+        --marker '✓' \
+        --border rounded \
+        --border-label '  Moon Files ' \
+        --border-label-pos 3
+)
+
+if [[ -n "$result" ]]; then
+    micro "$result"
+fi

@@ -1,0 +1,341 @@
+#!/usr/bin/env python3
+"""
+TabletScreen - Usa tu tablet Android como segunda pantalla en Hyprland
+Plug & Play: conecta el USB y funciona automáticamente.
+"""
+
+import subprocess
+import signal
+import sys
+import os
+import time
+import argparse
+import tomllib
+from pathlib import Path
+from typing import Optional
+
+CONFIG_PATH = Path.home() / ".config" / "tabletscreen" / "config.toml"
+DEFAULT_CONFIG = {
+    "monitor": {
+        "name": "HEADLESS-1",
+        "resolution": "1920x1080",
+        "refresh": 60,
+        "scale": 1.0,
+        "position": "auto",
+        "workspace": 10,
+    },
+    "vnc": {
+        "port": 5900,
+        "bind": "127.0.0.1",
+    },
+    "adb": {
+        "wait_timeout": 10,
+    }
+}
+
+
+class TabletScreen:
+    def __init__(self, config: dict):
+        self.config = config
+        self.monitor_name = config["monitor"]["name"]
+        self.resolution = config["monitor"]["resolution"]
+        self.refresh = config["monitor"]["refresh"]
+        self.scale = config["monitor"]["scale"]
+        self.position = config["monitor"]["position"]
+        self.workspace = config["monitor"]["workspace"]
+        self.vnc_port = config["vnc"]["port"]
+        self.vnc_bind = config["vnc"]["bind"]
+        self.adb_timeout = config["adb"]["wait_timeout"]
+
+        self.wayvnc_proc: Optional[subprocess.Popen] = None
+        self.running = False
+
+    def run_cmd(self, cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
+        """Ejecuta un comando y retorna el resultado."""
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, check=check)
+            return result
+        except subprocess.CalledProcessError as e:
+            print(f"Error ejecutando {' '.join(cmd)}: {e.stderr}")
+            raise
+
+    def check_dependencies(self) -> bool:
+        """Verifica que todas las dependencias estén instaladas."""
+        deps = ["hyprctl", "wayvnc", "adb", "wlr-randr"]
+        missing = []
+        for dep in deps:
+            result = subprocess.run(["which", dep], capture_output=True)
+            if result.returncode != 0:
+                missing.append(dep)
+
+        if missing:
+            print(f"Faltan dependencias: {', '.join(missing)}")
+            print("Instala con: sudo pacman -S wayvnc wlr-randr android-tools")
+            return False
+        return True
+
+    def wait_for_device(self) -> bool:
+        """Espera a que un dispositivo Android esté conectado y autorizado."""
+        print("Esperando dispositivo Android...")
+        try:
+            self.run_cmd(["adb", "wait-for-device"], check=True)
+            # Verificar que esté autorizado
+            result = self.run_cmd(["adb", "devices"], check=True)
+            if "device" in result.stdout and "unauthorized" not in result.stdout:
+                print("Dispositivo Android detectado y autorizado")
+                return True
+            elif "unauthorized" in result.stdout:
+                print("Dispositivo no autorizado. Acepta la conexión en tu tablet.")
+                return False
+        except Exception as e:
+            print(f"Error esperando dispositivo: {e}")
+            return False
+        return False
+
+    def get_headless_monitors(self) -> set[str]:
+        """Obtiene lista de monitores HEADLESS actuales."""
+        result = self.run_cmd(["hyprctl", "monitors", "all"], check=False)
+        monitors = set()
+        for line in result.stdout.split("\n"):
+            if line.startswith("Monitor HEADLESS"):
+                name = line.split()[1]
+                monitors.add(name)
+        return monitors
+
+    def create_virtual_monitor(self) -> bool:
+        """Crea el monitor virtual headless en Hyprland."""
+        print("Creando monitor virtual...")
+        try:
+            # Obtener monitores headless antes de crear
+            before = self.get_headless_monitors()
+
+            # Crear output headless (Hyprland asigna nombre automático)
+            self.run_cmd(["hyprctl", "output", "create", "headless"])
+            time.sleep(1)
+
+            # Detectar el nuevo monitor
+            after = self.get_headless_monitors()
+            new_monitors = after - before
+
+            if not new_monitors:
+                print("Error: No se detectó nuevo monitor headless")
+                return False
+
+            # Usar el monitor recién creado
+            self.monitor_name = new_monitors.pop()
+            print(f"Monitor detectado: {self.monitor_name}")
+
+            # Configurar resolución y posición
+            monitor_config = f"{self.monitor_name},{self.resolution}@{self.refresh},{self.position},{self.scale}"
+            self.run_cmd(["hyprctl", "keyword", "monitor", monitor_config])
+            time.sleep(0.5)
+
+            # Mover workspace al nuevo monitor
+            self.run_cmd(["hyprctl", "dispatch", "moveworkspacetomonitor",
+                         f"{self.workspace} {self.monitor_name}"])
+
+            print(f"Monitor virtual configurado: {monitor_config}")
+            return True
+        except Exception as e:
+            print(f"Error creando monitor virtual: {e}")
+            return False
+
+    def start_wayvnc(self) -> bool:
+        """Inicia el servidor wayvnc en el monitor virtual."""
+        print(f"Iniciando wayvnc en {self.vnc_bind}:{self.vnc_port}...")
+        try:
+            self.wayvnc_proc = subprocess.Popen(
+                ["wayvnc", "-o", self.monitor_name, self.vnc_bind, str(self.vnc_port)],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            time.sleep(1)
+
+            if self.wayvnc_proc.poll() is None:
+                print("wayvnc iniciado correctamente")
+                return True
+            else:
+                stderr = self.wayvnc_proc.stderr.read().decode() if self.wayvnc_proc.stderr else ""
+                print(f"wayvnc falló al iniciar: {stderr}")
+                return False
+        except Exception as e:
+            print(f"Error iniciando wayvnc: {e}")
+            return False
+
+    def setup_adb_reverse(self) -> bool:
+        """Configura el port forwarding de ADB para conexión USB."""
+        print(f"Configurando ADB reverse para puerto {self.vnc_port}...")
+        try:
+            self.run_cmd(["adb", "reverse", f"tcp:{self.vnc_port}", f"tcp:{self.vnc_port}"])
+            print("ADB reverse configurado - la tablet puede conectar a 127.0.0.1:5900")
+            return True
+        except Exception as e:
+            print(f"Error configurando ADB reverse: {e}")
+            return False
+
+    def cleanup(self):
+        """Limpia todo: cierra wayvnc, elimina ADB reverse y monitor virtual."""
+        print("\nLimpiando...")
+
+        # Cerrar wayvnc
+        if self.wayvnc_proc and self.wayvnc_proc.poll() is None:
+            print("Cerrando wayvnc...")
+            self.wayvnc_proc.terminate()
+            try:
+                self.wayvnc_proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                self.wayvnc_proc.kill()
+
+        # Quitar ADB reverse
+        try:
+            self.run_cmd(["adb", "reverse", "--remove", f"tcp:{self.vnc_port}"], check=False)
+            print("ADB reverse eliminado")
+        except:
+            pass
+
+        # Eliminar monitor virtual
+        try:
+            self.run_cmd(["hyprctl", "output", "remove", self.monitor_name], check=False)
+            print(f"Monitor {self.monitor_name} eliminado")
+        except:
+            pass
+
+        print("Limpieza completada")
+
+    def start(self) -> bool:
+        """Inicia la conexión completa."""
+        self.running = True
+
+        if not self.wait_for_device():
+            return False
+
+        if not self.create_virtual_monitor():
+            return False
+
+        if not self.start_wayvnc():
+            self.cleanup()
+            return False
+
+        if not self.setup_adb_reverse():
+            self.cleanup()
+            return False
+
+        print("\n" + "="*50)
+        print("TabletScreen ACTIVO")
+        print("="*50)
+        print(f"Monitor virtual: {self.monitor_name}")
+        print(f"Resolución: {self.resolution}@{self.refresh}Hz")
+        print(f"Workspace: {self.workspace}")
+        print(f"\nEn tu tablet Android:")
+        print(f"  1. Abre tu app VNC (bVNC, AVNC, RealVNC)")
+        print(f"  2. Conecta a: 127.0.0.1:{self.vnc_port}")
+        print(f"\nPresiona Ctrl+C para desconectar")
+        print("="*50 + "\n")
+
+        return True
+
+    def monitor_connection(self):
+        """Monitorea la conexión y limpia si se desconecta."""
+        while self.running:
+            # Verificar que wayvnc sigue corriendo
+            if self.wayvnc_proc and self.wayvnc_proc.poll() is not None:
+                print("wayvnc se cerró inesperadamente")
+                break
+
+            # Verificar conexión ADB
+            result = self.run_cmd(["adb", "devices"], check=False)
+            if "device" not in result.stdout or result.stdout.strip().endswith("devices"):
+                print("Dispositivo desconectado")
+                break
+
+            time.sleep(2)
+
+
+def load_config() -> dict:
+    """Carga la configuración o usa valores por defecto."""
+    if CONFIG_PATH.exists():
+        try:
+            with open(CONFIG_PATH, "rb") as f:
+                user_config = tomllib.load(f)
+                # Merge con defaults
+                config = DEFAULT_CONFIG.copy()
+                for section, values in user_config.items():
+                    if section in config:
+                        config[section].update(values)
+                return config
+        except Exception as e:
+            print(f"Error leyendo config, usando defaults: {e}")
+    return DEFAULT_CONFIG
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="TabletScreen - Usa tu tablet Android como segunda pantalla"
+    )
+    parser.add_argument("--test", action="store_true",
+                       help="Verificar dependencias y salir")
+    parser.add_argument("--start", action="store_true",
+                       help="Iniciar conexión (default)")
+    parser.add_argument("--stop", action="store_true",
+                       help="Detener conexión activa")
+    parser.add_argument("--status", action="store_true",
+                       help="Mostrar estado actual")
+    args = parser.parse_args()
+
+    config = load_config()
+    ts = TabletScreen(config)
+
+    if args.test:
+        print("Verificando dependencias...")
+        if ts.check_dependencies():
+            print("Todas las dependencias están instaladas")
+
+            # Verificar Hyprland
+            result = subprocess.run(["hyprctl", "version"], capture_output=True, text=True)
+            if result.returncode == 0:
+                print("Hyprland detectado y funcionando")
+            else:
+                print("Hyprland no está corriendo")
+
+            # Verificar ADB
+            result = subprocess.run(["adb", "devices"], capture_output=True, text=True)
+            print(f"Dispositivos ADB:\n{result.stdout}")
+        sys.exit(0)
+
+    if args.status:
+        result = subprocess.run(["hyprctl", "monitors", "all"], capture_output=True, text=True)
+        print("Monitores actuales:")
+        print(result.stdout)
+
+        result = subprocess.run(["pgrep", "-a", "wayvnc"], capture_output=True, text=True)
+        if result.stdout:
+            print(f"wayvnc corriendo: {result.stdout}")
+        else:
+            print("wayvnc no está corriendo")
+        sys.exit(0)
+
+    if args.stop:
+        ts.cleanup()
+        sys.exit(0)
+
+    # Modo normal: iniciar conexión
+    if not ts.check_dependencies():
+        sys.exit(1)
+
+    def signal_handler(sig, frame):
+        print("\nRecibida señal de terminación...")
+        ts.running = False
+        ts.cleanup()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    if ts.start():
+        ts.monitor_connection()
+
+    ts.cleanup()
+
+
+if __name__ == "__main__":
+    main()

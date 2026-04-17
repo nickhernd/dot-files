@@ -46,8 +46,10 @@ done
 link_config "starship.toml"
 
 # Home dotfiles
-for f in .bashrc .bash_profile .bash_logout .nanorc .gitignore; do
-    link_home "$f"
+# Enlaza todos los archivos y carpetas (incluyendo ocultos) de la carpeta home/ del repo
+find "$DOTFILES_DIR/home" -mindepth 1 -maxdepth 1 | while read src; do
+    name=$(basename "$src")
+    link_home "$name"
 done
 
 echo ""

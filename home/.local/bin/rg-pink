@@ -1,0 +1,11 @@
+#!/bin/bash
+# Ripgrep con colores Moon Pink
+exec rg --column --line-number --no-heading --color=always --smart-case \
+    --colors=match:none \
+    --colors=match:fg:0xff,0x9e,0xd2 \
+    --colors=match:style:bold \
+    --colors=match:style:underline \
+    --colors=path:fg:0xd4,0x7f,0xa6 \
+    --colors=path:style:bold \
+    --colors=line:fg:0xc8,0xb6,0xff \
+    "$@"
