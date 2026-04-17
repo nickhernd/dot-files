@@ -38,7 +38,7 @@ link_home() {
 }
 
 # Config dirs
-for dir in hypr waybar nvim kitty alacritty ghostty walker mako btop fastfetch ranger lazygit git; do
+for dir in hypr waybar nvim kitty alacritty ghostty walker mako btop fastfetch ranger lazygit git yazi swayosd nwg-look mpv imv lazydocker micro gtk-3.0 gtk-4.0 ripgrep; do
     link_config "$dir"
 done
 
