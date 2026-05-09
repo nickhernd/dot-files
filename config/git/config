@@ -6,6 +6,8 @@
 	ci = commit
 	st = status
 	lg = log --oneline --graph --decorate --all
+	pull-all = !git-pull-all
+	push-all = !git-push-all
 [init]
 	defaultBranch = master
 [pull]
@@ -36,3 +38,8 @@
 	postBuffer = 524288000
 	lowSpeedLimit = 0
 	lowSpeedTime = 999999
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
