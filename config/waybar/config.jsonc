@@ -107,7 +107,7 @@
     "format-ethernet": "󰈀 {ipaddr}",
     "format-disconnected": "󰖪",
     "tooltip-format": "Señal: {signaldBm}dBm\nIP: {ipaddr}",
-    "on-click": "ghostty -e sudo impala"
+    "on-click": "xdg-terminal-exec sudo impala"
   },
 
   "bluetooth": {
@@ -119,7 +119,7 @@
     "tooltip-format": "{controller_alias}\t{controller_address}",
     "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
     "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-    "on-click": "ghostty -e bluetui"
+    "on-click": "xdg-terminal-exec bluetui"
   },
 
   "pulseaudio": {
