@@ -1,30 +1,25 @@
-# Backups automáticos
-*.bak
-*.bak.*
-
-# Secretos y credenciales
-config/git/credentials
+# Credenciales y tokens - NUNCA subir
+config/gh/hosts.yml
+config/rclone/rclone.conf
+config/systemd/user/rclone-backup.service
+config/systemd/user/rclone-google.service
 home/.git-credentials
-**/.env
-**/*.key
-**/*.pem
+home/.claude.json
 
-# Caché y estado temporal
-config/nvim/.netrwhist
-config/ranger/tagged
-config/ranger/bookmarks
-config/ranger/history
-config/btop/btop.log
-config/omarchy/current/
-
-# Binarios y archivos grandes
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.webp
-*.mp4
-
-# Archivos de sistema
+# Caché y temporales
+*.log
+*.cache
+*~
 .DS_Store
-Thumbs.db
+__pycache__/
+*.pyc
+
+# Obsidian (demasiado grande, solo configs internas)
+config/obsidian/
+
+# Brave/Chromium (datos de perfil, no config)
+config/BraveSoftware/
+config/chromium/
+
+# Pulse audio (datos de sesión)
+home/.pulse-cookie

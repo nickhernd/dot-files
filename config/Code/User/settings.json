@@ -1,0 +1,44 @@
+{
+    "tabnine.experimentalAutoImports": true,
+    "gitlens.ai.model": "vscode",
+    "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+    "workbench.layoutControl.enabled": false,
+    "editor.unicodeHighlight.includeComments": false,
+    "editor.unicodeHighlight.includeStrings": false,
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+    "security.allowedUNCHosts": [
+        "wsl.localhost"
+    ],
+    "remote.autoForwardPortsSource": "hybrid",
+    "editor.fontFamily": "'FiraCode Nerd Font Mono', 'FiraCode Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+    "terminal.integrated.fontFamily": "monospace",
+    "terminal.integrated.fontLigatures.enabled": true,
+    "editor.fontLigatures": true,
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "workbench.iconTheme": "vs-seti-firacodenerdfont",
+    "makefile.configureOnOpen": true,
+    "terminal.integrated.allowedLinkSchemes": [
+        "file",
+        "http",
+        "https",
+        "mailto",
+        "vscode",
+        "vscode-insiders",
+        "ms-settings"
+    ],
+    "git.autofetch": true,
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "claudeCode.preferredLocation": "panel",
+    "editor.unicodeHighlight.nonBasicASCII": false,
+    "workbench.editorAssociations": {
+        "*.copilotmd": "vscode.markdown.preview.editor",
+        "*.bin": "default"
+    },
+    "git.confirmSync": false,
+    "redhat.telemetry.enabled": true,
+    "workbench.secondarySideBar.defaultVisibility": "hidden",
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "chat.disableAIFeatures": true,
+    "markdown-preview-enhanced.automaticallyShowPreviewOfMarkdownBeingEdited": true,
+    "git.enableSmartCommit": true
+}

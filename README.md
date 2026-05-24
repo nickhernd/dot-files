@@ -18,12 +18,16 @@ Dotfiles personales para Arch Linux con [Omarchy](https://omarchy.org/) (Hyprlan
 | `config/btop/` / `fastfetch/` | Monitorización e info del sistema |
 | `config/ranger/` | Gestor de archivos CLI clásico |
 | `config/lazygit/` / `lazydocker/` | TUIs para gestión de Git y Docker |
-| `config/nwg-look/` / `gtk-*` | Personalización de apariencia GTK |
+| `config/nwg-look/` | Personalización de apariencia GTK |
 | `config/ripgrep/` | Optimización de búsquedas en terminal |
 | `config/mpv/` / `imv/` | Visores de contenido multimedia |
+| `config/tmux/` | Multiplexor de terminal |
+| `config/omarchy/` | Temas, hooks y extensiones de Omarchy |
+| `config/mise/` | Gestor de versiones de herramientas (Node, Python, etc.) |
+| `config/opencode/` | Configuración de OpenCode |
+| `config/wiremix/` | Mezclador de audio Pipewire |
 | `config/starship.toml` | Prompt de shell personalizable |
-| `home/` | Configuraciones de base (`.bashrc`, `.nanorc`, etc.) |
-| `omarchy-core/` | Núcleo de configuraciones y temas de Omarchy |
+| `home/` | Dotfiles de base (`.bashrc`, `.bash_profile`, etc.) |
 
 ## Instalación
 

@@ -1,9 +1,9 @@
 add_newline = true
-command_timeout = 500
-format = "$directory$git_branch$git_status$character"
+command_timeout = 200
+format = "[$directory$git_branch$git_status]($style)$character"
 
 [character]
-error_symbol = "[✗](bold red)"
+error_symbol = "[✗](bold cyan)"
 success_symbol = "[❯](bold cyan)"
 
 [directory]
@@ -13,38 +13,20 @@ repo_root_style = "bold cyan"
 repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
 
 [git_branch]
-format = "[ $symbol$branch(:$remote_branch)]($style) "
-symbol = " "
-style = "bold purple"
-truncation_length = 30
+format = "[$branch]($style) "
+style = "italic cyan"
 
 [git_status]
-# Orden: conflictos > diverged > push > pull > staged > modificado > sin seguimiento
-format = '([$all_status$ahead_behind]($style) )'
-style = "bold yellow"
-
-# Necesitas hacer PUSH (tienes commits locales sin subir)
-ahead      = "[⇡PUSH×${count}](bold green) "
-# Necesitas hacer PULL (hay commits en remoto sin bajar)
-behind     = "[⇣PULL×${count}](bold red) "
-# Diverged: necesitas pull + push (o rebase/merge)
-diverged   = "[⇕SYNC ⇡${ahead_count}⇣${behind_count}](bold red) "
-
-# Tienes conflictos de merge
-conflicted = "[=MERGE](bold red) "
-
-# Todo limpio
-up_to_date = ""
-
-# Archivos en staging (listos para commit)
-staged     = "[+${count}](bold green)"
-# Archivos modificados (no añadidos aún)
-modified   = "[!${count}](bold yellow)"
-# Archivos sin seguimiento (nuevos)
-untracked  = "[?${count}](bold blue)"
-# Archivos borrados
-deleted    = "[✘${count}](bold red)"
-# Archivos renombrados
-renamed    = "[»${count}](bold cyan)"
-# Stash guardado
-stashed    = "[~${count}](bold cyan)"
+format     = '[$all_status]($style)'
+style      = "cyan"
+ahead      = "⇡${count} "
+diverged   = "⇕⇡${ahead_count}⇣${behind_count} "
+behind     = "⇣${count} "
+conflicted = " "
+up_to_date = " "
+untracked  = "? "
+modified   = " "
+stashed    = ""
+staged     = ""
+renamed    = ""
+deleted    = ""
