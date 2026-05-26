@@ -1,5 +1,97 @@
 " =============================================
-"  Neovim minimal - sin plugins, sin Lua
+"  Neovim con vim-plug
+" =============================================
+
+call plug#begin('~/.local/share/nvim/plugged')
+
+" LSP
+Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
+
+" Autocompletado
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+
+" Snippets (requerido por nvim-cmp)
+Plug 'L3MON4D3/LuaSnip'
+Plug 'saadparwaiz1/cmp_luasnip'
+
+" Búsqueda con preview (fzf)
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+call plug#end()
+
+" ---- Configuracion de LSP + autocompletado (Lua) ----
+lua << EOF
+
+-- mason: instala servidores LSP facilmente con :MasonInstall <nombre>
+require('mason').setup()
+require('mason-lspconfig').setup()
+
+
+local cmp = require('cmp')
+local luasnip = require('luasnip')
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      luasnip.lsp_expand(args.body)
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-Space>'] = cmp.mapping.complete(),   -- forzar menu
+    ['<CR>']      = cmp.mapping.confirm({ select = true }),
+    ['<Tab>']     = cmp.mapping(function(fallback)
+      if cmp.visible() then cmp.select_next_item()
+      elseif luasnip.expand_or_jumpable() then luasnip.expand_or_jump()
+      else fallback() end
+    end, { 'i', 's' }),
+    ['<S-Tab>']   = cmp.mapping(function(fallback)
+      if cmp.visible() then cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then luasnip.jump(-1)
+      else fallback() end
+    end, { 'i', 's' }),
+    ['<C-e>'] = cmp.mapping.abort(),
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+  }, {
+    { name = 'buffer' },
+    { name = 'path' },
+  }),
+})
+
+-- Conectar nvim-cmp con los servidores LSP
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+-- Ejemplo: activa pyright para Python. Instala con :MasonInstall pyright
+-- require('lspconfig').pyright.setup({ capabilities = capabilities })
+
+-- Ejemplo: activa tsserver para JS/TS. Instala con :MasonInstall typescript-language-server
+-- require('lspconfig').ts_ls.setup({ capabilities = capabilities })
+
+-- Ejemplo: clangd para C/C++. Instala con :MasonInstall clangd
+-- require('lspconfig').clangd.setup({ capabilities = capabilities })
+
+EOF
+
+" =============================================
+"  fzf: búsqueda con preview
+" =============================================
+let g:fzf_preview_window = ['right:50%:wrap', 'ctrl-/']
+let g:fzf_layout = { 'window': { 'width': 0.92, 'height': 0.85, 'border': 'rounded' } }
+
+command! -bang -nargs=* RG
+  \ call fzf#vim#grep2(
+  \   'rg --column --line-number --no-heading --color=always --smart-case -- ', <q-args>,
+  \   fzf#vim#with_preview({'options': ['--delimiter=:', '--nth=4..']}),
+  \   <bang>0)
+
 " =============================================
 
 " --- General ---
@@ -116,10 +208,39 @@ set splitbelow
 " =============================================
 "  File tree: netrw (built-in)
 " =============================================
-let g:netrw_banner     = 0   " sin banner
-let g:netrw_liststyle  = 3   " vista de arbol
-let g:netrw_winsize    = 25  " 25% de ancho
-let g:netrw_browse_split = 4 " abre archivos en ventana anterior
+let g:netrw_banner     = 0
+let g:netrw_liststyle  = 3
+let g:netrw_winsize    = 25
+
+" Abrir archivos de netrw siempre en la ventana de la derecha
+function! s:NetrwOpenRight()
+  let l:cur  = expand('<cfile>')
+  let l:base = substitute(get(b:, 'netrw_curdir', getcwd()), '/$', '', '')
+  let l:path = simplify((l:cur =~# '^/') ? l:cur : l:base . '/' . l:cur)
+
+  if isdirectory(l:path)
+    " Dejar que netrw maneje el toggle del directorio de forma nativa
+    call feedkeys("\<Plug>NetrwLocalBrowseCheck", 'n')
+    return
+  endif
+
+  if filereadable(l:path)
+    for w in range(1, winnr('$'))
+      if getbufvar(winbufnr(w), '&filetype') !=# 'netrw'
+        execute w . 'wincmd w'
+        execute 'edit ' . fnameescape(l:path)
+        return
+      endif
+    endfor
+    wincmd v
+    execute 'edit ' . fnameescape(l:path)
+  endif
+endfunction
+
+augroup NetrwOpenRight
+  autocmd!
+  autocmd FileType netrw nnoremap <buffer> <CR> :call <SID>NetrwOpenRight()<CR>
+augroup END
 
 " =============================================
 "  Keymaps
@@ -141,22 +262,35 @@ nnoremap <Esc> :nohlsearch<CR>
 " Buscar y reemplazar palabra bajo el cursor (en archivo actual)
 nnoremap <leader>r :%s/\<<C-r><C-w>\>//g<Left><Left>
 
-" Buscar palabra bajo cursor en TODOS los archivos → quickfix
-nnoremap <leader>fw :grep <C-r><C-w><CR>:copen<CR>
+" Buscar palabra bajo cursor en todos los archivos (con preview)
+nnoremap <leader>fw :RG <C-r><C-w><CR>
 
-" Buscar texto libre en TODOS los archivos → quickfix
-nnoremap <leader>fg :grep<Space>
+" Buscar texto libre en todos los archivos (live grep con preview)
+nnoremap <leader>fg :RG<CR>
+
+" Buscar archivo por nombre (con preview)
+nnoremap <leader>ff :Files<CR>
 
 " Navegacion en quickfix (resultados de busqueda)
 nnoremap <leader>n :cnext<CR>
 nnoremap <leader>p :cprev<CR>
 nnoremap <leader>c :cclose<CR>
 
-" Navegar entre splits
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
+" Navegar entre splits (hjkl y Ctrl+flechas)
+nnoremap <C-h>     <C-w>h
+nnoremap <C-l>     <C-w>l
+nnoremap <C-j>     <C-w>j
+nnoremap <C-k>     <C-w>k
+nnoremap <C-Left>  <C-w>h
+nnoremap <C-Right> <C-w>l
+nnoremap <C-Down>  <C-w>j
+nnoremap <C-Up>    <C-w>k
+
+" Redimensionar ventanas con Shift+flechas
+nnoremap <S-Left>  :vertical resize -3<CR>
+nnoremap <S-Right> :vertical resize +3<CR>
+nnoremap <S-Up>    :resize +3<CR>
+nnoremap <S-Down>  :resize -3<CR>
 
 " Mover lineas arriba/abajo
 vnoremap J :m '>+1<CR>gv=gv
