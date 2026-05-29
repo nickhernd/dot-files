@@ -22,10 +22,8 @@ find . -maxdepth 4 -name ".git" -type d -prune | while read -r gitdir; do
     cd "$repo_dir" || continue
     
     # Intentar un fetch rápido para saber el estado real del remoto
-    # Usamos el comando timeout del sistema para no quedarnos colgados
-    if git remote | grep -q '.*'; then
-        timeout 5s git fetch --quiet 2>/dev/null
-    fi
+    # Usamos --timeout para no quedarnos colgados si no hay internet
+    timeout 3 git fetch --quiet 2>/dev/null
     
     # Obtener nombre de la rama
     branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
@@ -34,7 +32,6 @@ find . -maxdepth 4 -name ".git" -type d -prune | while read -r gitdir; do
     status=$(git status --porcelain)
     
     # Verificar sincronización con el remoto (Ahead/Behind)
-    # Intentamos obtener el upstream, si no existe no comparamos
     upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
     ahead_behind=""
     needs_attention=false
@@ -44,12 +41,12 @@ find . -maxdepth 4 -name ".git" -type d -prune | while read -r gitdir; do
         ahead=$(echo "$counts" | cut -f1)
         behind=$(echo "$counts" | cut -f2)
         
-        if [ -n "$behind" ] && [ "$behind" -gt 0 ]; then
-            ahead_behind+=" ${RED}[Behind $behind -> Pull necesario]${RESET}"
+        if [ "$ahead" -gt 0 ]; then
+            ahead_behind+=" ${YELLOW}[Ahead $ahead -> Push necesario]${RESET}"
             needs_attention=true
         fi
-        if [ -n "$ahead" ] && [ "$ahead" -gt 0 ]; then
-            ahead_behind+=" ${YELLOW}[Ahead $ahead -> Push necesario]${RESET}"
+        if [ "$behind" -gt 0 ]; then
+            ahead_behind+=" ${RED}[Behind $behind -> Pull necesario]${RESET}"
             needs_attention=true
         fi
     fi
