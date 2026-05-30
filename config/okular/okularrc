@@ -1,0 +1,41 @@
+MenuBar=Disabled
+
+[Desktop Entry]
+FullScreen=true
+shouldShowMenuBarComingFromFullScreen=false
+shouldShowToolBarComingFromFullScreen=true
+
+[General]
+LockSidebar=true
+ShowSidebar=false
+
+[MainWindow]
+MenuBar=Disabled
+
+[MainWindow][Toolbar mainToolBar]
+IconSize=32
+
+[Recent Files]
+File1[$e]=$HOME/Downloads/PL - PROCESMIETNOS DE LENGUJE/Dragon-book.pdf
+File10[$e]=$HOME/Desktop/TC/resumen/resumen_tc.pdf
+File2[$e]=$HOME/Desktop/apuntes/cv-lit.pdf
+File3[$e]=$HOME/Desktop/TC/books/tema3 tc.pdf
+File4[$e]=$HOME/Desktop/TC/books/tema4 tc.pdf
+File5[$e]=$HOME/Desktop/archivos-varios/tablet_config.pdf
+File6[$e]=$HOME/Desktop/TC/diapos/Tema01.pdf
+File7[$e]=$HOME/Desktop/TC/books/TeoriaDeAutomatas,lenguajesYComputacion-Hopcroft_copy.pdf
+File8[$e]=$HOME/Desktop/TC/books/tema1 tc.pdf
+File9[$e]=$HOME/Desktop/TC/books/tema5 tc.pdf
+Name1[$e]=Dragon-book.pdf
+Name10[$e]=resumen_tc.pdf
+Name2[$e]=cv-lit.pdf
+Name3[$e]=tema3 tc.pdf
+Name4[$e]=tema4 tc.pdf
+Name5[$e]=tablet_config.pdf
+Name6[$e]=Tema01.pdf
+Name7[$e]=TeoriaDeAutomatas,lenguajesYComputacion-Hopcroft_copy.pdf
+Name8[$e]=tema1 tc.pdf
+Name9[$e]=tema5 tc.pdf
+
+[UiSettings]
+ColorScheme=BreezeDark
