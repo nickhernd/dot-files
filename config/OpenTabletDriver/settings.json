@@ -213,7 +213,16 @@
           }
         ],
         "AuxButtons": [
-          null,
+          {
+            "Path": "OpenTabletDriver.Desktop.Binding.MouseBinding",
+            "Settings": [
+              {
+                "Property": "Button",
+                "Value": "Left"
+              }
+            ],
+            "Enable": true
+          },
           null,
           null,
           null,

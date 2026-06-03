@@ -1,2 +1,50 @@
 [manager]
 show_hidden = true
+
+[opener]
+edit = [
+  { run = 'nvim "$@"', desc = "Editar con Neovim", block = true },
+  { run = 'code "$@"', desc = "Editar con VisualStudio Code", block = true },
+]
+
+pdf = [
+  { run = 'okular "$@"', desc = "Okular" },
+  { run = 'xournalpp "$@"', desc = "Xournal++" },
+  { run = 'rnote "$@"', desc = "Rnote" },
+]
+xournal = [
+  { run = 'xournalpp "$@"', desc = "Xournal++" },
+]
+rnote = [
+  { run = 'rnote "$@"', desc = "Rnote" },
+]
+markdown = [
+  { run = 'typora "$@"', desc = "Typora" },
+]
+latex = [
+  { run = 'texstudio "$@"', desc = "TeXstudio" },
+  { run = 'nvim "$@"',      desc = "Editar con Neovim", block = true },
+]
+
+[open]
+prepend_rules = [
+  { url = "**/*.xopp",   use = "xournal" },
+  { url = "**/*.rnote", use = "rnote" },
+  { url = "**/*.md",   use = "markdown" },
+  { url = "**/*.tex",  use = "latex" },
+  { url = "**/*.asm",  use = "edit" },
+  { url = "**/*.s",    use = "edit" },
+  { url = "**/*.S",    use = "edit" },
+]
+
+rules = [
+  { mime = "application/x-xopp",        use = "xournal" },
+  { mime = "text/*",                    use = "edit" },
+  { mime = "application/json",          use = "edit" },
+  { mime = "application/toml",          use = "edit" },
+  { mime = "application/xml",           use = "edit" },
+  { mime = "application/javascript",    use = "edit" },
+  { mime = "application/x-shellscript", use = "edit" },
+  { mime = "inode/x-empty",             use = "edit" },
+  { mime = "application/pdf",           use = "pdf" },
+]
