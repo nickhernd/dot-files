@@ -4,6 +4,9 @@
 
 call plug#begin('~/.local/share/nvim/plugged')
 
+" Auto-cierre de paréntesis
+Plug 'windwp/nvim-autopairs'
+
 " LSP
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/mason.nvim'
@@ -65,6 +68,11 @@ cmp.setup({
     { name = 'path' },
   }),
 })
+
+-- Auto-cierre de paréntesis integrado con nvim-cmp
+require('nvim-autopairs').setup({})
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
 
 -- Conectar nvim-cmp con los servidores LSP
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
@@ -310,8 +318,23 @@ nnoremap <leader>< :vertical resize -10<CR>
 " Cerrar buffer
 nnoremap <leader>q :q<CR>
 
-" Ver buffers abiertos y cambiar
-nnoremap <leader>b :ls<CR>:b<Space>
+
+" Terminal
+" Abrir terminal a la derecha y entrar en modo insert automáticamente
+nnoremap <leader>t :vsplit <bar> terminal<CR>i
+
+" Salir del modo terminal con Esc
+tnoremap <Esc> <C-\><C-n>
+
+" Portapapeles (Copy/Paste estilo estándar)
+vnoremap <C-c> "+y
+vnoremap <C-x> "+x
+nnoremap <C-v> "+p
+inoremap <C-v> <C-r>+
+vnoremap <C-v> "+p
+
+" Habilitar el uso del portapapeles del sistema por defecto
+set clipboard+=unnamedplus
 
 " =============================================
 "  Statusline minimalista (sin plugins)
@@ -333,3 +356,6 @@ autocmd BufWritePre * :%s/\s\+$//e
 
 " Volver a la ultima posicion al abrir archivo
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+" Ajuste para rellenar espacio inferior
+set cmdheight=1
