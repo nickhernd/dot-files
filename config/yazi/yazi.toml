@@ -6,7 +6,9 @@ edit = [
   { run = 'nvim "$@"', desc = "Editar con Neovim", block = true },
   { run = 'code "$@"', desc = "Editar con VisualStudio Code", block = true },
 ]
-
+display = [
+  { run = 'xdg-open "$@"', desc = "Abrir" },
+]
 pdf = [
   { run = 'okular "$@"', desc = "Okular" },
   { run = 'xournalpp "$@"', desc = "Xournal++" },
@@ -35,6 +37,7 @@ prepend_rules = [
   { url = "**/*.asm",  use = "edit" },
   { url = "**/*.s",    use = "edit" },
   { url = "**/*.S",    use = "edit" },
+  { mime = "image/*",   use = "display" },
 ]
 
 rules = [
