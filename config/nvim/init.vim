@@ -301,6 +301,12 @@ nnoremap <S-Up>    :resize +3<CR>
 nnoremap <S-Down>  :resize -3<CR>
 
 " Mover lineas arriba/abajo
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+inoremap <A-j> <Esc>:m .+1<CR>==gi
+inoremap <A-k> <Esc>:m .-2<CR>==gi
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
@@ -356,6 +362,10 @@ autocmd BufWritePre * :%s/\s\+$//e
 
 " Volver a la ultima posicion al abrir archivo
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+" Auto-guardado cada 15 segundos
+set updatetime=15000
+autocmd CursorHold,CursorHoldI * silent! update
 
 " Ajuste para rellenar espacio inferior
 set cmdheight=1

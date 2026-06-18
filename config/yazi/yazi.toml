@@ -24,7 +24,6 @@ markdown = [
   { run = 'typora "$@"', desc = "Typora" },
 ]
 latex = [
-  { run = 'texstudio "$@"', desc = "TeXstudio" },
   { run = 'nvim "$@"',      desc = "Editar con Neovim", block = true },
 ]
 
@@ -33,7 +32,7 @@ prepend_rules = [
   { url = "**/*.xopp",   use = "xournal" },
   { url = "**/*.rnote", use = "rnote" },
   { url = "**/*.md",   use = "markdown" },
-  { url = "**/*.tex",  use = "latex" },
+  { url = "**/*.tex",  use = "edit" },
   { url = "**/*.asm",  use = "edit" },
   { url = "**/*.s",    use = "edit" },
   { url = "**/*.S",    use = "edit" },
