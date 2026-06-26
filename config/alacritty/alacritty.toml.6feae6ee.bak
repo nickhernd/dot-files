@@ -22,5 +22,4 @@ bindings = [
 { key = "Right",  mods = "Control", chars = "\u001b[1;5C" },
 { key = "Up",     mods = "Control", chars = "\u001b[1;5A" },
 { key = "Down",   mods = "Control", chars = "\u001b[1;5B" },
-{ key = "Return", mods = "Shift",   chars = "\u001b\r" },
 ]
