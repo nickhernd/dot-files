@@ -30,17 +30,20 @@ find . -maxdepth 4 -name ".git" -type d -prune | while read -r gitdir; do
     
     # Verificar cambios locales (status)
     status=$(git status --porcelain)
-    
+
+    # Detectar cambios en staging (primer carácter no es espacio ni ?)
+    staged=$(echo "$status" | grep -E '^[MADRC]' 2>/dev/null)
+
     # Verificar sincronización con el remoto (Ahead/Behind)
     upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
     ahead_behind=""
     needs_attention=false
-    
+
     if [ -n "$upstream" ]; then
         counts=$(git rev-list --left-right --count HEAD...$upstream 2>/dev/null)
         ahead=$(echo "$counts" | cut -f1)
         behind=$(echo "$counts" | cut -f2)
-        
+
         if [ "$ahead" -gt 0 ]; then
             ahead_behind+=" ${YELLOW}[Ahead $ahead -> Push necesario]${RESET}"
             needs_attention=true
@@ -50,7 +53,14 @@ find . -maxdepth 4 -name ".git" -type d -prune | while read -r gitdir; do
             needs_attention=true
         fi
     fi
-    
+
+    # Indicar si hay cambios en staging pendientes de commit
+    if [ -n "$staged" ]; then
+        staged_count=$(echo "$staged" | wc -l)
+        ahead_behind+=" ${YELLOW}[Commit necesario ($staged_count)]${RESET}"
+        needs_attention=true
+    fi
+
     # Si hay archivos modificados, también requiere atención
     [ -n "$status" ] && needs_attention=true
 
