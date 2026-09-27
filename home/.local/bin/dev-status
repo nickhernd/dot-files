@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Resumen de desarrollo en JSON para el widget "dev" del escritorio.
+# Repos que mira: ~/Projects ~/Work ~/dot-files (hasta 3 niveles). Cambia con DEV_DIRS.
+DIRS=${DEV_DIRS:-"$HOME/Projects $HOME/Work $HOME/dot-files"}
+
+docker=null
+if command -v docker >/dev/null && ids=$(timeout 3 docker ps -q 2>/dev/null); then
+  docker=$(printf '%s' "$ids" | grep -c .)
+fi
+
+dirty=0; ahead=0; total=0; names=()
+while IFS= read -r g; do
+  r=${g%/.git}; total=$((total+1))
+  s=$(git -C "$r" status --porcelain=v1 -b 2>/dev/null) || continue
+  d=0
+  [[ $(printf '%s\n' "$s" | grep -vc '^##') -gt 0 ]] && { dirty=$((dirty+1)); d=1; }
+  [[ $(printf '%s\n' "$s" | head -1) == *"[ahead"* ]] && { ahead=$((ahead+1)); d=1; }
+  ((d)) && names+=("$(basename "$r")")
+done < <(for d in $DIRS; do [[ -d $d ]] && find "$d" -maxdepth 3 -name .git -type d 2>/dev/null; done)
+
+issues=null; prs=null; reviews=null; notifs=null
+if command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then
+  me=$(gh api user -q .login 2>/dev/null)
+  q() { timeout 8 gh api -X GET search/issues -f q="$1" -q .total_count 2>/dev/null || echo null; }
+  issues=$(q "is:open is:issue user:$me")
+  prs=$(q "is:open is:pr author:$me")
+  reviews=$(q "is:open is:pr review-requested:$me")
+  notifs=$(timeout 8 gh api notifications -q length 2>/dev/null || echo null)
+fi
+
+jq -nc --argjson docker "$docker" --argjson dirty $dirty --argjson ahead $ahead --argjson total $total \
+  --argjson issues "${issues:-null}" --argjson prs "${prs:-null}" --argjson reviews "${reviews:-null}" \
+  --argjson notifs "${notifs:-null}" --arg repos "$(IFS=,; echo "${names[*]:0:4}")" \
+  '{docker:$docker, repos:{total:$total, dirty:$dirty, ahead:$ahead, names:($repos|split(",")|map(select(.!="")))},
+    gh:{issues:$issues, prs:$prs, reviews:$reviews, notifs:$notifs}}'

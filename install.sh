@@ -38,12 +38,20 @@ link_home() {
 }
 
 # Config dirs
-for dir in hypr waybar nvim kitty alacritty ghostty walker mako btop fastfetch ranger lazygit git yazi swayosd nwg-look mpv imv lazydocker micro gtk-3.0 gtk-4.0 ripgrep; do
+for dir in hypr quickshell matugen rofi cava kitty foot ghostty alacritty nvim nvim-classic tmux git \
+           lazygit lazydocker gh-dash btop yazi micro ranger ripgrep mise imv xournalpp opencode; do
     link_config "$dir"
 done
 
 # Config files
-link_config "starship.toml"
+for f in starship.toml mimeapps.list omarchy/shell.json rclone/gdrive-filters.txt \
+         systemd/user/gdrive-sync.service systemd/user/gdrive-sync.timer; do
+    link_config "$f"
+done
+
+# Oculta la barra de Omarchy (la sustituye la del rice de Quickshell)
+mkdir -p "$HOME/.local/state/omarchy/toggles" && touch "$HOME/.local/state/omarchy/toggles/bar-off"
+mkdir -p "$HOME/.local/bin" && ln -sfn "$HOME/.config/quickshell/scripts/setwall" "$HOME/.local/bin/setwall"
 
 # Home dotfiles
 # Enlaza todos los archivos y carpetas (incluyendo ocultos) de la carpeta home/ del repo
@@ -53,4 +61,5 @@ find "$DOTFILES_DIR/home" -mindepth 1 -maxdepth 1 | while read src; do
 done
 
 echo ""
-echo "==> Hecho. Reinicia la sesión o ejecuta 'source ~/.bashrc' para aplicar los cambios."
+echo "==> Hecho. Instala las dependencias con ./instalar-rice.sh y reinicia la sesión."
+echo "    Recuerda crear ~/.config/secrets.env con tus API keys (no está en el repo)."

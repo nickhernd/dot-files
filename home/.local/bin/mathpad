@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Consola matemática: IPython + SymPy/NumPy/SciPy/Matplotlib listos para usar.
+exec ipython --no-banner -i -c "
+from sympy import *
+import numpy as np, scipy as sp, matplotlib.pyplot as plt
+x, y, z, t, n, k = symbols('x y z t n k')
+f, g = symbols('f g', cls=Function)
+init_printing(use_unicode=True)
+print('mathpad · sympy', __import__('sympy').__version__, '· numpy', np.__version__, '· símbolos: x y z t n k, funciones f g')
+"

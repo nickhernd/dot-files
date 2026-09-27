@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Info de red en JSON para el widget: interfaz, SSID, señal, IP local/pública, VPN.
+iface=$(ip route get 1.1.1.1 2>/dev/null | grep -oP 'dev \K\S+')
+lip=$(ip route get 1.1.1.1 2>/dev/null | grep -oP 'src \K\S+')
+ssid=""; signal=null
+if [[ $iface == wl* ]]; then
+  line=$(nmcli -t -f ACTIVE,SIGNAL,SSID dev wifi 2>/dev/null | grep '^yes:' | head -1)
+  signal=$(cut -d: -f2 <<<"$line"); ssid=$(cut -d: -f3- <<<"$line"); [[ -z $signal ]] && signal=null
+fi
+cache=~/.cache/quickshell/public-ip
+if [[ ! -s $cache || $(( $(date +%s) - $(stat -c %Y "$cache") )) -gt 600 ]]; then
+  curl -s -m 5 https://ifconfig.me > "$cache.tmp" && mv "$cache.tmp" "$cache"
+fi
+pip=$(cat "$cache" 2>/dev/null)
+vpn=$(ip -o link show up 2>/dev/null | grep -oE ': (tun[0-9]*|wg[0-9]*|tailscale0|proton[^:]*)' | head -1 | tr -d ': ')
+jq -nc --arg iface "${iface:-}" --arg lip "${lip:-}" --arg ssid "$ssid" --argjson signal "$signal" --arg pip "$pip" --arg vpn "$vpn" \
+  '{iface:$iface, localIp:$lip, ssid:$ssid, signal:$signal, publicIp:$pip, vpn:$vpn, online:($iface!="")}'

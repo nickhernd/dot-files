@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Fórmula del día (o la siguiente con --next) en JSON; la renderiza con Typst si está instalado.
+F=~/.config/quickshell/quotes/formulas.json
+S=~/.cache/quickshell/formula-index; mkdir -p ~/.cache/quickshell
+n=$(jq length "$F")
+if [[ ${1:-} == --next ]]; then i=$(( ( $(cat "$S" 2>/dev/null || date +%j) + 1 ) % n ))
+elif [[ -s $S && $(date -r "$S" +%F) == $(date +%F) ]]; then i=$(cat "$S")
+else i=$(( 10#$(date +%j) % n )); fi
+echo "$i" > "$S"
+img=""
+if command -v typst >/dev/null; then
+  img=~/.cache/quickshell/formula-$i.png
+  if [[ ! -s $img ]]; then
+    src=$(mktemp --suffix .typ)
+    printf '#set page(width: auto, height: auto, margin: 2pt, fill: none)\n#set text(fill: white, size: 22pt)\n$ %s $\n' \
+      "$(jq -r ".[$i].typst" "$F")" > "$src"
+    typst compile --format png --ppi 160 "$src" "$img" 2>/dev/null || img=""
+    rm -f "$src"
+  fi
+fi
+jq -c --arg img "$img" ".[$i] + {img: \$img, index: $i}" "$F"

@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Sincronización bidireccional ~/GoogleDrive <-> Google Drive (rclone bisync).
+#   gdrive-sync             sincroniza
+#   gdrive-sync --dry-run   muestra qué haría sin tocar nada   (alias gsync-preview)
+#   gdrive-sync --status    últimas líneas del log             (alias gsync-log)
+#   gdrive-sync --resync    primera vez / tras un conflicto gordo
+#   gdrive-sync --setup     configura la cuenta y hace la primera sincronización
+set -euo pipefail
+
+REMOTE="${GDRIVE_REMOTE:-gdrive:}"
+LOCAL="${GDRIVE_LOCAL:-$HOME/GoogleDrive}"
+LOG="$HOME/.local/state/gdrive-sync.log"
+FILTERS="$HOME/.config/rclone/gdrive-filters.txt"
+mkdir -p "$LOCAL" "$(dirname "$LOG")"
+
+notify() { command -v notify-send >/dev/null && notify-send -a "Google Drive" "$@" || true; }
+
+case "${1:-}" in
+  --status) tail -n 40 "$LOG"; exit 0 ;;
+  --setup)
+    rclone config create gdrive drive scope=drive
+    exec "$0" --resync ;;
+esac
+
+rclone listremotes | grep -qx "${REMOTE%%:*}:" || { echo "Falta el remoto. Ejecuta: gdrive-sync --setup"; exit 1; }
+
+args=(bisync "$REMOTE" "$LOCAL" --create-empty-src-dirs --compare size,modtime,checksum
+      --resilient --recover --max-lock 2m --conflict-resolve newer --conflict-loser num
+      --drive-skip-gdocs --filters-file "$FILTERS")
+
+case "${1:-}" in
+  --dry-run) rclone "${args[@]}" --dry-run -v 2>&1 | tail -n 60; exit 0 ;;
+  --resync)  args+=(--resync) ;;
+esac
+
+if rclone "${args[@]}" --log-file "$LOG" --log-level INFO; then
+  [[ -t 1 ]] && echo "✔ Google Drive sincronizado"
+else
+  notify -u critical "Error sincronizando" "Mira: gdrive-sync --status"
+  exit 1
+fi

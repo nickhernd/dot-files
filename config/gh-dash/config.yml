@@ -1,4 +1,6 @@
 prSections:
+    - title: En mis repos
+      filters: is:open user:nickhernd
     - title: My Pull Requests
       filters: is:open author:@me
     - title: Needs My Review
@@ -6,8 +8,10 @@ prSections:
     - title: Involved
       filters: is:open involves:@me -author:@me
 issuesSections:
-    - title: My Issues
-      filters: is:open sort:created-asc
+    - title: Mis issues
+      filters: is:open author:@me
+    - title: En mis repos
+      filters: is:open user:nickhernd
     - title: Assigned
       filters: is:open assignee:@me
     - title: Involved

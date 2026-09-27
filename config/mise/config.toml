@@ -1,2 +1,7 @@
 [tools]
-node = "25.9.0"
+codex = "latest"
+gh = "latest"
+node = "26.8.2"
+
+[settings.upgrade]
+auto_prune = false

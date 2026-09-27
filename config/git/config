@@ -43,3 +43,8 @@
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
+[delta]
+	navigate = true
+	line-numbers = true
+[merge]
+	conflictStyle = zdiff3

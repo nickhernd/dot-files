@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Estado de batería en JSON (sysfs) para el widget del escritorio.
+B=$(ls -d /sys/class/power_supply/BAT* 2>/dev/null | head -1)
+[[ -z $B ]] && { echo '{"present":false}'; exit; }
+r() { cat "$B/$1" 2>/dev/null || echo 0; }
+cap=$(r capacity); st=$(r status)
+if [[ -r $B/energy_now ]]; then
+  now=$(r energy_now); full=$(r energy_full); design=$(r energy_full_design); pw=$(r power_now)
+else # charge_* (µAh) + current (µA): pasar a µWh / µW con el voltaje
+  v=$(r voltage_now); now=$(( $(r charge_now) * v / 1000000 )); full=$(( $(r charge_full) * v / 1000000 ))
+  design=$(( $(r charge_full_design) * v / 1000000 )); pw=$(( $(r current_now) * v / 1000000 ))
+fi
+ac=0; for a in /sys/class/power_supply/{AC,ADP}*/online; do [[ -r $a && $(cat "$a") == 1 ]] && ac=1; done
+profile=$(powerprofilesctl get 2>/dev/null || echo "")
+jq -nc --argjson cap "$cap" --arg st "$st" --argjson now "$now" --argjson full "$full" --argjson design "$design" \
+  --argjson pw "$pw" --argjson cycles "$(r cycle_count)" --argjson ac $ac --arg profile "$profile" '
+  ($pw/1000000) as $w |
+  {present:true, capacity:$cap, status:$st, ac:($ac==1), watts:(($w*10|round)/10), cycles:$cycles, profile:$profile,
+   health:(if $design>0 then ($full*100/$design|round) else null end),
+   minutes:(if $w>0.5 then (if $st=="Charging" then (($full-$now)/$pw*60) elif $st=="Discharging" then ($now/$pw*60) else null end) else null end | if .==null then null else round end)}'

@@ -1,0 +1,182 @@
+[
+ {
+  "name": "Identidad de Euler",
+  "typst": "e^(i pi) + 1 = 0",
+  "text": "e^(iπ) + 1 = 0",
+  "desc": "Une las cinco constantes fundamentales: 0, 1, e, i y π."
+ },
+ {
+  "name": "Integral de Gauss",
+  "typst": "integral_(-oo)^oo e^(-x^2) dif x = sqrt(pi)",
+  "text": "∫ e^(−x²) dx = √π",
+  "desc": "Base de la distribución normal; se resuelve pasando a polares."
+ },
+ {
+  "name": "Teorema de Bayes",
+  "typst": "P(A|B) = (P(B|A) P(A)) / P(B)",
+  "text": "P(A|B) = P(B|A)·P(A) / P(B)",
+  "desc": "Cómo actualizar una creencia a la luz de nueva evidencia."
+ },
+ {
+  "name": "Transformada de Fourier",
+  "typst": "hat(f)(xi) = integral_(-oo)^oo f(x) e^(-2 pi i x xi) dif x",
+  "text": "f̂(ξ) = ∫ f(x) e^(−2πixξ) dx",
+  "desc": "Descompone una señal en sus frecuencias."
+ },
+ {
+  "name": "Problema de Basilea",
+  "typst": "sum_(n=1)^oo 1/n^2 = pi^2/6",
+  "text": "Σ 1/n² = π²/6",
+  "desc": "Resuelto por Euler en 1734; es ζ(2)."
+ },
+ {
+  "name": "Fórmula de Stirling",
+  "typst": "n! tilde sqrt(2 pi n) (n/e)^n",
+  "text": "n! ~ √(2πn)·(n/e)ⁿ",
+  "desc": "Aproximación asintótica del factorial."
+ },
+ {
+  "name": "Teorema fundamental del cálculo",
+  "typst": "integral_a^b f'(x) dif x = f(b) - f(a)",
+  "text": "∫ₐᵇ f′(x) dx = f(b) − f(a)",
+  "desc": "Derivar e integrar son operaciones inversas."
+ },
+ {
+  "name": "Serie de Taylor",
+  "typst": "f(x) = sum_(n=0)^oo (f^((n))(a))/(n!) (x-a)^n",
+  "text": "f(x) = Σ f⁽ⁿ⁾(a)/n! · (x−a)ⁿ",
+  "desc": "Una función suave como suma de potencias."
+ },
+ {
+  "name": "Fórmula de Euler (poliedros)",
+  "typst": "V - E + F = 2",
+  "text": "V − E + F = 2",
+  "desc": "Característica de Euler de cualquier poliedro convexo."
+ },
+ {
+  "name": "Desigualdad de Cauchy–Schwarz",
+  "typst": "|angle.l u, v angle.r| <= ||u|| dot ||v||",
+  "text": "|⟨u,v⟩| ≤ ‖u‖·‖v‖",
+  "desc": "Fundamental en espacios con producto interior."
+ },
+ {
+  "name": "Teorema de Pitágoras",
+  "typst": "a^2 + b^2 = c^2",
+  "text": "a² + b² = c²",
+  "desc": "Más de 350 demostraciones distintas conocidas."
+ },
+ {
+  "name": "Entropía de Shannon",
+  "typst": "H(X) = -sum_i p_i log_2 p_i",
+  "text": "H(X) = −Σ pᵢ log₂ pᵢ",
+  "desc": "Información media de una fuente, en bits."
+ },
+ {
+  "name": "Teorema maestro",
+  "typst": "T(n) = a T(n/b) + O(n^d)",
+  "text": "T(n) = a·T(n/b) + O(n^d)",
+  "desc": "Complejidad de divide y vencerás: compara d con log_b a."
+ },
+ {
+  "name": "Fórmula de De Moivre",
+  "typst": "(cos theta + i sin theta)^n = cos n theta + i sin n theta",
+  "text": "(cos θ + i sin θ)ⁿ = cos nθ + i sin nθ",
+  "desc": "Potencias de complejos en forma polar."
+ },
+ {
+  "name": "Ecuación del calor",
+  "typst": "(partial u)/(partial t) = alpha nabla^2 u",
+  "text": "∂u/∂t = α ∇²u",
+  "desc": "Difusión: la EDP parabólica por excelencia."
+ },
+ {
+  "name": "Teorema de Green",
+  "typst": "integral.cont_C (L dif x + M dif y) = integral.double_D ((partial M)/(partial x) - (partial L)/(partial y)) dif A",
+  "text": "∮ L dx + M dy = ∬ (∂M/∂x − ∂L/∂y) dA",
+  "desc": "Relaciona una integral de línea con una doble."
+ },
+ {
+  "name": "Pequeño teorema de Fermat",
+  "typst": "a^p equiv a quad (mod p)",
+  "text": "aᵖ ≡ a (mod p)",
+  "desc": "Base del test de primalidad y de RSA."
+ },
+ {
+  "name": "Función zeta de Riemann",
+  "typst": "zeta(s) = sum_(n=1)^oo 1/n^s = product_p 1/(1 - p^(-s))",
+  "text": "ζ(s) = Σ 1/nˢ = Π 1/(1 − p⁻ˢ)",
+  "desc": "El producto de Euler conecta la zeta con los primos."
+ },
+ {
+  "name": "Regla de la cadena",
+  "typst": "(f compose g)'(x) = f'(g(x)) g'(x)",
+  "text": "(f∘g)′(x) = f′(g(x))·g′(x)",
+  "desc": "El corazón de la retropropagación en redes neuronales."
+ },
+ {
+  "name": "Descenso de gradiente",
+  "typst": "theta_(t+1) = theta_t - eta nabla L(theta_t)",
+  "text": "θₜ₊₁ = θₜ − η ∇L(θₜ)",
+  "desc": "Moverse contra el gradiente para minimizar la pérdida."
+ },
+ {
+  "name": "Valores propios",
+  "typst": "A v = lambda v, quad det(A - lambda I) = 0",
+  "text": "Av = λv,  det(A − λI) = 0",
+  "desc": "Direcciones que una transformación solo escala."
+ },
+ {
+  "name": "Coeficiente binomial",
+  "typst": "(x + y)^n = sum_(k=0)^n binom(n, k) x^k y^(n-k)",
+  "text": "(x+y)ⁿ = Σ C(n,k) xᵏ yⁿ⁻ᵏ",
+  "desc": "Binomio de Newton; el triángulo de Pascal."
+ },
+ {
+  "name": "Número e",
+  "typst": "e = lim_(n -> oo) (1 + 1/n)^n",
+  "text": "e = lim (1 + 1/n)ⁿ",
+  "desc": "Nace del interés compuesto continuo."
+ },
+ {
+  "name": "Ecuaciones de Maxwell (Gauss)",
+  "typst": "nabla dot bold(E) = rho / epsilon_0",
+  "text": "∇·E = ρ/ε₀",
+  "desc": "La carga es la fuente del campo eléctrico."
+ },
+ {
+  "name": "Desigualdad de Markov",
+  "typst": "P(X >= a) <= E[X] / a",
+  "text": "P(X ≥ a) ≤ E[X]/a",
+  "desc": "Cota de colas para variables no negativas."
+ },
+ {
+  "name": "Ley de los grandes números",
+  "typst": "overline(X)_n -> mu quad \"c.s.\"",
+  "text": "X̄ₙ → μ  (c.s.)",
+  "desc": "La media muestral converge a la esperanza."
+ },
+ {
+  "name": "Teorema del límite central",
+  "typst": "sqrt(n) (overline(X)_n - mu) / sigma -> cal(N)(0, 1)",
+  "text": "√n (X̄ₙ − μ)/σ → N(0,1)",
+  "desc": "Por qué la normal aparece en todas partes."
+ },
+ {
+  "name": "Fórmula de Cauchy",
+  "typst": "f(a) = 1/(2 pi i) integral.cont_gamma f(z)/(z - a) dif z",
+  "text": "f(a) = 1/2πi ∮ f(z)/(z−a) dz",
+  "desc": "Los valores interiores quedan fijados por el borde."
+ },
+ {
+  "name": "Recurrencia de Fibonacci",
+  "typst": "F_n = (phi^n - psi^n) / sqrt(5)",
+  "text": "Fₙ = (φⁿ − ψⁿ)/√5",
+  "desc": "Fórmula de Binet; φ es la razón áurea."
+ },
+ {
+  "name": "Teorema de Noether (idea)",
+  "typst": "\"simetría\" <==> \"cantidad conservada\"",
+  "text": "simetría ⟺ cantidad conservada",
+  "desc": "Cada simetría continua da una ley de conservación."
+ }
+]

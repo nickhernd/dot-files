@@ -1,32 +1,31 @@
-# If not running interactively, don't do anything (leave this at the top of this file)
+# Omarchy environment (OMARCHY_PATH + PATH), needed even for non-interactive shells
+[[ -r /usr/share/omarchy/default/bash/env-bootstrap ]] && source /usr/share/omarchy/default/bash/env-bootstrap
+
+# If not running interactively, don't do anything else (leave this above the rc source)
 [[ $- != *i* ]] && return
 
 # All the default Omarchy aliases and functions
 # (don't mess with these directly, just overwrite them here!)
-source ~/.local/share/omarchy/default/bash/rc
+source "$OMARCHY_PATH/default/bash/rc"
 
 # Add your own exports, aliases, and functions here.
 #
 # Make an alias for invoking commands you use constantly
 # alias p='python'
 
+# ---- Personal (portado de dot-files) ----
 alias search='w3m "https://duckduckgo.com/html?q="'
-
-# Google Drive sync
 alias gsync='gdrive-sync'
 alias gsync-preview='gdrive-sync --dry-run'
 alias gsync-log='gdrive-sync --status'
 
-# Editor por defecto
 export EDITOR=nvim
 export VISUAL=nvim
-
-# Gemini API Key (get yours at https://aistudio.google.com/apikey)
-export GEMINI_API_KEY="AIzaSyA252rgL4vxZNVWO4RF2XF6Ex7Eu7LCmqU"
 export PATH="$HOME/.local/bin:$PATH"
-
-# Ripgrep config
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
+
+# Secretos (API keys) fuera del repo de dot-files
+[[ -r ~/.config/secrets.env ]] && source ~/.config/secrets.env
 
 # FZF Moon Pink Theme
 export FZF_DEFAULT_OPTS="
@@ -56,4 +55,15 @@ function ya() {
     fi
     rm -f -- "$tmp"
 }
-. "$HOME/.cargo/env"
+
+[[ -r "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+alias nvim-classic='NVIM_APPNAME=nvim-classic nvim'
+
+# ---- Herramientas de trabajo ----
+alias gd='gh dash'          # issues/PRs de GitHub
+alias lzd='lazydocker'
+alias df='duf'
+alias http='xh'
+alias md='glow'
+alias calc='qalc'
+alias math='mathpad'

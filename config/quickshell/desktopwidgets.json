@@ -1,0 +1,5 @@
+{
+    "on": { "clock": true, "music": true, "sysmon": true, "weather": true, "dev": true, "todo": true, "formula": true,
+            "deadlines": true, "coding": true, "pomodoro": true, "battery": true, "network": true, "quote": false },
+    "positions": {}
+}

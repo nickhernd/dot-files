@@ -17,6 +17,10 @@ RESET='\033[0m'
 echo -e "${CYAN}==> Dotfiles:${RESET} $DOTFILES_DIR"
 echo ""
 
+# Copiar la config actual del sistema al repo
+"$DOTFILES_DIR/sync.sh"
+echo ""
+
 # Mostrar estado
 echo -e "${CYAN}==> Estado actual:${RESET}"
 git status --short

@@ -1,0 +1,9 @@
+# Cosas que NO se sincronizan
+- .git/**
+- node_modules/**
+- __pycache__/**
+- .venv/**
+- *.tmp
+- *~
+- .~lock.*
+- .DS_Store
