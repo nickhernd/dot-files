@@ -16,7 +16,7 @@ DIRS=(
   hypr quickshell matugen rofi cava scripts
   kitty foot ghostty alacritty
   nvim nvim-classic tmux git lazygit lazydocker gh-dash btop yazi micro ranger ripgrep mise
-  newsboat imv xournalpp opencode okular texstudio qalculate wiremix crossnote OpenTabletDriver fontconfig
+  newsboat atuin imv xournalpp opencode okular texstudio qalculate wiremix crossnote OpenTabletDriver fontconfig
 )
 for d in "${DIRS[@]}"; do
   [[ -d $C/$d ]] || continue
@@ -40,7 +40,7 @@ cp "$C/starship.toml" "$R/"
 mkdir -p "$R/rclone" "$R/systemd/user"
 [[ -f $C/rclone/gdrive-filters.txt ]] && cp "$C/rclone/gdrive-filters.txt" "$R/rclone/"
 cp "$C"/systemd/user/gdrive-{sync.service,sync.timer,mount.service} "$R/systemd/user/" 2>/dev/null || true
-for f in okularrc okularpartrc; do [[ -f $C/$f ]] && cp "$C/$f" "$R/"; done
+for f in okularrc okularpartrc xdg-terminals.list; do [[ -f $C/$f ]] && cp "$C/$f" "$R/"; done
 
 # Fondo de pantalla actual (el que está puesto) -> wallpapers/
 mkdir -p "$DOTFILES_DIR/wallpapers"
