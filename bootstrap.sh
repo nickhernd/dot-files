@@ -16,6 +16,14 @@ cd "$DOTFILES_DIR"
 ALL=0
 [[ ${1:-} == --all || ${1:-} == -y ]] && ALL=1
 
+# Con --all, yay no pregunta paquete a paquete (la contraseña se pide una vez)
+if ((ALL)); then
+  yay() { command yay --noconfirm --answerdiff None --answerclean None --removemake "$@"; }
+  export -f yay
+  sudo -v && ( while true; do sudo -n true; sleep 50; done ) 2>/dev/null & KEEP=$!
+  trap 'kill $KEEP 2>/dev/null' EXIT
+fi
+
 info() { printf '\n\033[1;35m==> %s\033[0m\n' "$*"; }
 warn() { printf '\033[1;33m!!  %s\033[0m\n' "$*" >&2; }
 ask()  { ((ALL)) && return 0; read -rp "$1 [S/n] " r; [[ ! $r =~ ^[Nn]$ ]]; }
