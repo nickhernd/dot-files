@@ -3,7 +3,11 @@
 set -e
 
 echo ":: Quitando Obsidian"
-pacman -Q obsidian >/dev/null 2>&1 && sudo pacman -Rns --noconfirm obsidian || echo "   (ya no estaba)"
+if pacman -Q obsidian >/dev/null 2>&1; then
+  sudo pacman -Rns --noconfirm obsidian
+else
+  echo "   (ya no estaba)"
+fi
 
 echo ":: TeXstudio (+ LaTeX si aún no está)"
 yay -S --needed texstudio texlive-basic texlive-latexextra texlive-mathscience texlive-langspanish texlive-fontsrecommended

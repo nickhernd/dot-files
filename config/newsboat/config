@@ -1,0 +1,20 @@
+# Moon Pink
+color background          color255 default
+color listnormal          color255 default
+color listfocus           color218 color237 bold
+color listnormal_unread   color225 default
+color listfocus_unread    color218 color237 bold
+color info                color183 color235
+color article             color255 default
+highlight article "^(Feed|Title|Author|Link|Date):" color218 default bold
+highlight article "https?://[^ ]+" color183 default underline
+
+auto-reload yes
+reload-time 30
+reload-threads 4
+browser "xdg-open %u"
+articlelist-format "%4i %f %D  %?T?|%-17T| ?%t"
+bind-key j down
+bind-key k up
+bind-key l open
+bind-key h quit

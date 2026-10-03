@@ -1,0 +1,9 @@
+https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada "~El País · portada" actualidad
+https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada "~El País · tecnología" tech
+https://www.incibe.es/incibe-cert/alerta-temprana/avisos/feed "~INCIBE-CERT · avisos" seguridad
+https://unaaldia.hispasec.com/feed/ "~Hispasec · una al día" seguridad
+https://krebsonsecurity.com/feed/ "~Krebs on Security" seguridad
+https://lwn.net/headlines/rss "~LWN · Linux" linux
+https://archlinux.org/feeds/news/ "~Arch Linux · noticias" linux
+https://hnrss.org/frontpage "~Hacker News" tech
+https://www.quantamagazine.org/feed/ "~Quanta · mates y ciencia" mates

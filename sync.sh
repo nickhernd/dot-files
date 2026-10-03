@@ -16,7 +16,7 @@ DIRS=(
   hypr quickshell matugen rofi cava
   kitty foot ghostty alacritty
   nvim nvim-classic tmux git lazygit lazydocker gh-dash btop yazi micro ranger ripgrep mise
-  imv xournalpp opencode okular texstudio qalculate wiremix crossnote OpenTabletDriver fontconfig
+  newsboat imv xournalpp opencode okular texstudio qalculate wiremix crossnote OpenTabletDriver fontconfig
 )
 for d in "${DIRS[@]}"; do
   [[ -d $C/$d ]] || continue
@@ -53,7 +53,7 @@ for s in setwall mathpad gdrive-sync dev-status battery-status net-info formula-
 done
 
 # Script de dependencias
-for s in instalar-rice.sh instalar-extras.sh instalar-seguridad.sh; do [[ -f ~/$s ]] && cp ~/$s "$DOTFILES_DIR/"; done
+for s in instalar-rice.sh instalar-extras.sh instalar-seguridad.sh instalar-tuis.sh; do [[ -f ~/$s ]] && cp ~/$s "$DOTFILES_DIR/"; done
 
 # Comprobación de seguridad: que no se cuele ningún secreto
 if grep -rIlE 'AIza[0-9A-Za-z_-]{30,}|ghp_[0-9A-Za-z]{30,}|gho_[0-9A-Za-z]{30,}|sk-[0-9A-Za-z]{30,}|"refresh_token"' \
