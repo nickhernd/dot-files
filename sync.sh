@@ -53,7 +53,7 @@ for s in setwall mathpad gdrive-sync dev-status battery-status net-info formula-
 done
 
 # Script de dependencias
-[[ -f ~/instalar-rice.sh ]] && cp ~/instalar-rice.sh "$DOTFILES_DIR/"
+for s in instalar-rice.sh instalar-extras.sh; do [[ -f ~/$s ]] && cp ~/$s "$DOTFILES_DIR/"; done
 
 # Comprobación de seguridad: que no se cuele ningún secreto
 if grep -rIlE 'AIza[0-9A-Za-z_-]{30,}|ghp_[0-9A-Za-z]{30,}|gho_[0-9A-Za-z]{30,}|sk-[0-9A-Za-z]{30,}|"refresh_token"' \

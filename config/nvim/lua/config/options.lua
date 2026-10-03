@@ -16,3 +16,4 @@ vim.opt.swapfile = false
 vim.opt.undofile = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.spelllang = { "es", "en" }
+vim.opt.conceallevel = 2 -- fórmulas LaTeX/Markdown más legibles

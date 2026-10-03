@@ -1,9 +1,9 @@
-[manager]
+[mgr]
 
 keymap = [
   # --- Navegacion ---
   { on = "h", run = "leave",        desc = "Subir al directorio padre" },
-  { on = "l", run = "enter",        desc = "Entrar al directorio / abrir archivo" },
+  { on = "l", run = "plugin smart-enter", desc = "Entrar al directorio / abrir archivo" },
   { on = "j", run = "arrow 1",      desc = "Bajar" },
   { on = "k", run = "arrow -1",     desc = "Subir" },
   { on = "J", run = "arrow 5",      desc = "Bajar 5" },
@@ -11,7 +11,7 @@ keymap = [
   { on = "g g", run = "arrow -99999999", desc = "Ir al principio" },
   { on = "G",   run = "arrow 99999999",  desc = "Ir al final" },
   { on = "<Left>",  run = "leave" },
-  { on = "<Right>", run = "enter" },
+  { on = "<Right>", run = "plugin smart-enter" },
   { on = "<Down>",  run = "arrow 1" },
   { on = "<Up>",    run = "arrow -1" },
   { on = "<Enter>", run = "open",   desc = "Abrir archivo" },

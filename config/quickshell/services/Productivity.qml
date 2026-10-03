@@ -117,7 +117,7 @@ Singleton {
             return "terminal";
         if (/chrom|brave|firefox|zen|edge|vivaldi|librewolf/.test(cls))
             return "browser";
-        if (/zathura|okular|evince|obsidian|typora|xournal|libreoffice|papers/.test(cls))
+        if (/zathura|okular|evince|sioyek|zotero|typora|xournal|libreoffice|papers/.test(cls))
             return "docs";
         return "other";
     }

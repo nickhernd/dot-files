@@ -77,3 +77,7 @@ o.bind("SUPER + SHIFT + K", "Disco (gdu)", "omarchy-launch-tui gdu")
 o.window({ class = "org.omarchy.qalc" }, { float = true, center = true, size = { 720, 480 } })
 o.window({ class = "org.omarchy.mathpad" }, { float = true, center = true, size = { 1100, 700 } })
 o.bind("SUPER + ALT + O", "Pomodoro: iniciar/pausar", "qs ipc call pomodoro toggle")
+
+-- Obsidian eliminado: libera SUPER+SHIFT+O
+hl.unbind("SUPER + SHIFT + O")
+o.bind("SUPER + SHIFT + T", "TeXstudio", "uwsm-app -- texstudio")

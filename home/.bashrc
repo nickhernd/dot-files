@@ -67,3 +67,10 @@ alias http='xh'
 alias md='glow'
 alias calc='qalc'
 alias math='mathpad'
+
+# ---- Extras (se activan solos cuando estén instalados) ----
+if command -v atuin >/dev/null && [[ -r /usr/share/bash-preexec/bash-preexec.sh ]]; then
+  source /usr/share/bash-preexec/bash-preexec.sh
+  eval "$(atuin init bash --disable-up-arrow)"
+fi
+command -v direnv >/dev/null && eval "$(direnv hook bash)"

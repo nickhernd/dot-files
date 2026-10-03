@@ -14,8 +14,6 @@ home/.claude.json
 __pycache__/
 *.pyc
 
-# Obsidian (demasiado grande, solo configs internas)
-config/obsidian/
 
 # Brave/Chromium (datos de perfil, no config)
 config/BraveSoftware/

@@ -1,4 +1,4 @@
-[manager]
+[mgr]
 show_hidden = true
 
 [opener]
@@ -7,21 +7,21 @@ edit = [
   { run = 'code "$@"', desc = "Editar con VisualStudio Code", block = true },
 ]
 display = [
-  { run = 'xdg-open "$@"', desc = "Abrir" },
+  { run = 'xdg-open "$@"', desc = "Abrir", orphan = true },
 ]
 pdf = [
-  { run = 'okular "$@"', desc = "Okular" },
-  { run = 'xournalpp "$@"', desc = "Xournal++" },
-  { run = 'rnote "$@"', desc = "Rnote" },
+  { run = 'okular "$@"', desc = "Okular", orphan = true },
+  { run = 'xournalpp "$@"', desc = "Xournal++", orphan = true },
+  { run = 'rnote "$@"', desc = "Rnote", orphan = true },
 ]
 xournal = [
-  { run = 'xournalpp "$@"', desc = "Xournal++" },
+  { run = 'xournalpp "$@"', desc = "Xournal++", orphan = true },
 ]
 rnote = [
-  { run = 'rnote "$@"', desc = "Rnote" },
+  { run = 'rnote "$@"', desc = "Rnote", orphan = true },
 ]
 markdown = [
-  { run = 'typora "$@"', desc = "Typora" },
+  { run = 'typora "$@"', desc = "Typora", orphan = true },
 ]
 latex = [
   { run = 'nvim "$@"',      desc = "Editar con Neovim", block = true },
