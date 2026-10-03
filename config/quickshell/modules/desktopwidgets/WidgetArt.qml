@@ -16,8 +16,8 @@ Item {
     readonly property color accent: Colors[st.accentRole]
     readonly property real radius: st.art === "circle" ? width / 2 : st.art === "rounded" ? 14 : st.art === "soft" ? 12 : st.art === "seal" ? 4 : 0
 
-    implicitWidth: 92
-    implicitHeight: 92
+    implicitWidth: 76
+    implicitHeight: 76
 
     Rectangle {
         id: shapeMask

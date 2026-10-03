@@ -22,7 +22,7 @@ WidgetFrame {
     seal: "琴"
 
     Row {
-        spacing: 16
+        spacing: 12
 
         WidgetArt {
             anchors.verticalCenter: parent.verticalCenter
@@ -31,7 +31,7 @@ WidgetFrame {
         }
 
         Column {
-            width: 280
+            width: 200
             spacing: 5
 
             Text {
