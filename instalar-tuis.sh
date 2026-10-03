@@ -18,8 +18,24 @@ yay -S --needed csvlens jless fx presenterm
 
 echo ":: Organización"
 #  newsboat: noticias RSS (El País + seguridad ya configurado) · calcurse: calendario y agenda
-#  taskwarrior-tui: tareas con prioridades y fechas · ncspot: Spotify en terminal
-yay -S --needed newsboat calcurse taskwarrior-tui ncspot
+#  taskwarrior-tui: tareas con prioridades y fechas
+yay -S --needed newsboat calcurse taskwarrior-tui
+
+echo ":: Música"
+#  ytermusic: YouTube Music en terminal (tus listas y biblioteca) · reproduce con mpv + yt-dlp
+yay -S --needed ytermusic mpv yt-dlp
+
+echo ":: Estudio y mates"
+#  kalker: calculadora con sintaxis matemática (funciones, sumatorios, integrales, derivadas)
+#  visidata: hoja de cálculo/análisis de datos en terminal (CSV, JSON, SQLite, Excel)
+#  wiki-tui: Wikipedia en la terminal · ttyper: practicar mecanografía
+yay -S --needed kalker visidata wiki-tui ttyper
+
+echo ":: Productividad y seguridad"
+#  television (tv): buscador difuso universal (archivos, texto, git, procesos, env...)
+#  lnav: navegar y analizar logs (detecta formatos, filtra, SQL sobre logs)
+#  sshs: elegir host de ~/.ssh/config · dysk: discos y puntos de montaje
+yay -S --needed television lnav sshs dysk
 
 echo ""
-echo "Listo ✔  Prueba: newsboat · lazyjournal · trip 1.1.1.1 · sudo bandwhich · csvlens archivo.csv"
+echo "Listo ✔  Prueba: newsboat · lazyjournal · trip 1.1.1.1 · sudo bandwhich · ytermusic · kalker · tv"

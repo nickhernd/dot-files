@@ -39,7 +39,7 @@ info "2/7 Paquetes"
 ask "¿Rice de Quickshell, TUIs, LaTeX/Typst, Python científico, Docker y Drive?" && ./instalar-rice.sh
 ask "¿Extras de estudio (TeXstudio, sioyek, Zotero, Anki, Lean, atuin...)?" && ./instalar-extras.sh
 ask "¿Bajo nivel y seguridad (pwndbg, ghidra, wireshark, qemu, lynis...)?" && ./instalar-seguridad.sh
-ask "¿TUIs extra (lazyjournal, termshark, trippy, newsboat, calcurse...)?" && ./instalar-tuis.sh
+ask "¿TUIs extra (lazyjournal, termshark, newsboat, ytermusic, kalker, visidata...)?" && ./instalar-tuis.sh
 
 # --- 3. Fuentes de iconos ------------------------------------------------------
 info "3/7 Fuentes de iconos"
