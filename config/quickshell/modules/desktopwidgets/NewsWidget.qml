@@ -29,15 +29,15 @@ WidgetFrame {
             id: item
             required property var modelData
             required property int index
-            width: 470
-            height: 34
+            width: 560
+            height: 46
 
             Text {
                 id: num
                 anchors.top: parent.top
                 text: String(item.index + 1).padStart(2, "0")
                 font.family: root.st.mono
-                font.pixelSize: 12
+                font.pixelSize: 15
                 color: Colors[root.st.accentRole]
             }
 
@@ -50,7 +50,7 @@ WidgetFrame {
                 text: item.modelData.title
                 elide: Text.ElideRight
                 font.family: root.st.font
-                font.pixelSize: 13
+                font.pixelSize: 17
                 font.underline: ma.containsMouse
                 color: ma.containsMouse ? Colors[root.st.accentRole] : Colors.on_surface
             }
@@ -58,11 +58,11 @@ WidgetFrame {
             Text {
                 anchors.left: ttl.left
                 anchors.top: ttl.bottom
-                anchors.topMargin: 1
+                anchors.topMargin: 2
                 text: item.modelData.section.toLowerCase() + (item.modelData.ago ? "  ·  " + item.modelData.ago : "")
                 font.family: root.st.mono
-                font.pixelSize: 10
-                color: Colors.withAlpha(Colors.on_surface, 0.5)
+                font.pixelSize: 12
+                color: Colors.withAlpha(Colors.on_surface, 0.55)
             }
 
             MouseArea {
