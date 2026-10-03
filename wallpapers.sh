@@ -17,7 +17,10 @@ while read -r url; do
   [[ -s $dest ]] || curl -sfL -m 120 -o "$dest" "$url" || echo "   (falló $f)"
 done < "$DOTFILES_DIR/wallpapers.txt"
 
-echo "==> Generando Malaz en Moon Pink"
+echo "==> Fondos guardados en el repo"
+cp -u "$DOTFILES_DIR"/wallpapers/*.{jpg,png} "$W/" 2>/dev/null || true
+
+echo "==> Generando Malaz en Moon Pink (si no está ya)"
 src="$W/malazan/wallhaven-r2811j.jpg"
 out="$W/malaz-longest-sword-moonpink.jpg"
 if [[ -s $src && ! -s $out ]] && command -v magick >/dev/null; then

@@ -17,7 +17,8 @@ Dotfiles personales para Arch Linux con [Omarchy 4](https://omarchy.org/) (Hyprl
 | `config/omarchy/themes/moon-pink/` | Tema Moon Pink (rosa `#ff9ed2`, lavanda `#c8b6ff`, fondo `#1a1625`) |
 | `config/yazi/` | yazi con plugins (git, previews con glow/hexyl/eza, ouch, mount, chmod…) y flavor Moon Pink |
 | `config/omarchy/shell.json` | Shell de Omarchy (barra oculta; notificaciones/OSD/fondo los da el rice) |
-| `config/rclone/` `config/systemd/user/` | Sincronización con Google Drive cada 15 min |
+| `config/rclone/` `config/systemd/user/` | Google Drive montado en `~/GoogleDrive` (`gdrive-mount.service`); `gdrive-sync` bidireccional como alternativa |
+| `wallpapers/` | Fondo actual (Malaz en Moon Pink, créditos en `wallpapers/CREDITOS.md`) |
 | `home/` | `.bashrc`, `.bash_profile`, scripts de `~/.local/bin` |
 
 ### Widgets de escritorio (tema *Still*, en español)
@@ -57,10 +58,10 @@ git clone https://github.com/nickhernd/dot-files.git ~/dot-files
 4. `instalar-seguridad.sh` — bajo nivel (nasm, pwndbg, qemu, cross-compiladores), ingeniería inversa (ghidra, rizin/cutter, imhex), redes (wireshark, nmap), protección (arch-audit, lynis, opensnitch) y laboratorio de VMs
 5. Fuentes de iconos, `wallpapers.sh` (descarga los fondos de `wallpapers.txt` y genera los del tema), tema **Moon Pink** y plugins de Neovim/yazi
 
-Los fondos no están en el repo: se descargan de wallhaven.cc. El de Malaz es
-*The Longest Sword* de Ina Wong ([artofinca.com](https://artofinca.com)), recoloreado en local.
+El fondo actual está en `wallpapers/` (*The Longest Sword* de Ina Wong, [artofinca.com](https://artofinca.com),
+recoloreado en Moon Pink). El resto se descargan de wallhaven.cc.
 
-Pasos manuales al final: `~/.config/secrets.env`, `gh auth login`, `gdrive-sync --setup`.
+Pasos manuales al final: `~/.config/secrets.env`, `gh auth login`, `rclone config create gdrive drive` y `systemctl --user enable --now gdrive-mount.service`.
 
 ## Actualizar el repo
 
