@@ -14,14 +14,17 @@ Dotfiles personales para Arch Linux con [Omarchy 4](https://omarchy.org/) (Hyprl
 | `config/nvim/` | LazyVim + extras (Python, C/C++, LaTeX, Typst, Markdown, SQL, Docker) y mis atajos |
 | `config/nvim-classic/` | Mi config antigua con vim-plug (`nvim-classic`) |
 | `config/gh-dash/` | TUI de issues y PRs de GitHub |
+| `config/omarchy/themes/moon-pink/` | Tema Moon Pink (rosa `#ff9ed2`, lavanda `#c8b6ff`, fondo `#1a1625`) |
+| `config/yazi/` | yazi con plugins (git, previews con glow/hexyl/eza, ouch, mount, chmod…) y flavor Moon Pink |
 | `config/omarchy/shell.json` | Shell de Omarchy (barra oculta; notificaciones/OSD/fondo los da el rice) |
 | `config/rclone/` `config/systemd/user/` | Sincronización con Google Drive cada 15 min |
 | `home/` | `.bashrc`, `.bash_profile`, scripts de `~/.local/bin` |
 
 ### Widgets de escritorio (tema *Still*, en español)
 
-Reloj · tiempo (wttr.in) · tareas (`~/todo.md`) · fórmula del día (Typst) · entregas (`~/deadlines.md`) ·
+Reloj · tiempo (wttr.in) · seguridad (cortafuegos, puertos, CVEs) · fórmula del día (Typst) · noticias de El País ·
 tiempo programando · pomodoro · música · sistema · batería · red · desarrollo (Docker, git, GitHub).
+Borde izquierdo de la pantalla: centro de control.
 
 ### Atajos principales
 
@@ -36,19 +39,28 @@ tiempo programando · pomodoro · música · sistema · batería · red · desar
 | `SUPER+SHIFT+U` / `K` | yazi / gdu |
 | `SUPER+ALT+M` | modo ratón con teclado |
 
-## Instalación
+## Instalación en un ordenador nuevo (automática)
+
+Requisito: [Omarchy](https://omarchy.org/) instalado.
 
 ```bash
 git clone https://github.com/nickhernd/dot-files.git ~/dot-files
-cd ~/dot-files
-./install.sh          # symlinks (con backup .bak de lo existente)
-./instalar-rice.sh    # paquetes: rice, TUIs, LaTeX/Typst, Python científico, rclone, Docker
+~/dot-files/bootstrap.sh          # pregunta qué bloques instalar
+~/dot-files/bootstrap.sh --all    # todo sin preguntar
 ```
 
-Después: `gh auth login`, `gh extension install dlvhdr/gh-dash`, `gdrive-sync --setup` y
-`systemctl --user enable --now gdrive-sync.timer`.
+`bootstrap.sh` hace, en orden:
 
-Los secretos (API keys) van en `~/.config/secrets.env`, que **no** está en el repo.
+1. `install.sh` — enlaces de la config (backup `.bak` de lo existente; nunca reemplaza `~/.local` entero)
+2. `instalar-rice.sh` — rice de Quickshell, TUIs, LaTeX/Typst, Python científico, Docker, rclone
+3. `instalar-extras.sh` — TeXstudio, sioyek, Zotero, Anki, Lean 4, atuin, direnv, just…
+4. `instalar-seguridad.sh` — bajo nivel (nasm, pwndbg, qemu, cross-compiladores), ingeniería inversa (ghidra, rizin/cutter, imhex), redes (wireshark, nmap), protección (arch-audit, lynis, opensnitch) y laboratorio de VMs
+5. Fuentes de iconos, `wallpapers.sh` (descarga los fondos de `wallpapers.txt` y genera los del tema), tema **Moon Pink** y plugins de Neovim/yazi
+
+Los fondos no están en el repo: se descargan de wallhaven.cc. El de Malaz es
+*The Longest Sword* de Ina Wong ([artofinca.com](https://artofinca.com)), recoloreado en local.
+
+Pasos manuales al final: `~/.config/secrets.env`, `gh auth login`, `gdrive-sync --setup`.
 
 ## Actualizar el repo
 

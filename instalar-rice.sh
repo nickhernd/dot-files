@@ -4,7 +4,7 @@ set -e
 
 echo ":: Rice (Quickshell)"
 yay -S --needed \
-  playerctl cliphist wf-recorder cava matugen rofi ydotool \
+  playerctl cliphist wf-recorder cava rofi ydotool \
   ttf-iosevka-nerd ttf-nerd-fonts-symbols ttf-material-symbols-variable-git \
   noto-fonts-cjk
 
@@ -42,8 +42,8 @@ sudo usermod -aG docker "$USER"
 echo ":: ydotool (modo ratón SUPER+ALT+M)"
 systemctl --user enable --now ydotool.service || true
 
-echo ":: Colores del rice desde el wallpaper"
-matugen image "$(readlink -f ~/.cache/current_wallpaper)" --source-color-index 0
+# Colores: tema fijo Moon Pink (sin matugen, para que el fondo no los cambie).
+# Si algún día quieres colores automáticos según el fondo: yay -S matugen
 
 pgrep -f "wl-paste --watch cliphist" >/dev/null || (setsid wl-paste --watch cliphist store >/dev/null 2>&1 &)
 pkill -x qs || true

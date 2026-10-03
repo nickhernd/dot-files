@@ -49,11 +49,11 @@ return {
 
     on_tertiary_fixed_variant = "rgba(4d4162ff)",
 
-    outline = "rgba(8b9198ff)",
+    outline = "rgba(8a7a9eff)",
 
     outline_variant = "rgba(41474dff)",
 
-    primary = "rgba(97ccf9ff)",
+    primary = "rgba(ff9ed2ff)",
 
     primary_container = "rgba(014b71ff)",
 
@@ -79,7 +79,7 @@ return {
 
     surface_bright = "rgba(363a3eff)",
 
-    surface_container = "rgba(1c2024ff)",
+    surface_container = "rgba(241d33ff)",
 
     surface_container_high = "rgba(262a2eff)",
 
@@ -95,7 +95,7 @@ return {
 
     surface_variant = "rgba(41474dff)",
 
-    tertiary = "rgba(d0bfe7ff)",
+    tertiary = "rgba(d47fa6ff)",
 
     tertiary_container = "rgba(4d4162ff)",
 

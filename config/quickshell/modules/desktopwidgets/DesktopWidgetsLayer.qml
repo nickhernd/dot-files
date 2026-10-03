@@ -70,4 +70,14 @@ Scope {
         widgetId: "network"
         widget: Component { NetworkWidget {} }
     }
+
+    WidgetWindow {
+        widgetId: "security"
+        widget: Component { SecurityWidget {} }
+    }
+
+    WidgetWindow {
+        widgetId: "news"
+        widget: Component { NewsWidget {} }
+    }
 }

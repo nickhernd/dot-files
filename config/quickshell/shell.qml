@@ -188,8 +188,14 @@ ShellRoot {
             z: 100
             height: 600
 
+            // Borde izquierdo: centro de control (antes abría el lanzador)
             onEntered: {
-                launcherWindow.toggle()
+                if (!controlCenterLoader.active) {
+                    controlCenterLoader.active = true
+                    controlCenterLoader.item.opened = true
+                } else if (!controlCenterLoader.item.opened) {
+                    controlCenterLoader.item.opened = true
+                }
             }
 
             hoverEnabled: true

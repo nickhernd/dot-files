@@ -114,4 +114,54 @@ Singleton {
             return Math.round(bps / 1024) + " KB/s";
         return Math.round(bps) + " B/s";
     }
+
+    // ── Seguridad (~/.local/bin/sec-status), cada 10 min ──
+    property var security: null
+
+    Timer {
+        interval: 10 * 60 * 1000
+        repeat: true
+        running: true
+        triggeredOnStart: true
+        onTriggered: secProc.running = true
+    }
+
+    Process {
+        id: secProc
+        command: ["sh", "-c", "$HOME/.local/bin/sec-status"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try { root.security = JSON.parse(text); } catch (e) {}
+            }
+        }
+    }
+
+    function refreshSecurity() {
+        secProc.running = true;
+    }
+
+    // ── Noticias: portada de El País, cada 15 min ──
+    property var news: []
+
+    Timer {
+        interval: 15 * 60 * 1000
+        repeat: true
+        running: true
+        triggeredOnStart: true
+        onTriggered: newsProc.running = true
+    }
+
+    Process {
+        id: newsProc
+        command: ["sh", "-c", "$HOME/.local/bin/news-top 6"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    const n = JSON.parse(text);
+                    if (n.length)
+                        root.news = n;
+                } catch (e) {}
+            }
+        }
+    }
 }

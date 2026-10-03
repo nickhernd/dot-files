@@ -1,0 +1,119 @@
+[mgr]
+
+keymap = [
+  # --- Navegacion ---
+  { on = "h", run = "leave",        desc = "Subir al directorio padre" },
+  { on = "l", run = "plugin smart-enter", desc = "Entrar al directorio / abrir archivo" },
+  { on = "j", run = "arrow 1",      desc = "Bajar" },
+  { on = "k", run = "arrow -1",     desc = "Subir" },
+  { on = "J", run = "arrow 5",      desc = "Bajar 5" },
+  { on = "K", run = "arrow -5",     desc = "Subir 5" },
+  { on = "g g", run = "arrow -99999999", desc = "Ir al principio" },
+  { on = "G",   run = "arrow 99999999",  desc = "Ir al final" },
+  { on = "<Left>",  run = "leave" },
+  { on = "<Right>", run = "plugin smart-enter" },
+  { on = "<Down>",  run = "arrow 1" },
+  { on = "<Up>",    run = "arrow -1" },
+  { on = "<Enter>", run = "open",   desc = "Abrir archivo" },
+
+  # --- Crear ---
+  { on = "a", run = "create",       desc = "Crear archivo (termina sin / para archivo, con / para dir)" },
+  { on = "A", run = "create --dir", desc = "Crear directorio directamente" },
+
+  # --- Renombrar ---
+  { on = "r", run = "rename --cursor=before_ext", desc = "Renombrar (cursor antes de extension)" },
+  { on = "R", run = "rename --empty=stem",        desc = "Renombrar vaciando el nombre" },
+
+  # --- Copiar / Mover / Borrar ---
+  { on = "y", run = "yank",         desc = "Copiar seleccionados" },
+  { on = "x", run = "yank --cut",   desc = "Cortar seleccionados" },
+  { on = "p", run = "paste",        desc = "Pegar" },
+  { on = "P", run = "paste --force",desc = "Pegar sobreescribiendo" },
+  { on = "d", run = "remove",       desc = "Mover a papelera" },
+  { on = "D", run = "remove --permanently", desc = "Borrar permanentemente" },
+
+  # --- Seleccion ---
+  { on = "<Space>", run = "select --state=none", desc = "Toggle seleccion" },
+  { on = "v",       run = "visual_mode",         desc = "Modo seleccion visual" },
+  { on = "V",       run = "select_all --state=none", desc = "Seleccionar / deseleccionar todo" },
+
+  # --- Busqueda ---
+  { on = "/", run = "find --smart",           desc = "Buscar hacia abajo" },
+  { on = "?", run = "find --previous --smart",desc = "Buscar hacia arriba" },
+  { on = "n", run = "find_arrow",             desc = "Siguiente resultado" },
+  { on = "N", run = "find_arrow --previous",  desc = "Resultado anterior" },
+  { on = "f", run = "filter --smart",         desc = "Filtrar archivos" },
+  { on = "s", run = "search fd",              desc = "Buscar con fd" },
+  { on = "S", run = "search rg",              desc = "Buscar contenido con ripgrep" },
+
+  # --- Ordenar ---
+  { on = ["o", "n"], run = "sort name --dir-first",        desc = "Ordenar por nombre" },
+  { on = ["o", "N"], run = "sort name --reverse --dir-first", desc = "Ordenar por nombre (inverso)" },
+  { on = ["o", "m"], run = "sort modified --dir-first",    desc = "Ordenar por fecha modificacion" },
+  { on = ["o", "s"], run = "sort size --dir-first",        desc = "Ordenar por tamano" },
+
+  # --- Vista ---
+  { on = ".", run = "hidden toggle",  desc = "Mostrar/ocultar dotfiles" },
+  { on = "z", run = "plugin zoxide",  desc = "Saltar con zoxide" },
+  { on = "Z", run = "plugin fzf",     desc = "Saltar con fzf" },
+
+  # --- Tabs ---
+  { on = "t",       run = "tab_create --current", desc = "Nueva tab en directorio actual" },
+  { on = "1",       run = "tab_switch 0" },
+  { on = "2",       run = "tab_switch 1" },
+  { on = "3",       run = "tab_switch 2" },
+  { on = "<Tab>",   run = "tab_switch 1 --relative",  desc = "Tab siguiente" },
+  { on = "<S-Tab>", run = "tab_switch -1 --relative", desc = "Tab anterior" },
+
+  # --- Shell ---
+  { on = "!", run = "shell --interactive",           desc = "Abrir shell en directorio actual" },
+  { on = "c", run = "shell --block --interactive",   desc = "Comando rapido" },
+
+  # --- Misc ---
+  { on = "u", run = "undo",    desc = "Deshacer" },
+  { on = "U", run = "redo",    desc = "Rehacer" },
+  { on = "q", run = "quit",    desc = "Salir" },
+  { on = "~", run = "help",    desc = "Ayuda" },
+]
+
+[tasks]
+keymap = [
+  { on = "<Esc>", run = "close", desc = "Cerrar panel de tareas" },
+  { on = "w",     run = "close", desc = "Cerrar panel de tareas" },
+  { on = "j",     run = "arrow 1" },
+  { on = "k",     run = "arrow -1" },
+  { on = "<Down>",run = "arrow 1" },
+  { on = "<Up>",  run = "arrow -1" },
+]
+
+[select]
+keymap = [
+  { on = "<Esc>",   run = "close",          desc = "Cancelar" },
+  { on = "<Enter>", run = "close --submit", desc = "Confirmar" },
+  { on = "j",       run = "arrow 1" },
+  { on = "k",       run = "arrow -1" },
+  { on = "<Down>",  run = "arrow 1" },
+  { on = "<Up>",    run = "arrow -1" },
+]
+
+[input]
+keymap = [
+  { on = "<Esc>",   run = "close",          desc = "Cancelar" },
+  { on = "<Enter>", run = "close --submit", desc = "Confirmar" },
+  { on = "<Left>",  run = "move -1" },
+  { on = "<Right>", run = "move 1" },
+  { on = "<C-a>",   run = "move -999" },
+  { on = "<C-e>",   run = "move 999" },
+  { on = "<Backspace>", run = "backspace" },
+  { on = "<Delete>",    run = "backspace --under" },
+]
+
+[confirm]
+keymap = [
+  { on = "<Esc>",   run = "close",          desc = "Cancelar" },
+  { on = "<Enter>", run = "close --submit", desc = "Confirmar" },
+  { on = "n",       run = "close",          desc = "No" },
+  { on = "y",       run = "close --submit", desc = "Si" },
+  { on = "j",       run = "arrow 1" },
+  { on = "k",       run = "arrow -1" },
+]

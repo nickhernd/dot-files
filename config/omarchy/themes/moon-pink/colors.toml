@@ -1,0 +1,32 @@
+# Moon Pink — paleta de nickhernd (FZF/micro moon-pink)
+mode = "dark"
+
+accent = "#ff9ed2"
+selection = "#3a2a4d"
+muted = "#5b4a6e"
+
+background = "#1a1625"
+dark_background = "#15111e"
+darker_background = "#100d17"
+lighter_background = "#2a1f38"
+
+foreground = "#e6d5f0"
+dark_foreground = "#8a7a9e"
+light_foreground = "#efe2f7"
+bright_foreground = "#ffffff"
+
+red = "#ff6b9d"
+yellow = "#ffd3a5"
+orange = "#ffb38a"
+green = "#a8e6cf"
+cyan = "#9ad8f0"
+blue = "#c8b6ff"
+magenta = "#ff9ed2"
+brown = "#8a5a6e"
+
+bright_red = "#ff8fb5"
+bright_yellow = "#ffe3c2"
+bright_green = "#c2f2de"
+bright_cyan = "#b8e6f7"
+bright_blue = "#dacfff"
+bright_magenta = "#ffc2e8"

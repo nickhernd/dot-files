@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+"""Titulares de un feed RSS (por defecto la portada de El País) en JSON para el widget."""
+import json, sys, urllib.request, xml.etree.ElementTree as ET
+from email.utils import parsedate_to_datetime
+from datetime import datetime, timezone
+
+URL = "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada"
+n = int(sys.argv[1]) if len(sys.argv) > 1 else 6
+try:
+    req = urllib.request.Request(URL, headers={"User-Agent": "Mozilla/5.0 news-widget"})
+    root = ET.fromstring(urllib.request.urlopen(req, timeout=10).read())
+except Exception:
+    print("[]"); sys.exit()
+
+out = []
+now = datetime.now(timezone.utc)
+for it in root.iter("item"):
+    title = (it.findtext("title") or "").strip()
+    if not title:
+        continue
+    cats = [c.text for c in it.findall("category") if c.text]
+    ago = ""
+    try:
+        mins = int((now - parsedate_to_datetime(it.findtext("pubDate"))).total_seconds() // 60)
+        ago = f"hace {mins} min" if mins < 60 else f"hace {mins // 60} h" if mins < 1440 else f"hace {mins // 1440} d"
+    except Exception:
+        pass
+    out.append({"title": title, "url": (it.findtext("link") or "").strip(),
+                "section": cats[0] if cats else "El País", "ago": ago})
+    if len(out) >= n:
+        break
+print(json.dumps(out, ensure_ascii=False))

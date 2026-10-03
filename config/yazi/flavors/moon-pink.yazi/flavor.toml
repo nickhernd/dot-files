@@ -1,0 +1,102 @@
+# Moon Pink — flavor de yazi a juego con el tema de Omarchy
+# fondo #1a1625 · rosa #ff9ed2 · rosa claro #ffc2e8 · lavanda #c8b6ff · rosa palo #d47fa6
+
+[mgr]
+cwd = { fg = "#c8b6ff", bold = true }
+
+find_keyword  = { fg = "#1a1625", bg = "#ff9ed2", bold = true }
+find_position = { fg = "#ffc2e8", bg = "reset", bold = true }
+
+marker_copied   = { fg = "#a8e6cf", bg = "#a8e6cf" }
+marker_cut      = { fg = "#ff6b9d", bg = "#ff6b9d" }
+marker_marked   = { fg = "#c8b6ff", bg = "#c8b6ff" }
+marker_selected = { fg = "#ff9ed2", bg = "#ff9ed2" }
+
+count_copied   = { fg = "#1a1625", bg = "#a8e6cf" }
+count_cut      = { fg = "#1a1625", bg = "#ff6b9d" }
+count_selected = { fg = "#1a1625", bg = "#ff9ed2" }
+
+border_symbol = "│"
+border_style  = { fg = "#5b4a6e" }
+
+[indicator]
+parent  = { fg = "#1a1625", bg = "#c8b6ff" }
+current = { fg = "#1a1625", bg = "#ff9ed2", bold = true }
+preview = { underline = true }
+
+[tabs]
+active   = { fg = "#1a1625", bg = "#ff9ed2", bold = true }
+inactive = { fg = "#e6d5f0", bg = "#2a1f38" }
+
+[mode]
+normal_main = { fg = "#1a1625", bg = "#ff9ed2", bold = true }
+normal_alt  = { fg = "#ff9ed2", bg = "#2a1f38" }
+select_main = { fg = "#1a1625", bg = "#c8b6ff", bold = true }
+select_alt  = { fg = "#c8b6ff", bg = "#2a1f38" }
+unset_main  = { fg = "#1a1625", bg = "#d47fa6", bold = true }
+unset_alt   = { fg = "#d47fa6", bg = "#2a1f38" }
+
+[status]
+overall   = { fg = "#e6d5f0", bg = "#1a1625" }
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+perm_type  = { fg = "#c8b6ff" }
+perm_read  = { fg = "#ffd3a5" }
+perm_write = { fg = "#ff6b9d" }
+perm_exec  = { fg = "#a8e6cf" }
+perm_sep   = { fg = "#5b4a6e" }
+
+progress_label  = { fg = "#e6d5f0", bold = true }
+progress_normal = { fg = "#ff9ed2", bg = "#2a1f38" }
+progress_error  = { fg = "#ff6b9d", bg = "#2a1f38" }
+
+[pick]
+border   = { fg = "#ff9ed2" }
+active   = { fg = "#ffc2e8", bold = true }
+inactive = {}
+
+[input]
+border   = { fg = "#ff9ed2" }
+title    = { fg = "#ffc2e8" }
+value    = { fg = "#e6d5f0" }
+selected = { reversed = true }
+
+[cmp]
+border = { fg = "#ff9ed2" }
+
+[tasks]
+border  = { fg = "#ff9ed2" }
+title   = { fg = "#ffc2e8" }
+hovered = { fg = "#ff9ed2", underline = true }
+
+[which]
+mask            = { bg = "#15111e" }
+cand            = { fg = "#ff9ed2" }
+rest            = { fg = "#8a7a9e" }
+desc            = { fg = "#c8b6ff" }
+separator       = "  "
+separator_style = { fg = "#5b4a6e" }
+
+[help]
+on      = { fg = "#ff9ed2" }
+run     = { fg = "#c8b6ff" }
+hovered = { reversed = true, bold = true }
+footer  = { fg = "#1a1625", bg = "#ff9ed2" }
+
+[notify]
+title_info  = { fg = "#a8e6cf" }
+title_warn  = { fg = "#ffd3a5" }
+title_error = { fg = "#ff6b9d" }
+
+[filetype]
+rules = [
+  { mime = "image/*",  fg = "#ffd3a5" },
+  { mime = "{audio,video}/*", fg = "#d47fa6" },
+  { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#ff6b9d" },
+  { mime = "application/{pdf,doc,rtf}", fg = "#a8e6cf" },
+  { mime = "application/x-{executable,sharedlib,pie-executable,object}", fg = "#9ad8f0" },
+  { url = "*", is = "exec", fg = "#a8e6cf" },
+  { url = "*/", fg = "#c8b6ff", bold = true },
+  { url = "*", fg = "#e6d5f0" },
+]

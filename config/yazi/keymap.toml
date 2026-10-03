@@ -69,6 +69,20 @@ keymap = [
   { on = "!", run = "shell --interactive",           desc = "Abrir shell en directorio actual" },
   { on = "c", run = "shell --block --interactive",   desc = "Comando rapido" },
 
+  # --- Plugins (lazy yazi) ---
+  { on = "T",     run = "plugin toggle-pane max-preview", desc = "Maximizar/restaurar preview" },
+  { on = "<C-t>", run = "plugin toggle-pane min-preview", desc = "Ocultar/mostrar preview" },
+  { on = "F",     run = "plugin smart-filter",            desc = "Filtro inteligente (entra si queda 1)" },
+  { on = ";",     run = "plugin jump-to-char",            desc = "Saltar a archivo por letra" },
+  { on = "+",     run = "plugin chmod",                   desc = "Cambiar permisos (chmod)" },
+  { on = "M",     run = "plugin mount",                   desc = "Montar/desmontar discos y USB" },
+  { on = "<C-d>", run = "plugin diff",                    desc = "Diff entre seleccionado y actual" },
+  { on = "C",     run = "plugin ouch",                    desc = "Comprimir selección (ouch)" },
+  { on = "O",     run = "open --interactive",             desc = "Abrir con..." },
+  { on = "e",     run = "shell 'nvim \"$@\"' --block",  desc = "Editar en Neovim" },
+  { on = "<C-g>", run = "shell 'lazygit' --block",        desc = "Lazygit aquí" },
+  { on = "w",     run = "tasks:show",                     desc = "Panel de tareas" },
+
   # --- Misc ---
   { on = "u", run = "undo",    desc = "Deshacer" },
   { on = "U", run = "redo",    desc = "Rehacer" },

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Portada de Hacker News (top N) en JSON para el widget de noticias.
+n=${1:-6}
+curl -s -m 10 https://hacker-news.firebaseio.com/v0/topstories.json | jq -r ".[:$n][]" |
+while read -r id; do curl -s -m 8 "https://hacker-news.firebaseio.com/v0/item/$id.json"; echo; done |
+jq -sc '[.[] | select(.title) | {
+  title, score, comments: (.descendants // 0),
+  url: (.url // ("https://news.ycombinator.com/item?id=" + (.id|tostring))),
+  site: ((.url // "https://news.ycombinator.com") | sub("^https?://(www\\.)?"; "") | split("/")[0])
+}]'

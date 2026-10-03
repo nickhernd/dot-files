@@ -1,14 +1,13 @@
 #!/bin/bash
-# Script de instalación de dotfiles
-# Crea symlinks desde el repo hacia las ubicaciones correctas en el sistema.
-# Uso: ./install.sh
+# install.sh — Enlaza (symlinks) la configuración del repo en el sistema.
+# Hace backup (.bak) de lo que ya exista. Lo llama bootstrap.sh; también se puede usar solo.
 
 set -e
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$HOME/.config"
 
-echo "==> Instalando dotfiles desde: $DOTFILES_DIR"
+echo "==> Enlazando dotfiles desde: $DOTFILES_DIR"
 
 backup() {
     local target="$1"
@@ -18,48 +17,59 @@ backup() {
     fi
 }
 
-link_config() {
-    local src="$DOTFILES_DIR/config/$1"
-    local dst="$CONFIG_DIR/$1"
-    [[ -e "$src" ]] || return
+link() {
+    local src="$1" dst="$2"
+    [[ -e "$src" ]] || return 0
     backup "$dst"
     mkdir -p "$(dirname "$dst")"
     ln -sfn "$src" "$dst"
     echo "  [link] $dst"
 }
 
-link_home() {
-    local src="$DOTFILES_DIR/home/$1"
-    local dst="$HOME/$1"
-    [[ -e "$src" ]] || return
-    backup "$dst"
-    ln -sfn "$src" "$dst"
-    echo "  [link] $dst"
-}
-
-# Config dirs
+# Carpetas de ~/.config
 for dir in hypr quickshell matugen rofi cava kitty foot ghostty alacritty nvim nvim-classic tmux git \
-           lazygit lazydocker gh-dash btop yazi micro ranger ripgrep mise imv xournalpp opencode; do
-    link_config "$dir"
+           lazygit lazydocker gh-dash btop yazi micro ranger ripgrep mise imv xournalpp opencode \
+           okular texstudio qalculate wiremix crossnote OpenTabletDriver fontconfig; do
+    link "$DOTFILES_DIR/config/$dir" "$CONFIG_DIR/$dir"
 done
 
-# Config files
+# Archivos sueltos de ~/.config
 for f in starship.toml mimeapps.list omarchy/shell.json rclone/gdrive-filters.txt \
          systemd/user/gdrive-sync.service systemd/user/gdrive-sync.timer; do
-    link_config "$f"
+    link "$DOTFILES_DIR/config/$f" "$CONFIG_DIR/$f"
 done
+
+# Tema Moon Pink de Omarchy (los fondos los genera bootstrap.sh)
+for t in "$DOTFILES_DIR"/config/omarchy/themes/*/; do
+    [[ -d $t ]] || continue
+    name=$(basename "$t")
+    mkdir -p "$CONFIG_DIR/omarchy/themes/$name"
+    for f in "$t"*; do link "$f" "$CONFIG_DIR/omarchy/themes/$name/$(basename "$f")"; done
+done
+
+# Dotfiles de $HOME (solo archivos, nunca carpetas enteras como ~/.local)
+for f in .bashrc .bash_profile .bash_logout .nanorc; do
+    link "$DOTFILES_DIR/home/$f" "$HOME/$f"
+done
+
+# Scripts de ~/.local/bin, uno a uno
+mkdir -p "$HOME/.local/bin"
+for f in "$DOTFILES_DIR"/home/.local/bin/*; do
+    [[ -e $f || -L $f ]] || continue
+    name=$(basename "$f")
+    [[ $name == setwall ]] && continue
+    link "$f" "$HOME/.local/bin/$name"
+done
+ln -sfn "$CONFIG_DIR/quickshell/scripts/setwall" "$HOME/.local/bin/setwall"
 
 # Oculta la barra de Omarchy (la sustituye la del rice de Quickshell)
 mkdir -p "$HOME/.local/state/omarchy/toggles" && touch "$HOME/.local/state/omarchy/toggles/bar-off"
-mkdir -p "$HOME/.local/bin" && ln -sfn "$HOME/.config/quickshell/scripts/setwall" "$HOME/.local/bin/setwall"
 
-# Home dotfiles
-# Enlaza todos los archivos y carpetas (incluyendo ocultos) de la carpeta home/ del repo
-find "$DOTFILES_DIR/home" -mindepth 1 -maxdepth 1 | while read src; do
-    name=$(basename "$src")
-    link_home "$name"
-done
+# Plantilla de secretos (no está en el repo)
+if [[ ! -f $CONFIG_DIR/secrets.env ]]; then
+    printf '# API keys y tokens (NO subir a git)\n# export GEMINI_API_KEY="..."\n' > "$CONFIG_DIR/secrets.env"
+    chmod 600 "$CONFIG_DIR/secrets.env"
+    echo "  [nuevo] $CONFIG_DIR/secrets.env (rellénalo con tus claves)"
+fi
 
-echo ""
-echo "==> Hecho. Instala las dependencias con ./instalar-rice.sh y reinicia la sesión."
-echo "    Recuerda crear ~/.config/secrets.env con tus API keys (no está en el repo)."
+echo "==> Enlaces hechos."

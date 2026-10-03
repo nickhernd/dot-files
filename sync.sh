@@ -31,7 +31,7 @@ done
 mkdir -p "$R/omarchy"
 cp "$C/omarchy/shell.json" "$R/omarchy/"
 for d in extensions hooks branding themed plugins themes; do
-  [[ -d $C/omarchy/$d ]] && "${RSYNC[@]}" "$C/omarchy/$d/" "$R/omarchy/$d/"
+  [[ -d $C/omarchy/$d ]] && "${RSYNC[@]}" --exclude 'backgrounds/' "$C/omarchy/$d/" "$R/omarchy/$d/"
 done
 
 # Archivos sueltos
@@ -46,14 +46,14 @@ H="$DOTFILES_DIR/home"
 cp ~/.bashrc ~/.bash_profile "$H/"
 [[ -f ~/.nanorc ]] && cp ~/.nanorc "$H/"
 mkdir -p "$H/.local/bin"
-for s in setwall mathpad gdrive-sync dev-status battery-status net-info formula-of-day \
+for s in setwall mathpad gdrive-sync dev-status battery-status net-info formula-of-day sec-status news-top hn-top \
          fzf-files fzf-grep git-pull-all git-push-all git-scan rg-pink tabletscreen xppen-monitor.sh; do
   f=~/.local/bin/$s
   [[ -e $f ]] && cp -P "$f" "$H/.local/bin/"
 done
 
 # Script de dependencias
-for s in instalar-rice.sh instalar-extras.sh; do [[ -f ~/$s ]] && cp ~/$s "$DOTFILES_DIR/"; done
+for s in instalar-rice.sh instalar-extras.sh instalar-seguridad.sh; do [[ -f ~/$s ]] && cp ~/$s "$DOTFILES_DIR/"; done
 
 # Comprobación de seguridad: que no se cuele ningún secreto
 if grep -rIlE 'AIza[0-9A-Za-z_-]{30,}|ghp_[0-9A-Za-z]{30,}|gho_[0-9A-Za-z]{30,}|sk-[0-9A-Za-z]{30,}|"refresh_token"' \

@@ -17,3 +17,4 @@ vim.opt.undofile = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.spelllang = { "es", "en" }
 vim.opt.conceallevel = 2 -- fórmulas LaTeX/Markdown más legibles
+vim.filetype.add({ extension = { asm = "nasm", nasm = "nasm", s = "asm", S = "asm", ld = "linkerscript" } })

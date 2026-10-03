@@ -41,6 +41,8 @@ Singleton {
         pomodoro: { "": "Pomodoro", hud: "Pomodoro", terminal: "~ $ pomodoro", cosmos: "Burn timer", zen: "pomodoro", xianxia: "時 · Hour" },
         battery: { "": "Batería", hud: "Power", terminal: "~ $ upower", cosmos: "Power cells", zen: "batería", xianxia: "電 · Power" },
         network: { "": "Red", hud: "Network", terminal: "~ $ ip a", cosmos: "Comms", zen: "red", xianxia: "網 · Net" },
+        security: { "": "Seguridad", hud: "Defense", terminal: "~ $ sec-status", cosmos: "Shields", zen: "seguridad", xianxia: "盾 · Shield" },
+        news: { "": "Noticias", hud: "Intel", terminal: "~ $ curl hn", cosmos: "Transmissions", zen: "noticias · el país", xianxia: "報 · News" },
         uptime: { "": "Up", hud: "UPTIME", terminal: "up", cosmos: "Mission time", zen: "encendido", xianxia: "闭关 Seclusion" }
     })
 

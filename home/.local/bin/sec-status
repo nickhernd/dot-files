@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Resumen de seguridad del sistema en JSON (solo lectura, sin root) para el widget.
+fw=""
+for s in ufw firewalld nftables; do systemctl is-active --quiet "$s" && { fw=$s; break; }; done
+
+# Puertos escuchando expuestos (no solo localhost)
+mapfile -t exposed < <(ss -tulnH 2>/dev/null | awk '{print $1" "$5}' \
+  | grep -vE ' (127\.|\[::1\]|::1|224\.0\.0\.)' | awk '{n=split($2,a,":"); print $1"/"a[n]}' | sort -u)
+total=$(ss -tulnH 2>/dev/null | wc -l)
+
+cves=null
+command -v arch-audit >/dev/null && cves=$(timeout 30 arch-audit -q 2>/dev/null | wc -l)
+updates=$(timeout 30 checkupdates 2>/dev/null | wc -l)
+sudo_fail=$(journalctl --since "-24h" -t sudo --no-pager 2>/dev/null | grep -c "authentication failure")
+crypt=$(lsblk -no TYPE 2>/dev/null | grep -qx crypt && echo true || echo false)
+sshd=$(systemctl is-active --quiet sshd && echo true || echo false)
+last=$(grep "starting full system upgrade" /var/log/pacman.log 2>/dev/null | tail -1 | grep -oP '^\[\K[^T]+')
+days=null
+[[ -n $last ]] && days=$(( ( $(date +%s) - $(date -d "$last" +%s) ) / 86400 ))
+
+jq -nc --arg fw "$fw" --argjson total "$total" --arg exposed "$(IFS=,; echo "${exposed[*]}")" \
+  --argjson cves "$cves" --argjson updates "$updates" --argjson sudo "$sudo_fail" \
+  --argjson crypt "$crypt" --argjson sshd "$sshd" --argjson days "$days" '
+  {firewall:$fw, ports:{total:$total, exposed:($exposed|split(",")|map(select(.!="")))},
+   cves:$cves, updates:$updates, sudoFailures:$sudo, encrypted:$crypt, sshd:$sshd, daysSinceUpdate:$days}'
