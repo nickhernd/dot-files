@@ -20,7 +20,9 @@ ALL=0
 if ((ALL)); then
   yay() { command yay --noconfirm --answerdiff None --answerclean None --removemake "$@"; }
   export -f yay
-  sudo -v && ( while true; do sudo -n true; sleep 50; done ) 2>/dev/null & KEEP=$!
+  sudo -v || exit 1
+  ( while true; do sudo -n true; sleep 50; done ) 2>/dev/null &
+  KEEP=$!
   trap 'kill $KEEP 2>/dev/null' EXIT
 fi
 
