@@ -19,11 +19,12 @@ Singleton {
         { id: "weather", name: "Tiempo", icon: "partly_cloudy_day", description: "El tiempo y previsión de 3 días", x: 0.02, y: 0.36 },
         { id: "security", name: "Seguridad", icon: "shield", description: "Cortafuegos, puertos, CVEs y actualizaciones", x: 0.02, y: 0.71 },
         { id: "todo", name: "Tareas", icon: "checklist", description: "Tareas de ~/todo.md", x: 0.02, y: 0.60 },
-        { id: "formula", name: "Fórmula del día", icon: "function", description: "Una fórmula o teorema cada día", x: 0.02, y: 0.91 },
+        { id: "formula", name: "Fórmula del día", icon: "function", description: "Una fórmula o teorema cada día", x: 0.035, y: 0.955 },
         { id: "news", name: "Noticias", icon: "newspaper", description: "Portada de El País", x: 0.5, y: 0.04 },
         { id: "deadlines", name: "Entregas", icon: "event", description: "Entregas y exámenes de ~/deadlines.md", x: 0.5, y: 0.04 },
         { id: "coding", name: "Tiempo programando", icon: "code", description: "Tiempo activo hoy y últimos 7 días", x: 0.5, y: 0.48 },
         { id: "pomodoro", name: "Pomodoro", icon: "timer", description: "Temporizador de foco 25/5", x: 0.5, y: 0.97 },
+        { id: "notifications", name: "Notificaciones", icon: "notifications", description: "Últimas notificaciones", x: 0.79, y: 0.05 },
         { id: "music", name: "Music player", icon: "music_note", description: "Now playing, with controls", x: 0.98, y: 0.03 },
         { id: "sysmon", name: "System monitor", icon: "monitoring", description: "CPU, memory, temperature and disk", x: 0.98, y: 0.25 },
         { id: "battery", name: "Batería", icon: "battery_full", description: "Carga, consumo, salud y perfil", x: 0.98, y: 0.47 },
@@ -33,7 +34,7 @@ Singleton {
         { id: "cava", name: "Visualizer", icon: "graphic_eq", description: "Cava spectrum of what's playing" }
     ]
 
-    readonly property var defaults: ({ clock: true, music: true, sysmon: true, weather: true, dev: true, formula: true, deadlines: false, todo: false, security: true, news: true, coding: true, pomodoro: true, battery: true, network: true })
+    readonly property var defaults: ({ clock: true, music: true, sysmon: true, weather: true, dev: true, formula: true, deadlines: false, todo: false, security: true, news: true, notifications: true, coding: true, pomodoro: true, battery: true, network: true })
 
     function info(id) {
         return widgets.find(w => w.id === id);

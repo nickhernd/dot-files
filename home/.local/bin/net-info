@@ -9,7 +9,7 @@ if [[ $iface == wl* ]]; then
 fi
 cache=~/.cache/quickshell/public-ip
 if [[ ! -s $cache || $(( $(date +%s) - $(stat -c %Y "$cache") )) -gt 600 ]]; then
-  curl -s -m 5 https://ifconfig.me > "$cache.tmp" && mv "$cache.tmp" "$cache"
+  curl -4 -s -m 5 https://ifconfig.me > "$cache.tmp" && mv "$cache.tmp" "$cache"
 fi
 pip=$(cat "$cache" 2>/dev/null)
 vpn=$(ip -o link show up 2>/dev/null | grep -oE ': (tun[0-9]*|wg[0-9]*|tailscale0|proton[^:]*)' | head -1 | tr -d ': ')

@@ -14,7 +14,8 @@
     "network": true,
     "quote": false,
     "security": true,
-    "news": true
+    "news": true,
+    "notifications": true
   },
   "positions": {}
 }

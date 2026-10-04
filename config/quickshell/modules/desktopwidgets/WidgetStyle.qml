@@ -43,6 +43,7 @@ Singleton {
         network: { "": "Red", hud: "Network", terminal: "~ $ ip a", cosmos: "Comms", zen: "red", xianxia: "網 · Net" },
         security: { "": "Seguridad", hud: "Defense", terminal: "~ $ sec-status", cosmos: "Shields", zen: "seguridad", xianxia: "盾 · Shield" },
         news: { "": "Noticias", hud: "Intel", terminal: "~ $ curl hn", cosmos: "Transmissions", zen: "noticias · el país", xianxia: "報 · News" },
+        notifications: { "": "Notificaciones", hud: "Alerts", terminal: "~ $ journalctl -f", cosmos: "Incoming", zen: "notificaciones", xianxia: "知 · Messages" },
         uptime: { "": "Up", hud: "UPTIME", terminal: "up", cosmos: "Mission time", zen: "encendido", xianxia: "闭关 Seclusion" }
     })
 

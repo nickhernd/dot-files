@@ -80,4 +80,9 @@ Scope {
         widgetId: "news"
         widget: Component { NewsWidget {} }
     }
+
+    WidgetWindow {
+        widgetId: "notifications"
+        widget: Component { NotificationsWidget {} }
+    }
 }
