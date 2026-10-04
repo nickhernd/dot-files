@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Limpieza guiada: pregunta antes de cada paso. Lo abre el widget de mantenimiento.
+ask() { read -rp "$1 [s/N] " r; [[ $r =~ ^[sSyY]$ ]]; }
+echo -e "\033[1;35m== Mantenimiento del sistema ==\033[0m\n"
+ask "Caché de pacman: dejar solo las 2 últimas versiones de cada paquete (paccache)?" && sudo paccache -rk2 && sudo paccache -ruk0
+ask "Caché de yay (paquetes AUR compilados)?" && yay -Sc --aur --noconfirm
+orph=$(pacman -Qtdq)
+if [[ -n $orph ]]; then
+  echo -e "\nPaquetes huérfanos (ya no los necesita nada):"; echo "$orph" | column
+  ask "¿Desinstalarlos?" && sudo pacman -Rns $orph
+fi
+ask "Vaciar la papelera?" && rm -rf ~/.local/share/Trash/{files,info}/* && echo "  papelera vacía"
+ask "Logs del sistema: conservar solo las últimas 2 semanas?" && sudo journalctl --vacuum-time=2weeks
+if command -v docker >/dev/null && docker info >/dev/null 2>&1; then
+  docker system df
+  ask "Docker: borrar contenedores parados, imágenes y caché sin usar?" && docker system prune -f
+fi
+echo -e "\n\033[1;35mHecho.\033[0m"; read -rp "Enter para cerrar..."

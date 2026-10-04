@@ -85,4 +85,19 @@ Scope {
         widgetId: "notifications"
         widget: Component { NotificationsWidget {} }
     }
+
+    WidgetWindow {
+        widgetId: "arxiv"
+        widget: Component { ArxivWidget {} }
+    }
+
+    WidgetWindow {
+        widgetId: "processes"
+        widget: Component { ProcessesWidget {} }
+    }
+
+    WidgetWindow {
+        widgetId: "maintenance"
+        widget: Component { MaintenanceWidget {} }
+    }
 }

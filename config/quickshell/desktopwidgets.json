@@ -15,7 +15,10 @@
     "quote": false,
     "security": true,
     "news": true,
-    "notifications": true
+    "notifications": true,
+    "arxiv": true,
+    "processes": true,
+    "maintenance": true
   },
   "positions": {}
 }

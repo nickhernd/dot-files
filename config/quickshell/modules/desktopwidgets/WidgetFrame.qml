@@ -41,6 +41,16 @@ Item {
         shadowVerticalOffset: 1
     }
 
+    // Zen ("bare"): velo oscuro translúcido para leer sobre fondos claros
+    Rectangle {
+        anchors.fill: parent
+        visible: frame.st.frame === "bare"
+        radius: 16
+        color: Colors.withAlpha(Colors.background, 0.62)
+        border.width: 1
+        border.color: Colors.withAlpha(Colors.outline_variant, 0.35)
+    }
+
     Rectangle {
         anchors.fill: parent
         visible: frame.st.frame === "card"

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Espacio recuperable del sistema en JSON (solo lectura) para el widget de mantenimiento.
+kb() { du -sk "$1" 2>/dev/null | cut -f1; }
+pkg=$(kb /var/cache/pacman/pkg); yay=$(kb ~/.cache/yay); trash=$(kb ~/.local/share/Trash)
+cache=$(kb ~/.cache)
+orph=$(pacman -Qtdq 2>/dev/null | wc -l)
+jrn=$(journalctl --disk-usage 2>/dev/null | grep -oP '[\d.]+[KMGT]?' | head -1)
+dock=null
+if command -v docker >/dev/null && timeout 5 docker info >/dev/null 2>&1; then
+  dock=$(docker system df --format '{{.Reclaimable}}' 2>/dev/null | awk '{print $1}' | jq -R . | jq -sc .)
+fi
+jq -nc --argjson pkg "${pkg:-0}" --argjson yay "${yay:-0}" --argjson trash "${trash:-0}" --argjson cache "${cache:-0}" \
+  --argjson orph "$orph" --arg jrn "${jrn:-?}" --argjson dock "$dock" \
+  '{pacmanCacheKB:$pkg, yayCacheKB:$yay, trashKB:$trash, userCacheKB:$cache, orphans:$orph, journal:$jrn, docker:$dock}'

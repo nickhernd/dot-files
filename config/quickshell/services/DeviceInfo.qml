@@ -164,4 +164,99 @@ Singleton {
             }
         }
     }
+
+    // ── Procesos: top 6 por CPU o RAM, cada 3 s ──
+    property var procs: []
+    property string procSort: "cpu"         // cpu | mem
+
+    Timer {
+        interval: 3000
+        repeat: true
+        running: true
+        triggeredOnStart: true
+        onTriggered: procProc.running = true
+    }
+
+    Process {
+        id: procProc
+        command: ["sh", "-c", "ps -eo pid=,pcpu=,pmem=,comm= --sort=-" + (root.procSort === "mem" ? "pmem" : "pcpu") + " | head -5"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.procs = text.trim().split("\n").filter(l => l.trim()).map(l => {
+                    const f = l.trim().split(/\s+/);
+                    return { pid: +f[0], cpu: +f[1], mem: +f[2], name: f.slice(3).join(" ") };
+                });
+            }
+        }
+    }
+
+    function setProcSort(k) {
+        procSort = k;
+        procProc.running = true;
+    }
+
+    function killProc(pid) {
+        Quickshell.execDetached(["kill", "-TERM", String(pid)]);
+        procProc.running = true;
+    }
+
+    // ── Mantenimiento (~/.local/bin/maint-status), cada 30 min ──
+    property var maint: null
+
+    Timer {
+        interval: 30 * 60 * 1000
+        repeat: true
+        running: true
+        triggeredOnStart: true
+        onTriggered: maintProc.running = true
+    }
+
+    Process {
+        id: maintProc
+        command: ["sh", "-c", "$HOME/.local/bin/maint-status"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try { root.maint = JSON.parse(text); } catch (e) {}
+            }
+        }
+    }
+
+    function refreshMaint() {
+        maintProc.running = true;
+    }
+
+    function cleanUp() {
+        Quickshell.execDetached(["sh", "-c", "uwsm-app -- xdg-terminal-exec --app-id=org.omarchy.maint -e $HOME/.local/bin/maint-clean"]);
+    }
+
+    // ── Papers de arXiv (~/.local/bin/arxiv-top), cada hora ──
+    property var papers: []
+    property string arxivCat: "todo"        // seguridad | sistemas | mates | todo
+
+    Timer {
+        interval: 60 * 60 * 1000
+        repeat: true
+        running: true
+        triggeredOnStart: true
+        onTriggered: arxivProc.running = true
+    }
+
+    Process {
+        id: arxivProc
+        command: ["sh", "-c", "$HOME/.local/bin/arxiv-top " + root.arxivCat + " 5"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    const p = JSON.parse(text);
+                    if (p.length)
+                        root.papers = p;
+                } catch (e) {}
+            }
+        }
+    }
+
+    function setArxivCat(c) {
+        arxivCat = c;
+        arxivProc.running = true;
+    }
 }

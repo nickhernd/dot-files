@@ -24,17 +24,20 @@ Singleton {
         { id: "deadlines", name: "Entregas", icon: "event", description: "Entregas y exámenes de ~/deadlines.md", x: 0.5, y: 0.04 },
         { id: "coding", name: "Tiempo programando", icon: "code", description: "Tiempo activo hoy y últimos 7 días", x: 0.5, y: 0.48 },
         { id: "pomodoro", name: "Pomodoro", icon: "timer", description: "Temporizador de foco 25/5", x: 0.5, y: 0.97 },
-        { id: "notifications", name: "Notificaciones", icon: "notifications", description: "Últimas notificaciones", x: 0.79, y: 0.05 },
+        { id: "notifications", name: "Notificaciones", icon: "notifications", description: "Últimas notificaciones", x: 0.79, y: 0.04 },
+        { id: "arxiv", name: "arXiv", icon: "article", description: "Últimos papers de arXiv", x: 0.79, y: 0.2 },
+        { id: "processes", name: "Procesos", icon: "memory", description: "Procesos que más consumen", x: 0.79, y: 0.63 },
+        { id: "maintenance", name: "Mantenimiento", icon: "cleaning_services", description: "Espacio recuperable y limpieza", x: 0.79, y: 0.995 },
         { id: "music", name: "Music player", icon: "music_note", description: "Now playing, with controls", x: 0.98, y: 0.03 },
-        { id: "sysmon", name: "System monitor", icon: "monitoring", description: "CPU, memory, temperature and disk", x: 0.98, y: 0.25 },
-        { id: "battery", name: "Batería", icon: "battery_full", description: "Carga, consumo, salud y perfil", x: 0.98, y: 0.47 },
-        { id: "network", name: "Red", icon: "network_check", description: "Velocidad, IPs y VPN", x: 0.98, y: 0.70 },
-        { id: "dev", name: "Dev", icon: "terminal", description: "Docker, repos git y GitHub", x: 0.98, y: 0.98 },
+        { id: "sysmon", name: "System monitor", icon: "monitoring", description: "CPU, memory, temperature and disk", x: 0.98, y: 0.22 },
+        { id: "battery", name: "Batería", icon: "battery_full", description: "Carga, consumo, salud y perfil", x: 0.98, y: 0.44 },
+        { id: "network", name: "Red", icon: "network_check", description: "Velocidad, IPs y VPN", x: 0.98, y: 0.68 },
+        { id: "dev", name: "Dev", icon: "terminal", description: "Docker, repos git y GitHub", x: 0.98, y: 0.995 },
         { id: "quote", name: "Frase", icon: "format_quote", description: "Una frase nueva cada diez minutos", x: 0.02, y: 0.98 },
         { id: "cava", name: "Visualizer", icon: "graphic_eq", description: "Cava spectrum of what's playing" }
     ]
 
-    readonly property var defaults: ({ clock: true, music: true, sysmon: true, weather: true, dev: true, formula: true, deadlines: false, todo: false, security: true, news: true, notifications: true, coding: true, pomodoro: true, battery: true, network: true })
+    readonly property var defaults: ({ clock: true, music: true, sysmon: true, weather: true, dev: true, formula: true, deadlines: false, todo: false, security: true, news: true, notifications: true, arxiv: true, processes: true, maintenance: true, coding: true, pomodoro: true, battery: true, network: true })
 
     function info(id) {
         return widgets.find(w => w.id === id);

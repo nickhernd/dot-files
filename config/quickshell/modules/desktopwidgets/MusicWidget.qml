@@ -31,7 +31,7 @@ WidgetFrame {
         }
 
         Column {
-            width: 200
+            width: 165
             spacing: 5
 
             Text {
