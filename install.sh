@@ -28,7 +28,7 @@ link() {
 
 # Carpetas de ~/.config
 for dir in hypr quickshell matugen rofi cava scripts kitty foot ghostty alacritty nvim nvim-classic tmux git \
-           lazygit lazydocker gh-dash btop yazi micro ranger ripgrep mise imv xournalpp opencode newsboat atuin \
+           lazygit lazydocker gh-dash btop yazi micro ranger ripgrep mise imv xournalpp opencode newsboat atuin ZapZap \
            okular texstudio qalculate wiremix crossnote OpenTabletDriver fontconfig; do
     link "$DOTFILES_DIR/config/$dir" "$CONFIG_DIR/$dir"
 done

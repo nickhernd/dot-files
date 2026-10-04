@@ -16,7 +16,7 @@ DIRS=(
   hypr quickshell matugen rofi cava scripts
   kitty foot ghostty alacritty
   nvim nvim-classic tmux git lazygit lazydocker gh-dash btop yazi micro ranger ripgrep mise
-  newsboat atuin imv xournalpp opencode okular texstudio qalculate wiremix crossnote OpenTabletDriver fontconfig
+  newsboat atuin ZapZap imv xournalpp opencode okular texstudio qalculate wiremix crossnote OpenTabletDriver fontconfig
 )
 for d in "${DIRS[@]}"; do
   [[ -d $C/$d ]] || continue

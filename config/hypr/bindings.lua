@@ -81,3 +81,7 @@ o.bind("SUPER + ALT + O", "Pomodoro: iniciar/pausar", "qs ipc call pomodoro togg
 -- Obsidian eliminado: libera SUPER+SHIFT+O
 hl.unbind("SUPER + SHIFT + O")
 o.bind("SUPER + SHIFT + T", "TeXstudio", "uwsm-app -- texstudio")
+
+-- WhatsApp: ZapZap en vez de la web app
+hl.unbind("SUPER + SHIFT + ALT + G")
+o.bind("SUPER + SHIFT + ALT + G", "WhatsApp", 'omarchy-launch-or-focus "^com.rtosta.zapzap$" "uwsm-app -- zapzap"')

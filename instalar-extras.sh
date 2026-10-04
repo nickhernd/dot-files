@@ -17,6 +17,10 @@ echo ":: Terminal y flujo de trabajo"
 #  just: tareas por proyecto (justfile)              watchexec: re-ejecutar al guardar
 yay -S --needed atuin bash-preexec direnv just watchexec tectonic tree-sitter-cli
 
+echo ":: Mensajería"
+#  zapzap: WhatsApp con icono en la bandeja (como Telegram)
+yay -S --needed zapzap
+
 echo ":: Estudio e investigación"
 #  sioyek: visor de PDF para papers/libros de mates   zotero: gestor de bibliografía
 #  anki: tarjetas de repaso                           localsend: pasar archivos al móvil
