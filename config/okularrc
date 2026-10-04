@@ -1,6 +1,15 @@
 [Desktop Entry]
-FullScreen=false
+FullScreen=true
+shouldShowMenuBarComingFromFullScreen=true
+shouldShowToolBarComingFromFullScreen=true
 
 [General]
 LockSidebar=true
 ShowSidebar=true
+
+[MainWindow]
+MenuBar=Disabled
+
+[Recent Files]
+File1[$e]=$HOME/GoogleDrive/verificacion_formal/_principles_of_model_checking.pdf
+Name1[$e]=_principles_of_model_checking.pdf

@@ -6,28 +6,30 @@ sort_dir_first = true
 
 [opener]
 edit = [
-  { run = 'nvim "$@"', desc = "Editar con Neovim", block = true },
-  { run = 'code "$@"', desc = "Editar con VisualStudio Code", block = true },
+  { run = 'nvim %s', desc = "Editar con Neovim", block = true },
+  { run = 'code %s', desc = "Editar con VisualStudio Code", block = true },
 ]
 display = [
-  { run = 'xdg-open "$@"', desc = "Abrir", orphan = true },
+  { run = 'xdg-open %s', desc = "Abrir", orphan = true },
 ]
 pdf = [
-  { run = 'okular "$@"', desc = "Okular", orphan = true },
-  { run = 'xournalpp "$@"', desc = "Xournal++", orphan = true },
-  { run = 'rnote "$@"', desc = "Rnote", orphan = true },
+  { run = 'okular %s', desc = "Okular", orphan = true },
+  { run = 'zathura %s', desc = "Zathura", orphan = true },
+  { run = 'xournalpp %s', desc = "Xournal++", orphan = true },
+  { run = 'rnote %s', desc = "Rnote", orphan = true },
 ]
 xournal = [
-  { run = 'xournalpp "$@"', desc = "Xournal++", orphan = true },
+  { run = 'xournalpp %s', desc = "Xournal++", orphan = true },
 ]
 rnote = [
-  { run = 'rnote "$@"', desc = "Rnote", orphan = true },
+  { run = 'rnote %s', desc = "Rnote", orphan = true },
 ]
 markdown = [
-  { run = 'typora "$@"', desc = "Typora", orphan = true },
+  { run = 'nvim %s', desc = "Editar con Neovim", block = true },
+  { run = 'glow -p %s', desc = "Leer con glow", block = true },
 ]
 latex = [
-  { run = 'nvim "$@"',      desc = "Editar con Neovim", block = true },
+  { run = 'nvim %s',      desc = "Editar con Neovim", block = true },
 ]
 
 [open]

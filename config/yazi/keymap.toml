@@ -79,7 +79,7 @@ keymap = [
   { on = "<C-d>", run = "plugin diff",                    desc = "Diff entre seleccionado y actual" },
   { on = "C",     run = "plugin ouch",                    desc = "Comprimir selección (ouch)" },
   { on = "O",     run = "open --interactive",             desc = "Abrir con..." },
-  { on = "e",     run = "shell 'nvim \"$@\"' --block",  desc = "Editar en Neovim" },
+  { on = "e",     run = "shell 'nvim %s' --block",  desc = "Editar en Neovim" },
   { on = "<C-g>", run = "shell 'lazygit' --block",        desc = "Lazygit aquí" },
   { on = "w",     run = "tasks:show",                     desc = "Panel de tareas" },
 
