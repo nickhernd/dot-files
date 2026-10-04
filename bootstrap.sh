@@ -83,7 +83,7 @@ first=$(ls "$DOTFILES_DIR"/wallpapers/*.{jpg,png} 2>/dev/null | head -1)
 [[ -f $HOME/todo.md ]] || printf '# Tareas\n\n- [ ] Primera tarea\n' > "$HOME/todo.md"
 if pgrep -x Hyprland >/dev/null; then
   hyprctl reload >/dev/null 2>&1 || true
-  pkill -x qs || true; (setsid qs >/dev/null 2>&1 &)
+  pkill -x qs || true; (uwsm-app -- qs >/dev/null 2>&1 &)
 fi
 
 cat <<'MSG'

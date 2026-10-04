@@ -1,5 +1,5 @@
 -- Quickshell del rice (barra, centro de control, wallpaper, notificaciones...)
-o.exec_on_start("qs")
+o.launch_on_start("qs")
 -- Historial de portapapeles para el clipboard manager del rice
 o.launch_on_start("wl-paste --watch cliphist store")
 

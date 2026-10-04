@@ -47,7 +47,7 @@ systemctl --user enable --now ydotool.service || true
 
 pgrep -f "wl-paste --watch cliphist" >/dev/null || (setsid wl-paste --watch cliphist store >/dev/null 2>&1 &)
 pkill -x qs || true
-(setsid qs >/dev/null 2>&1 &)
+(uwsm-app -- qs >/dev/null 2>&1 &)
 
 cat <<'MSG'
 
