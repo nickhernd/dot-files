@@ -52,7 +52,7 @@ H="$DOTFILES_DIR/home"
 cp ~/.bashrc ~/.bash_profile "$H/"
 [[ -f ~/.nanorc ]] && cp ~/.nanorc "$H/"
 mkdir -p "$H/.local/bin"
-for s in setwall mathpad gdrive-sync dev-status battery-status net-info formula-of-day sec-status news-top hn-top arxiv-top maint-status maint-clean \
+for s in setwall mathpad gdrive-sync dev-status battery-status net-info formula-of-day sec-status news-top hn-top maint-status maint-clean \
          fzf-files fzf-grep git-pull-all git-push-all git-scan rg-pink tabletscreen xppen-monitor.sh; do
   f=~/.local/bin/$s
   [[ -e $f ]] && cp -P "$f" "$H/.local/bin/"

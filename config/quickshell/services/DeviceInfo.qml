@@ -229,34 +229,4 @@ Singleton {
         Quickshell.execDetached(["sh", "-c", "uwsm-app -- xdg-terminal-exec --app-id=org.omarchy.maint -e $HOME/.local/bin/maint-clean"]);
     }
 
-    // ── Papers de arXiv (~/.local/bin/arxiv-top), cada hora ──
-    property var papers: []
-    property string arxivCat: "todo"        // seguridad | sistemas | mates | todo
-
-    Timer {
-        interval: 60 * 60 * 1000
-        repeat: true
-        running: true
-        triggeredOnStart: true
-        onTriggered: arxivProc.running = true
-    }
-
-    Process {
-        id: arxivProc
-        command: ["sh", "-c", "$HOME/.local/bin/arxiv-top " + root.arxivCat + " 5"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    const p = JSON.parse(text);
-                    if (p.length)
-                        root.papers = p;
-                } catch (e) {}
-            }
-        }
-    }
-
-    function setArxivCat(c) {
-        arxivCat = c;
-        arxivProc.running = true;
-    }
 }

@@ -34,21 +34,11 @@ Item {
     layer.effect: MultiEffect {
         shadowEnabled: true
         shadowColor: "black"
-        shadowOpacity: 0.45
-        shadowBlur: 0.7
+        shadowOpacity: 0.85
+        shadowBlur: 0.9
         blurMax: 24
         shadowHorizontalOffset: 0
         shadowVerticalOffset: 1
-    }
-
-    // Zen ("bare"): velo oscuro translúcido para leer sobre fondos claros
-    Rectangle {
-        anchors.fill: parent
-        visible: frame.st.frame === "bare"
-        radius: 16
-        color: Colors.withAlpha(Colors.background, 0.62)
-        border.width: 1
-        border.color: Colors.withAlpha(Colors.outline_variant, 0.35)
     }
 
     Rectangle {

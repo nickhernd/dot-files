@@ -14,7 +14,7 @@ Singleton {
         hud: { frame: "chamfer", font: "JetBrainsMono Nerd Font", display: "Orbitron", mono: "JetBrainsMono Nerd Font", weight: Font.Medium, labelCase: "upper", labelSpacing: 3.5, labelRole: "primary", accentRole: "primary", bar: "segments", art: "chamfer", pad: 18 },
         terminal: { frame: "console", font: "Iosevka Nerd Font", display: "Iosevka Nerd Font", mono: "Iosevka Nerd Font", weight: Font.Normal, labelCase: "lower", labelSpacing: 0.5, labelRole: "primary", accentRole: "primary", bar: "ascii", art: "square", pad: 16 },
         cosmos: { frame: "glass", font: "Adwaita Sans", display: "ESPACION", mono: "JetBrainsMono Nerd Font", weight: Font.Normal, labelCase: "upper", labelSpacing: 3, labelRole: "on_surface_variant", accentRole: "primary", bar: "orbit", art: "circle", pad: 20 },
-        zen: { frame: "bare", font: "Adwaita Sans", display: "Adwaita Sans", mono: "Adwaita Sans", weight: Font.Light, labelCase: "lower", labelSpacing: 0.6, labelRole: "on_surface_variant", accentRole: "primary", bar: "hairline", art: "soft", pad: 16 },
+        zen: { frame: "bare", font: "Adwaita Sans", display: "Adwaita Sans", mono: "Adwaita Sans", weight: Font.Light, labelCase: "lower", labelSpacing: 0.6, labelRole: "on_surface_variant", accentRole: "primary", bar: "hairline", art: "soft", pad: 8 },
         xianxia: { frame: "scroll", font: "Noto Serif", display: "Noto Serif", mono: "Noto Serif", cjk: "Noto Serif CJK SC", weight: Font.Normal, labelCase: "none", labelSpacing: 1, labelRole: "tertiary", accentRole: "tertiary", bar: "brush", art: "seal", pad: 18 }
     })
 
@@ -44,7 +44,6 @@ Singleton {
         security: { "": "Seguridad", hud: "Defense", terminal: "~ $ sec-status", cosmos: "Shields", zen: "seguridad", xianxia: "盾 · Shield" },
         news: { "": "Noticias", hud: "Intel", terminal: "~ $ curl hn", cosmos: "Transmissions", zen: "noticias · el país", xianxia: "報 · News" },
         notifications: { "": "Notificaciones", hud: "Alerts", terminal: "~ $ journalctl -f", cosmos: "Incoming", zen: "notificaciones", xianxia: "知 · Messages" },
-        arxiv: { "": "arXiv", hud: "Research", terminal: "~ $ arxiv", cosmos: "Research", zen: "papers · arxiv", xianxia: "論 · Papers" },
         processes: { "": "Procesos", hud: "Processes", terminal: "~ $ ps aux", cosmos: "Crew", zen: "procesos", xianxia: "程 · Processes" },
         maintenance: { "": "Mantenimiento", hud: "Maintenance", terminal: "~ $ du -sh", cosmos: "Maintenance", zen: "mantenimiento", xianxia: "掃 · Cleaning" },
         uptime: { "": "Up", hud: "UPTIME", terminal: "up", cosmos: "Mission time", zen: "encendido", xianxia: "闭关 Seclusion" }

@@ -16,7 +16,6 @@
     "security": true,
     "news": true,
     "notifications": true,
-    "arxiv": true,
     "processes": true,
     "maintenance": true
   },
