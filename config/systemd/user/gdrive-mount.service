@@ -1,10 +1,15 @@
 [Unit]
 Description=Montar Google Drive en ~/GoogleDrive (rclone mount)
-After=network-online.target
-Wants=network-online.target
+# Se vuelve a montar solo si se desmonta por accidente (expulsar, fusermount -u...).
+# Para desmontarlo a propósito: systemctl --user stop gdrive-mount
+StartLimitIntervalSec=0
 
 [Service]
 Type=notify
+# Esperar a que haya red y DNS (hasta 5 min) antes de montar
+ExecStartPre=/bin/sh -c 'for i in $(seq 150); do getent hosts www.googleapis.com >/dev/null && exit 0; sleep 2; done; exit 1'
+# Limpiar un montaje "colgado" que haya quedado de antes
+ExecStartPre=-/usr/bin/fusermount3 -uz %h/GoogleDrive
 ExecStartPre=/usr/bin/mkdir -p %h/GoogleDrive
 ExecStart=/usr/bin/rclone mount gdrive: %h/GoogleDrive \
   --vfs-cache-mode full \
@@ -17,8 +22,10 @@ ExecStart=/usr/bin/rclone mount gdrive: %h/GoogleDrive \
   --log-level INFO \
   --log-file %h/.local/state/gdrive-mount.log
 ExecStop=/usr/bin/fusermount3 -uz %h/GoogleDrive
-Restart=on-failure
-RestartSec=10
+# Volver a montar siempre que se caiga o se desmonte (salvo stop manual)
+Restart=always
+RestartSec=5
+TimeoutStartSec=6min
 
 [Install]
 WantedBy=default.target
