@@ -66,6 +66,8 @@ ln -sfn "$CONFIG_DIR/quickshell/scripts/setwall" "$HOME/.local/bin/setwall"
 
 # Oculta la barra de Omarchy (la sustituye la del rice de Quickshell)
 mkdir -p "$HOME/.local/state/omarchy/toggles" && touch "$HOME/.local/state/omarchy/toggles/bar-off"
+# Sin salvapantallas de Omarchy (el bloqueo a los 5 min se mantiene)
+touch "$HOME/.local/state/omarchy/toggles/screensaver-off"
 
 # Plantilla de secretos (no está en el repo)
 if [[ ! -f $CONFIG_DIR/secrets.env ]]; then
