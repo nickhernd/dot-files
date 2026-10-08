@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+"""tracker — hábitos, rachas y libros desde la terminal (mismos datos que el panel izquierdo).
+
+  tracker              resumen de hoy (hábitos, rachas, libros, pomodoros)
+  tracker week         tabla de los últimos 7 días
+  tracker add-book     añadir un libro (título y páginas)
+  tracker page         ir a una página de un libro
+  tracker log ID N     fijar el valor de hoy de un hábito (p. ej. tracker log water 5)
+  tracker relapse ID   reiniciar una racha (nofap, nomonster...)
+  tracker start ID AAAA-MM-DD   indicar desde cuándo llevas una racha
+  tracker edit         abrir el JSON en Neovim (añadir/quitar hábitos)
+  tracker backup       copia cifrada a ~/dot-files ahora mismo
+  tracker restore      recuperar los datos desde la copia cifrada de ~/dot-files
+"""
+import json, os, subprocess, sys
+from datetime import date, timedelta
+
+PATH = os.path.expanduser("~/.local/share/tracker/tracker.json")
+PINK, LAV, DIM, OK, BAD, B, R = "\033[38;2;255;158;210m", "\033[38;2;200;182;255m", "\033[2m", "\033[38;2;168;230;207m", "\033[38;2;255;107;157m", "\033[1m", "\033[0m"
+DEFAULT = [
+    {"id": "nofap", "name": "Sin fap", "icon": "self_improvement", "type": "streak"},
+    {"id": "nomonster", "name": "Sin Monster", "icon": "no_drinks", "type": "streak"},
+    {"id": "water", "name": "Hidratación", "icon": "water_drop", "type": "count", "goal": 8, "step": 1, "unit": "vasos"},
+    {"id": "reading", "name": "Lectura", "icon": "menu_book", "type": "count", "goal": 30, "step": 5, "unit": "min"},
+    {"id": "sport", "name": "Deporte", "icon": "fitness_center", "type": "check"},
+    {"id": "sleep", "name": "Dormir 7 h", "icon": "bedtime", "type": "check"},
+    {"id": "study", "name": "Estudio", "icon": "school", "type": "count", "goal": 4, "step": 1, "unit": "pomodoros", "auto": "pomodoros"},
+]
+
+def load():
+    try:
+        d = json.load(open(PATH))
+    except Exception:
+        d = {"version": 1}
+    d.setdefault("habits", DEFAULT); d.setdefault("streaks", {}); d.setdefault("log", {}); d.setdefault("books", [])
+    for h in d["habits"]:
+        if h["type"] == "streak" and h["id"] not in d["streaks"]:
+            d["streaks"][h["id"]] = {"start": today(), "best": 0, "relapses": []}
+    return d
+
+def save(d):
+    os.makedirs(os.path.dirname(PATH), exist_ok=True)
+    tmp = PATH + ".tmp"
+    json.dump(d, open(tmp, "w"), ensure_ascii=False, indent=1)
+    os.replace(tmp, PATH)
+
+def today(n=0):
+    return (date.today() - timedelta(days=n)).isoformat()
+
+def value(d, h, day):
+    l = d["log"].get(day, {})
+    return l.get("pomodoros", 0) if h.get("auto") == "pomodoros" else l.get(h["id"], 0)
+
+def streak_days(d, hid):
+    s = d["streaks"].get(hid, {"start": today()})
+    return (date.today() - date.fromisoformat(s["start"])).days
+
+def done(d, h, day):
+    if h["type"] == "check": return bool(value(d, h, day))
+    if h["type"] == "count": return value(d, h, day) >= h.get("goal", 1)
+    if h["type"] == "streak":
+        back = (date.today() - date.fromisoformat(day)).days
+        return streak_days(d, h["id"]) >= back and day not in d["streaks"].get(h["id"], {}).get("relapses", [])
+    return False
+
+def bar(frac, w=20):
+    n = round(max(0, min(1, frac)) * w)
+    return PINK + "█" * n + DIM + "░" * (w - n) + R
+
+def summary(d):
+    print(f"\n{B}{PINK}  Hábitos · {today()}{R}\n")
+    for h in d["habits"]:
+        mark = OK + "●" if done(d, h, today()) else DIM + "○"
+        if h["type"] == "streak":
+            s = d["streaks"].get(h["id"], {})
+            info = f"{streak_days(d, h['id'])} días  {DIM}(mejor {max(s.get('best', 0), streak_days(d, h['id']))}){R}"
+        elif h["type"] == "count":
+            v = value(d, h, today()); g = h.get("goal", 1)
+            info = f"{bar(v / g, 12)} {v}/{g} {h.get('unit', '')}"
+        else:
+            info = "hecho" if done(d, h, today()) else f"{DIM}pendiente{R}"
+        print(f"  {mark}{R} {h['name']:<14} {info}")
+    l = d["log"].get(today(), {})
+    print(f"\n  {LAV}Pomodoros hoy:{R} {l.get('pomodoros', 0)}  ·  {l.get('focusMinutes', 0)} min de foco")
+    if d["books"]:
+        print(f"\n{B}{PINK}  Libros{R}\n")
+        for i, b in enumerate(d["books"], 1):
+            fin = f" {OK}✓{R}" if b.get("finished") else ""
+            print(f"  {i}. {b['title'][:34]:<34} {bar(b['page'] / b['total'], 14)} {b['page']}/{b['total']}{fin}")
+    print()
+
+def week(d):
+    days = [today(n) for n in range(6, -1, -1)]
+    head = "".join(f"{'DLMXJVS'[(date.fromisoformat(x).weekday() + 1) % 7]:>3}" for x in days)
+    print(f"\n{B}{PINK}  Últimos 7 días{R}\n  {'':<14}{head}")
+    for h in d["habits"]:
+        cells = "".join(f"  {OK + '●' if done(d, h, x) else DIM + '·'}{R}" for x in days)
+        print(f"  {h['name']:<14}{cells}")
+    print()
+
+def ask(prompt, cast=str, default=None):
+    while True:
+        r = input(f"{LAV}{prompt}{R} ").strip()
+        if not r and default is not None: return default
+        try: return cast(r)
+        except ValueError: print(f"{BAD}  valor no válido{R}")
+
+def pick_book(d):
+    if not d["books"]:
+        print("No hay libros. Usa: tracker add-book"); sys.exit()
+    for i, b in enumerate(d["books"], 1):
+        print(f"  {i}. {b['title']}  ({b['page']}/{b['total']})")
+    return ask("¿Qué libro? (número):", int) - 1
+
+def main():
+    a = sys.argv[1:]
+    d = load()
+    cmd = a[0] if a else "summary"
+    if cmd in ("summary", "hoy"):
+        summary(d)
+    elif cmd == "week":
+        week(d)
+    elif cmd == "add-book":
+        t = ask("Título del libro:")
+        p = ask("Número de páginas [300]:", int, 300)
+        c = ask("¿Por qué página vas? [0]:", int, 0)
+        d["books"].append({"title": t, "page": min(c, p), "total": p, "updated": today()})
+        save(d); print(f"{OK}✔ Añadido «{t}»{R}")
+    elif cmd == "page":
+        i = pick_book(d)
+        b = d["books"][i]
+        b["page"] = max(0, min(b["total"], ask(f"Página actual de «{b['title']}»:", int)))
+        b["updated"] = today()
+        if b["page"] >= b["total"]: b["finished"] = today()
+        save(d); print(f"{OK}✔ Marcapáginas en la página {b['page']}{R}")
+    elif cmd == "log" and len(a) == 3:
+        d["log"].setdefault(today(), {})[a[1]] = int(a[2]) if a[2].isdigit() else a[2] in ("1", "si", "sí", "true")
+        save(d); summary(d)
+    elif cmd == "relapse" and len(a) == 2:
+        s = d["streaks"].setdefault(a[1], {"start": today(), "best": 0, "relapses": []})
+        s["best"] = max(s.get("best", 0), streak_days(d, a[1]))
+        s.setdefault("relapses", []).append(today()); s["start"] = today()
+        save(d); print(f"Racha de {a[1]} reiniciada. ¡A por otra! 💪")
+    elif cmd == "start" and len(a) == 3:
+        date.fromisoformat(a[2])
+        d["streaks"].setdefault(a[1], {"best": 0, "relapses": []})["start"] = a[2]
+        save(d); summary(d)
+    elif cmd == "edit":
+        if not os.path.exists(PATH): save(d)
+        subprocess.call(["nvim", PATH])
+    elif cmd in ("backup", "restore"):
+        os.execvp("tracker-backup", ["tracker-backup"] + (["--restore"] if cmd == "restore" else []))
+    else:
+        print(__doc__)
+        return
+    if len(a) and a[0] in ("add-book", "page") and os.environ.get("TERM"):
+        input(f"{DIM}Enter para cerrar…{R}")
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (KeyboardInterrupt, EOFError):
+        print()

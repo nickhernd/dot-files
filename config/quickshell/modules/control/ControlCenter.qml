@@ -104,6 +104,10 @@ Item {
 
                     Header { }
 
+                    FocusSection { }
+
+                    HabitsSection { }
+
                     QuickSettings { }
 
                     SliderSection { }

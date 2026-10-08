@@ -35,11 +35,16 @@ import qs.modules.desktoptheme
 import qs.modules.desktopwidgets
 
 ShellRoot {
+    // Servicios que deben existir desde el arranque (IPC del tracker, registro de pomodoros)
+    readonly property var habitsService: Services.Habits
+    readonly property var productivityService: Services.Productivity
+
     id: root
 
     // This instance owns the compositor side of desktop themes and writes
     // Firefox's stylesheets (the lock screen instance only reads the choice).
     Component.onCompleted: {
+        console.info("tracker:", Services.Habits.path, "pomodoro:", Services.Productivity.focusMinutes);
         Services.DesktopTheme.manage = true
         Services.FirefoxTheme.manage = true
     }

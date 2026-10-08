@@ -25,7 +25,17 @@ Dotfiles personales para Arch Linux con [Omarchy 4](https://omarchy.org/) (Hyprl
 
 Reloj · tiempo (wttr.in) · seguridad (cortafuegos, puertos, CVEs) · fórmula del día (Typst) · noticias de El País ·
 tiempo programando · pomodoro · música · sistema · batería · red · desarrollo (Docker, git, GitHub).
-Borde izquierdo de la pantalla: centro de control.
+Borde izquierdo de la pantalla: centro de control, con **Enfoque** (pomodoro con historial semanal) y **Hábitos**.
+
+### Tracker de hábitos
+
+Rachas (sin fap, sin Monster), hidratación, lectura, deporte, sueño, estudio (pomodoros automáticos) y libros con
+marcapáginas. Se usa desde el panel izquierdo o con `tracker` en la terminal (`tracker week`, `tracker add-book`,
+`tracker start nofap AAAA-MM-DD`, `tracker edit` para añadir hábitos…).
+
+Datos en `~/.local/share/tracker/tracker.json`. Copia **cifrada** (AES-256) en `data/tracker/tracker.json.enc`,
+actualizada sola cada hora y tras cada cambio. La clave (`~/.config/tracker/backup.key`) **no está en el repo**:
+sin ella no se puede leer la copia. En un ordenador nuevo: copia la clave y ejecuta `tracker restore`.
 
 ### Atajos principales
 

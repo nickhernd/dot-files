@@ -1,0 +1,6 @@
+[Unit]
+Description=Copia cifrada del tracker de hábitos en ~/dot-files
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/tracker-backup --quiet

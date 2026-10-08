@@ -1,6 +1,8 @@
+MenuBar=Disabled
+
 [Desktop Entry]
-FullScreen=true
-shouldShowMenuBarComingFromFullScreen=true
+FullScreen=false
+shouldShowMenuBarComingFromFullScreen=false
 shouldShowToolBarComingFromFullScreen=true
 
 [General]
@@ -11,23 +13,23 @@ ShowSidebar=true
 MenuBar=Disabled
 
 [Recent Files]
-File1[$e]=$HOME/GoogleDrive/TC/diapos/Tema03.pdf
-File10[$e]=$HOME/GoogleDrive/FF_Fundamentos_Físicos_ff/A - Tipler Fisica Vol I 6ª Ed .pdf
-File2[$e]=$HOME/GoogleDrive/TC/diapos/Tema04.pdf
-File3[$e]=$HOME/GoogleDrive/TC/Computational Complexity A Modern Aproach.pdf
-File4[$e]=$HOME/GoogleDrive/TC/DavisSigalWeyukar_copy.pdf
-File5[$e]=$HOME/GoogleDrive/TC/Introduction to the theory of computation_third edition - Michael Sipser.pdf
-File6[$e]=$HOME/GoogleDrive/TC/libro_uni.pdf
-File7[$e]=$HOME/GoogleDrive/TC/TeoriaDeAutomatas,lenguajesYComputacion-Hopcroft_copy.pdf
-File8[$e]=$HOME/GoogleDrive/AL/pdfcoffee.com_libroalgebra-lineal-y-geometria-vectorial-uned-alberto-borobia-beatriz-estradapdf-2-pdf-free.pdf
-File9[$e]=$HOME/GoogleDrive/FF_Fundamentos_Físicos_ff/1000 PROBLEMAS DE FISICA GENERAL.pdf
-Name1[$e]=Tema03.pdf
-Name10[$e]=A - Tipler Fisica Vol I 6ª Ed .pdf
-Name2[$e]=Tema04.pdf
-Name3[$e]=Computational Complexity A Modern Aproach.pdf
-Name4[$e]=DavisSigalWeyukar_copy.pdf
-Name5[$e]=Introduction to the theory of computation_third edition - Michael Sipser.pdf
-Name6[$e]=libro_uni.pdf
-Name7[$e]=TeoriaDeAutomatas,lenguajesYComputacion-Hopcroft_copy.pdf
-Name8[$e]=pdfcoffee.com_libroalgebra-lineal-y-geometria-vectorial-uned-alberto-borobia-beatriz-estradapdf-2-pdf-free.pdf
-Name9[$e]=1000 PROBLEMAS DE FISICA GENERAL.pdf
+File1[$e]=$HOME/GoogleDrive/TC/DavisSigalWeyukar_copy.pdf
+File10[$e]=$HOME/GoogleDrive/TC_ii/libro_uni.pdf
+File2[$e]=$HOME/GoogleDrive/TC/Introduction to the theory of computation_third edition - Michael Sipser.pdf
+File3[$e]=$HOME/GoogleDrive/TC/libro_uni.pdf
+File4[$e]=$HOME/GoogleDrive/TC/TeoriaDeAutomatas,lenguajesYComputacion-Hopcroft_copy.pdf
+File5[$e]=$HOME/GoogleDrive/AL/pdfcoffee.com_libroalgebra-lineal-y-geometria-vectorial-uned-alberto-borobia-beatriz-estradapdf-2-pdf-free.pdf
+File6[$e]=$HOME/GoogleDrive/FF_Fundamentos_Físicos_ff/1000 PROBLEMAS DE FISICA GENERAL.pdf
+File7[$e]=$HOME/GoogleDrive/FF_Fundamentos_Físicos_ff/A - Tipler Fisica Vol I 6ª Ed .pdf
+File8[$e]=$HOME/GoogleDrive/TC_ii/automatas_tc_apuntes.pdf
+File9[$e]=$HOME/GoogleDrive/TC_ii/TeoriaDeAutomatas,lenguajesYComputacion-Hopcroft_copy.pdf
+Name1[$e]=DavisSigalWeyukar_copy.pdf
+Name10[$e]=libro_uni.pdf
+Name2[$e]=Introduction to the theory of computation_third edition - Michael Sipser.pdf
+Name3[$e]=libro_uni.pdf
+Name4[$e]=TeoriaDeAutomatas,lenguajesYComputacion-Hopcroft_copy.pdf
+Name5[$e]=pdfcoffee.com_libroalgebra-lineal-y-geometria-vectorial-uned-alberto-borobia-beatriz-estradapdf-2-pdf-free.pdf
+Name6[$e]=1000 PROBLEMAS DE FISICA GENERAL.pdf
+Name7[$e]=A - Tipler Fisica Vol I 6ª Ed .pdf
+Name8[$e]=automatas_tc_apuntes.pdf
+Name9[$e]=TeoriaDeAutomatas,lenguajesYComputacion-Hopcroft_copy.pdf

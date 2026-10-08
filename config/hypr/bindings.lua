@@ -85,3 +85,6 @@ o.bind("SUPER + SHIFT + T", "TeXstudio", "uwsm-app -- texstudio")
 -- WhatsApp: ZapZap en vez de la web app
 hl.unbind("SUPER + SHIFT + ALT + G")
 o.bind("SUPER + SHIFT + ALT + G", "WhatsApp", 'omarchy-launch-or-focus "^com.rtosta.zapzap$" "uwsm-app -- zapzap"')
+
+-- Terminal del tracker de hábitos (añadir libro, página...) flotante
+o.window({ class = "org.omarchy.tracker" }, { float = true, center = true, size = { 640, 360 } })

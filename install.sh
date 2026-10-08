@@ -36,6 +36,7 @@ done
 # Archivos sueltos de ~/.config
 for f in starship.toml mimeapps.list omarchy/shell.json rclone/gdrive-filters.txt \
          systemd/user/gdrive-sync.service systemd/user/gdrive-sync.timer systemd/user/gdrive-mount.service \
+         systemd/user/tracker-backup.service systemd/user/tracker-backup.timer \
          okularrc okularpartrc xdg-terminals.list; do
     link "$DOTFILES_DIR/config/$f" "$CONFIG_DIR/$f"
 done

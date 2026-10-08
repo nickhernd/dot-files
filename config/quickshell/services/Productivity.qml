@@ -61,6 +61,7 @@ Singleton {
             if (root.phase === "focus") {
                 root.sessionsToday += 1;
                 root.savePomodoro();
+                Habits.addPomodoro(root.focusMinutes);
                 root.phase = "break";
                 root.remaining = root.phaseTotal;
                 root.notify("🍅 Sesión completada", "Toca descanso de " + Math.round(root.phaseTotal / 60) + " min. Llevas " + root.sessionsToday + " hoy.");

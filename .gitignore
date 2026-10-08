@@ -21,3 +21,8 @@ config/chromium/
 
 # Pulse audio (datos de sesión)
 home/.pulse-cookie
+
+# Tracker de hábitos: solo la copia cifrada (.enc) puede ir al repo
+data/tracker/*.json
+data/tracker/*.key
+backup.key

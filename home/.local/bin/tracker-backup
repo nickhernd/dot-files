@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# tracker-backup — copia CIFRADA del tracker de hábitos en ~/dot-files (repo público).
+#   tracker-backup            cifra, y si cambió, commit + push solo de ese archivo
+#   tracker-backup --quiet    igual, sin mensajes (lo usa el panel)
+#   tracker-backup --restore  descifra la copia del repo en ~/.local/share/tracker
+# Clave: ~/.config/tracker/backup.key (NO está en el repo: guárdala tú, sin ella no se puede descifrar).
+set -euo pipefail
+
+DATA="$HOME/.local/share/tracker/tracker.json"
+KEY="$HOME/.config/tracker/backup.key"
+REPO="$HOME/dot-files"
+OUT="$REPO/data/tracker/tracker.json.enc"
+Q=0; [[ ${1:-} == --quiet ]] && Q=1
+say() { ((Q)) || echo "$@"; }
+enc() { openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass "file:$KEY" "$@"; }
+
+if [[ ! -f $KEY ]]; then
+  mkdir -p "$(dirname "$KEY")"; umask 077
+  openssl rand -base64 48 > "$KEY"
+  say "!! Clave nueva creada en $KEY — haz una copia en un sitio seguro."
+fi
+
+if [[ ${1:-} == --restore ]]; then
+  [[ -f $OUT ]] || { echo "No hay copia en $OUT"; exit 1; }
+  mkdir -p "$(dirname "$DATA")"
+  [[ -f $DATA ]] && cp "$DATA" "$DATA.bak-$(date +%Y%m%d%H%M%S)"
+  enc -d -in "$OUT" -out "$DATA"
+  echo "✔ Tracker restaurado en $DATA"; exit 0
+fi
+
+[[ -f $DATA ]] || { say "Aún no hay datos del tracker."; exit 0; }
+mkdir -p "$(dirname "$OUT")"
+
+# ¿Ha cambiado respecto a la copia del repo? (el cifrado cambia siempre por la sal)
+if [[ -f $OUT ]] && enc -d -in "$OUT" 2>/dev/null | cmp -s - "$DATA"; then
+  say "Sin cambios desde la última copia."; exit 0
+fi
+
+enc -in "$DATA" -out "$OUT.tmp" && mv "$OUT.tmp" "$OUT"
+cd "$REPO"
+git add data/tracker/tracker.json.enc
+git commit -q -m "tracker: copia cifrada $(date +%F\ %H:%M)" -- data/tracker/tracker.json.enc
+GIT_TERMINAL_PROMPT=0 timeout 60 git push -q 2>/dev/null && say "✔ Copia cifrada subida a GitHub" || say "✔ Copia guardada (push pendiente)"
