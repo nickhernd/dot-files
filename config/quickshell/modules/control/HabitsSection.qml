@@ -48,12 +48,27 @@ ColumnLayout {
             spacing: 10
 
             Repeater {
-                model: root.h.habits
+                model: root.h.grouped
+
+                ColumnLayout {
+                    id: grp
+                    required property var modelData
+                    Layout.fillWidth: true
+                    spacing: 8
+
+                    StyledText {
+                        visible: grp.modelData._first
+                        Layout.topMargin: grp.modelData._cat === root.h.categories[0] ? 0 : 8
+                        text: grp.modelData._cat.toUpperCase()
+                        font.pixelSize: 10
+                        font.letterSpacing: 1.5
+                        font.weight: Font.DemiBold
+                        color: Colors.primary
+                    }
 
                 RowLayout {
                     id: row
-                    required property var modelData
-                    readonly property var hb: modelData
+                    readonly property var hb: grp.modelData
                     readonly property bool ok: root.h.done(hb, root.h.today())
                     Layout.fillWidth: true
                     spacing: 10
@@ -62,7 +77,18 @@ ColumnLayout {
                         text: row.hb.icon || "radio_button_checked"
                         filled: row.ok
                         font.pixelSize: 20
-                        color: row.ok ? Colors.primary : Colors.withAlpha(Colors.on_surface, 0.55)
+                        color: row.ok ? Colors.primary : Colors.withAlpha(Colors.on_surface, ia.containsMouse && row.hb.open ? 0.95 : 0.55)
+
+                        // Comunicación: el icono abre la app y marca el hábito
+                        MouseArea {
+                            id: ia
+                            anchors.fill: parent
+                            anchors.margins: -4
+                            enabled: !!row.hb.open
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.h.open(row.hb)
+                        }
                     }
 
                     ColumnLayout {
@@ -166,6 +192,7 @@ ColumnLayout {
                         }
                     }
                 }
+            }
             }
         }
     }

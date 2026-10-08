@@ -15,14 +15,33 @@ Singleton {
 
     // Hábitos por defecto (se pueden editar en el JSON)
     readonly property var defaultHabits: [
-        { id: "nofap", name: "Sin fap", icon: "self_improvement", type: "streak" },
-        { id: "nomonster", name: "Sin Monster", icon: "no_drinks", type: "streak" },
-        { id: "water", name: "Hidratación", icon: "water_drop", type: "count", goal: 8, step: 1, unit: "vasos" },
-        { id: "reading", name: "Lectura", icon: "menu_book", type: "count", goal: 30, step: 5, unit: "min" },
-        { id: "sport", name: "Deporte", icon: "fitness_center", type: "check" },
-        { id: "sleep", name: "Dormir 7 h", icon: "bedtime", type: "check" },
-        { id: "study", name: "Estudio", icon: "school", type: "count", goal: 4, step: 1, unit: "pomodoros", auto: "pomodoros" }
+        { id: "nofap", name: "Sin fap", icon: "self_improvement", type: "streak", cat: "Salud" },
+        { id: "nomonster", name: "Sin Monster", icon: "no_drinks", type: "streak", cat: "Salud" },
+        { id: "nosocial", name: "Sin redes", icon: "phonelink_erase", type: "check", cat: "Salud" },
+        { id: "water", name: "Hidratación", icon: "water_drop", type: "count", goal: 8, step: 1, unit: "vasos", cat: "Salud" },
+        { id: "sleep", name: "Dormir 7 h", icon: "bedtime", type: "check", cat: "Salud" },
+        { id: "sport", name: "Deporte", icon: "fitness_center", type: "check", cat: "Salud" },
+        { id: "swim", name: "Natación", icon: "pool", type: "check", cat: "Salud" },
+        { id: "reading", name: "Lectura", icon: "menu_book", type: "count", goal: 30, step: 5, unit: "min", cat: "Mente" },
+        { id: "study", name: "Estudio", icon: "school", type: "count", goal: 4, step: 1, unit: "pomodoros", auto: "pomodoros", cat: "Mente" },
+        { id: "gmail", name: "Mirar Gmail", icon: "mail", type: "check", cat: "Comunicación", open: "omarchy-launch-webapp https://mail.google.com" },
+        { id: "whatsapp", name: "Mirar WhatsApp", icon: "chat", type: "check", cat: "Comunicación", open: "omarchy-launch-or-focus '^com.rtosta.zapzap$' 'uwsm-app -- zapzap'" },
+        { id: "telegram", name: "Mirar Telegram", icon: "send", type: "check", cat: "Comunicación", open: "omarchy-launch-or-focus '^(TelegramDesktop|org.telegram.desktop)$' 'uwsm-app -- Telegram'" },
+        { id: "shave", name: "Depilación", icon: "content_cut", type: "check", cat: "Cuidado personal" },
+        { id: "skincare", name: "Skin care", icon: "face", type: "check", cat: "Cuidado personal" },
+        { id: "haircare", name: "Hair care", icon: "face_retouching_natural", type: "check", cat: "Cuidado personal" }
     ]
+    // Hábitos ordenados por categoría, marcando el primero de cada una (para el título)
+    readonly property var grouped: {
+        const out = [];
+        categories.forEach(c => habits.filter(h => (h.cat || "Otros") === c).forEach((h, i) => out.push(Object.assign({ _first: i === 0, _cat: c }, h))));
+        return out;
+    }
+    readonly property var categories: {
+        const out = [];
+        habits.forEach(h => { const c = h.cat || "Otros"; if (out.indexOf(c) < 0) out.push(c); });
+        return out;
+    }
 
     property var data: ({ version: 1, habits: defaultHabits, streaks: {}, log: {}, books: [] })
     property bool loaded: false
@@ -122,11 +141,39 @@ Singleton {
         });
     }
 
-    // Fija la fecha de inicio de las rachas nuevas (si no, contarían "desde hoy" cada día)
+    // Añade los hábitos por defecto que falten (sin tocar los tuyos), completa
+    // categorías/acciones y fija el inicio de las rachas nuevas.
     function ensureStreaks() {
-        const missing = habits.filter(h => h.type === "streak" && !data.streaks[h.id]);
-        if (missing.length)
-            mutate(d => missing.forEach(h => d.streaks[h.id] = { start: today(), best: 0, relapses: [] }));
+        const ids = (data.habits || []).map(h => h.id);
+        const newHabits = defaultHabits.filter(h => ids.indexOf(h.id) < 0);
+        const needCat = (data.habits || []).some(h => !h.cat && defaultHabits.find(x => x.id === h.id));
+        const missing = habits.concat(newHabits).filter(h => h.type === "streak" && !data.streaks[h.id]);
+        if (!newHabits.length && !needCat && !missing.length)
+            return;
+        mutate(d => {
+            d.habits = (d.habits || []).map(h => {
+                const def = defaultHabits.find(x => x.id === h.id);
+                return def ? Object.assign({}, def, h, { cat: h.cat || def.cat, open: h.open || def.open }) : h;
+            });
+            // Insertar los nuevos en el orden de los valores por defecto
+            newHabits.forEach(h => {
+                const idx = defaultHabits.indexOf(h);
+                const after = defaultHabits.slice(0, idx).reverse().find(x => d.habits.some(y => y.id === x.id));
+                const pos = after ? d.habits.findIndex(y => y.id === after.id) + 1 : d.habits.length;
+                d.habits.splice(pos, 0, h);
+            });
+            d.habits.forEach(h => {
+                if (h.type === "streak" && !d.streaks[h.id])
+                    d.streaks[h.id] = { start: today(), best: 0, relapses: [] };
+            });
+        });
+    }
+
+    function open(h) {
+        if (h.open)
+            Quickshell.execDetached(["sh", "-c", h.open]);
+        if (h.type === "check" && !value(h.id))
+            setValue(h.id, true);
     }
 
     function addPomodoro(minutes) {

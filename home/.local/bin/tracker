@@ -18,13 +18,21 @@ from datetime import date, timedelta
 PATH = os.path.expanduser("~/.local/share/tracker/tracker.json")
 PINK, LAV, DIM, OK, BAD, B, R = "\033[38;2;255;158;210m", "\033[38;2;200;182;255m", "\033[2m", "\033[38;2;168;230;207m", "\033[38;2;255;107;157m", "\033[1m", "\033[0m"
 DEFAULT = [
-    {"id": "nofap", "name": "Sin fap", "icon": "self_improvement", "type": "streak"},
-    {"id": "nomonster", "name": "Sin Monster", "icon": "no_drinks", "type": "streak"},
-    {"id": "water", "name": "Hidratación", "icon": "water_drop", "type": "count", "goal": 8, "step": 1, "unit": "vasos"},
-    {"id": "reading", "name": "Lectura", "icon": "menu_book", "type": "count", "goal": 30, "step": 5, "unit": "min"},
-    {"id": "sport", "name": "Deporte", "icon": "fitness_center", "type": "check"},
-    {"id": "sleep", "name": "Dormir 7 h", "icon": "bedtime", "type": "check"},
-    {"id": "study", "name": "Estudio", "icon": "school", "type": "count", "goal": 4, "step": 1, "unit": "pomodoros", "auto": "pomodoros"},
+    {"id": "nofap", "name": "Sin fap", "icon": "self_improvement", "type": "streak", "cat": "Salud"},
+    {"id": "nomonster", "name": "Sin Monster", "icon": "no_drinks", "type": "streak", "cat": "Salud"},
+    {"id": "nosocial", "name": "Sin redes", "icon": "phonelink_erase", "type": "check", "cat": "Salud"},
+    {"id": "water", "name": "Hidratación", "icon": "water_drop", "type": "count", "goal": 8, "step": 1, "unit": "vasos", "cat": "Salud"},
+    {"id": "sleep", "name": "Dormir 7 h", "icon": "bedtime", "type": "check", "cat": "Salud"},
+    {"id": "sport", "name": "Deporte", "icon": "fitness_center", "type": "check", "cat": "Salud"},
+    {"id": "swim", "name": "Natación", "icon": "pool", "type": "check", "cat": "Salud"},
+    {"id": "reading", "name": "Lectura", "icon": "menu_book", "type": "count", "goal": 30, "step": 5, "unit": "min", "cat": "Mente"},
+    {"id": "study", "name": "Estudio", "icon": "school", "type": "count", "goal": 4, "step": 1, "unit": "pomodoros", "auto": "pomodoros", "cat": "Mente"},
+    {"id": "gmail", "name": "Mirar Gmail", "icon": "mail", "type": "check", "cat": "Comunicación"},
+    {"id": "whatsapp", "name": "Mirar WhatsApp", "icon": "chat", "type": "check", "cat": "Comunicación"},
+    {"id": "telegram", "name": "Mirar Telegram", "icon": "send", "type": "check", "cat": "Comunicación"},
+    {"id": "shave", "name": "Depilación", "icon": "content_cut", "type": "check", "cat": "Cuidado personal"},
+    {"id": "skincare", "name": "Skin care", "icon": "face", "type": "check", "cat": "Cuidado personal"},
+    {"id": "haircare", "name": "Hair care", "icon": "face_retouching_natural", "type": "check", "cat": "Cuidado personal"},
 ]
 
 def load():
@@ -33,7 +41,12 @@ def load():
     except Exception:
         d = {"version": 1}
     d.setdefault("habits", DEFAULT); d.setdefault("streaks", {}); d.setdefault("log", {}); d.setdefault("books", [])
+    ids = [h["id"] for h in d["habits"]]
+    for h in DEFAULT:
+        if h["id"] not in ids:
+            d["habits"].append(h)
     for h in d["habits"]:
+        h.setdefault("cat", next((x["cat"] for x in DEFAULT if x["id"] == h["id"]), "Otros"))
         if h["type"] == "streak" and h["id"] not in d["streaks"]:
             d["streaks"][h["id"]] = {"start": today(), "best": 0, "relapses": []}
     return d
@@ -68,8 +81,11 @@ def bar(frac, w=20):
     return PINK + "█" * n + DIM + "░" * (w - n) + R
 
 def summary(d):
-    print(f"\n{B}{PINK}  Hábitos · {today()}{R}\n")
-    for h in d["habits"]:
+    print(f"\n{B}{PINK}  Hábitos · {today()}{R}")
+    cats = list(dict.fromkeys(h.get("cat", "Otros") for h in d["habits"]))
+    for h in [h for c in cats for h in d["habits"] if h.get("cat", "Otros") == c]:
+        if h is next(x for x in d["habits"] if x.get("cat", "Otros") == h.get("cat", "Otros")):
+            print(f"\n  {LAV}{h.get('cat', 'Otros').upper()}{R}")
         mark = OK + "●" if done(d, h, today()) else DIM + "○"
         if h["type"] == "streak":
             s = d["streaks"].get(h["id"], {})
@@ -93,7 +109,8 @@ def week(d):
     days = [today(n) for n in range(6, -1, -1)]
     head = "".join(f"{'DLMXJVS'[(date.fromisoformat(x).weekday() + 1) % 7]:>3}" for x in days)
     print(f"\n{B}{PINK}  Últimos 7 días{R}\n  {'':<14}{head}")
-    for h in d["habits"]:
+    cats = list(dict.fromkeys(h.get("cat", "Otros") for h in d["habits"]))
+    for h in [h for c in cats for h in d["habits"] if h.get("cat", "Otros") == c]:
         cells = "".join(f"  {OK + '●' if done(d, h, x) else DIM + '·'}{R}" for x in days)
         print(f"  {h['name']:<14}{cells}")
     print()
