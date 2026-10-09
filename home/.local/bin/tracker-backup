@@ -113,6 +113,17 @@ def refresh_excel():
         fresh = False
     if not fresh:
         subprocess.run([f"{HOME}/.local/bin/tracker-xlsx", "--quiet"], check=False)
+    # Copia en Google Drive: si faltaba o es más antigua (p. ej. Drive no estaba montado), ponerla al día
+    drive = f"{HOME}/GoogleDrive"
+    dst = f"{drive}/Tracker/habitos.xlsx"
+    try:
+        if os.path.ismount(drive) and os.path.exists(xlsx) and (not os.path.exists(dst) or os.path.getmtime(dst) < os.path.getmtime(xlsx)):
+            import shutil
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy2(xlsx, dst)
+            say("↑ Excel copiado a Google Drive")
+    except OSError:
+        pass
 
 
 def main():

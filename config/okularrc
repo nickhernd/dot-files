@@ -14,7 +14,7 @@ MenuBar=Disabled
 
 [Recent Files]
 File1[$e]=$HOME/GoogleDrive/IC_ii/EJERCICIOS/Ejercicios Unidad 2.pdf
-File10[$e]=$HOME/GoogleDrive/FF_Fundamentos_Físicos_ff/04_Libros_Teoria/Fisica_Universitaria_Sears_Zemansky_12ava_Edicion_Vol1.pdf
+File10[$e]=$HOME/GoogleDrive/FF_Fundamentos_Físicos_ff/04_Libros_Teoria/Fisica General - Burbano.pdf
 File2[$e]=$HOME/GoogleDrive/IC_ii/Computer Architecture, Sixth Edition_ A Quantitative Approach ( PDFDrive ).pdf
 File3[$e]=$HOME/GoogleDrive/AL_mm/Resumen - Álgebra Lineal I.pdf
 File4[$e]=$HOME/GoogleDrive/AL_mm/Álgebra lineal_ejercicios_vol1.pdf
@@ -24,7 +24,7 @@ File7[$e]=$HOME/GoogleDrive/EB_mm/Estadística básica con R.pdf
 File8[$e]=$HOME/GoogleDrive/RC_ii/Prácticas RC/practica2/Practica2.pdf
 File9[$e]=$HOME/GoogleDrive/SD_ii/sesiones/Sesio¿n 5 - SD Spanish.pdf
 Name1[$e]=Ejercicios Unidad 2.pdf
-Name10[$e]=Fisica_Universitaria_Sears_Zemansky_12ava_Edicion_Vol1.pdf
+Name10[$e]=Fisica General - Burbano.pdf
 Name2[$e]=Computer Architecture, Sixth Edition_ A Quantitative Approach ( PDFDrive ).pdf
 Name3[$e]=Resumen - Álgebra Lineal I.pdf
 Name4[$e]=Álgebra lineal_ejercicios_vol1.pdf
