@@ -34,6 +34,7 @@ fi
 
 echo "==> Fondos del tema Moon Pink"
 cp -n "$out" "$T/0-malaz-longest-sword.jpg" 2>/dev/null || true
+[[ -f $W/malaz-ascendiente-moonpink.jpg ]] && cp -n "$W/malaz-ascendiente-moonpink.jpg" "$T/0-malaz-ascendiente.jpg"
 for pair in mlg7qm.png:1-topografia.png 7j9wle.png:2-curvas.png 6lykzx.png:3-galaxia.png polllj.jpg:4-planeta.jpg; do
   s="$W/wallhaven-${pair%%:*}"; [[ -s $s ]] && cp -n "$s" "$T/${pair##*:}"
 done

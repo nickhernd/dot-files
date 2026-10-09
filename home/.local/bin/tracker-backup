@@ -1,43 +1,154 @@
-#!/usr/bin/env bash
-# tracker-backup — copia CIFRADA del tracker de hábitos en ~/dot-files (repo público).
-#   tracker-backup            cifra, y si cambió, commit + push solo de ese archivo
-#   tracker-backup --quiet    igual, sin mensajes (lo usa el panel)
-#   tracker-backup --restore  descifra la copia del repo en ~/.local/share/tracker
-# Clave: ~/.config/tracker/backup.key (NO está en el repo: guárdala tú, sin ella no se puede descifrar).
-set -euo pipefail
+#!/usr/bin/env python3
+"""tracker-backup — sincroniza el tracker de hábitos entre ordenadores vía ~/dot-files (cifrado).
 
-DATA="$HOME/.local/share/tracker/tracker.json"
-KEY="$HOME/.config/tracker/backup.key"
-REPO="$HOME/dot-files"
-OUT="$REPO/data/tracker/tracker.json.enc"
-Q=0; [[ ${1:-} == --quiet ]] && Q=1
-say() { ((Q)) || echo "$@"; }
-enc() { openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass "file:$KEY" "$@"; }
+  tracker-backup            sincroniza: baja la copia del repo, la COMBINA con la local y sube el resultado
+  tracker-backup --quiet    igual, sin mensajes (lo usan el panel y el temporizador)
+  tracker-backup --restore  sustituye los datos locales por los del repo (sin combinar)
 
-if [[ ! -f $KEY ]]; then
-  mkdir -p "$(dirname "$KEY")"; umask 077
-  openssl rand -base64 48 > "$KEY"
-  say "!! Clave nueva creada en $KEY — haz una copia en un sitio seguro."
-fi
+Cómo se combinan dos ordenadores (nunca se pierde nada):
+  · registro diario: contadores → el mayor; casillas → hecho si en alguno está hecho
+  · rachas: gana la recaída más reciente; se unen todas las recaídas; mejor racha → la mayor
+  · libros: por título, la página más avanzada; hábitos: unión por id
+Clave: ~/.config/tracker/backup.key (NO está en el repo). Debe ser la misma en todos los ordenadores.
+"""
+import json, os, subprocess, sys, tempfile
 
-if [[ ${1:-} == --restore ]]; then
-  [[ -f $OUT ]] || { echo "No hay copia en $OUT"; exit 1; }
-  mkdir -p "$(dirname "$DATA")"
-  [[ -f $DATA ]] && cp "$DATA" "$DATA.bak-$(date +%Y%m%d%H%M%S)"
-  enc -d -in "$OUT" -out "$DATA"
-  echo "✔ Tracker restaurado en $DATA"; exit 0
-fi
+HOME = os.path.expanduser("~")
+DATA = f"{HOME}/.local/share/tracker/tracker.json"
+KEY = f"{HOME}/.config/tracker/backup.key"
+REPO = f"{HOME}/dot-files"
+REL = "data/tracker/tracker.json.enc"
+OUT = f"{REPO}/{REL}"
+QUIET = "--quiet" in sys.argv
+OPENSSL = ["openssl", "enc", "-aes-256-cbc", "-pbkdf2", "-iter", "200000", "-salt", "-pass", f"file:{KEY}"]
 
-[[ -f $DATA ]] || { say "Aún no hay datos del tracker."; exit 0; }
-mkdir -p "$(dirname "$OUT")"
 
-# ¿Ha cambiado respecto a la copia del repo? (el cifrado cambia siempre por la sal)
-if [[ -f $OUT ]] && enc -d -in "$OUT" 2>/dev/null | cmp -s - "$DATA"; then
-  say "Sin cambios desde la última copia."; exit 0
-fi
+def say(*a):
+    if not QUIET:
+        print(*a)
 
-enc -in "$DATA" -out "$OUT.tmp" && mv "$OUT.tmp" "$OUT"
-cd "$REPO"
-git add data/tracker/tracker.json.enc
-git commit -q -m "tracker: copia cifrada $(date +%F\ %H:%M)" -- data/tracker/tracker.json.enc
-GIT_TERMINAL_PROMPT=0 timeout 60 git push -q 2>/dev/null && say "✔ Copia cifrada subida a GitHub" || say "✔ Copia guardada (push pendiente)"
+
+def git(*a, check=True):
+    env = dict(os.environ, GIT_TERMINAL_PROMPT="0")
+    return subprocess.run(["git", "-C", REPO, *a], capture_output=True, text=True, env=env, check=check)
+
+
+def decrypt(blob):
+    r = subprocess.run(OPENSSL + ["-d"], input=blob, capture_output=True)
+    if r.returncode != 0:
+        raise SystemExit("!! No se pudo descifrar la copia del repo: ¿la clave es la misma en los dos ordenadores?")
+    return json.loads(r.stdout)
+
+
+def encrypt(data, path):
+    raw = json.dumps(data, ensure_ascii=False, indent=1).encode()
+    r = subprocess.run(OPENSSL + ["-out", path + ".tmp"], input=raw, capture_output=True, check=True)
+    os.replace(path + ".tmp", path)
+
+
+def load_local():
+    try:
+        return json.load(open(DATA))
+    except Exception:
+        return None
+
+
+def write_local(d):
+    os.makedirs(os.path.dirname(DATA), exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(DATA))
+    with os.fdopen(fd, "w") as f:
+        json.dump(d, f, ensure_ascii=False, indent=1)
+    os.replace(tmp, DATA)
+
+
+def merge_val(a, b):
+    if isinstance(a, bool) or isinstance(b, bool):
+        return bool(a) or bool(b)
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)):
+        return max(a, b)
+    return a if a is not None else b
+
+
+def merge(a, b):
+    if a is None: return b
+    if b is None: return a
+    out = dict(a)
+    # hábitos: unión por id (se respeta el orden de a)
+    ids = [h["id"] for h in a.get("habits", [])]
+    out["habits"] = a.get("habits", []) + [h for h in b.get("habits", []) if h["id"] not in ids]
+    # registro diario
+    log = {}
+    for day in set(a.get("log", {})) | set(b.get("log", {})):
+        da, db = a.get("log", {}).get(day, {}), b.get("log", {}).get(day, {})
+        log[day] = {k: merge_val(da.get(k), db.get(k)) for k in set(da) | set(db)}
+    out["log"] = dict(sorted(log.items()))
+    # rachas
+    st = {}
+    for hid in set(a.get("streaks", {})) | set(b.get("streaks", {})):
+        sa, sb = a.get("streaks", {}).get(hid), b.get("streaks", {}).get(hid)
+        if not sa or not sb:
+            st[hid] = sa or sb; continue
+        rel = sorted(set(sa.get("relapses", [])) | set(sb.get("relapses", [])))
+        st[hid] = {"start": max(sa["start"], sb["start"]), "best": max(sa.get("best", 0), sb.get("best", 0)), "relapses": rel}
+    out["streaks"] = st
+    # libros por título
+    books = {}
+    for bk in a.get("books", []) + b.get("books", []):
+        t = bk["title"]
+        if t not in books or (bk.get("page", 0), bk.get("updated", "")) > (books[t].get("page", 0), books[t].get("updated", "")):
+            books[t] = bk
+    order = [bk["title"] for bk in a.get("books", [])] + [bk["title"] for bk in b.get("books", []) if bk["title"] not in [x["title"] for x in a.get("books", [])]]
+    out["books"] = [books[t] for t in order]
+    return out
+
+
+def main():
+    if not os.path.exists(KEY):
+        os.makedirs(os.path.dirname(KEY), exist_ok=True)
+        old = os.umask(0o077)
+        subprocess.run(["sh", "-c", f"openssl rand -base64 48 > '{KEY}'"], check=True)
+        os.umask(old)
+        say(f"!! Clave nueva creada en {KEY} — cópiala IGUAL en tus otros ordenadores.")
+
+    # 1. Traer lo último del repo (sin tocar el árbol de trabajo)
+    fetched = git("fetch", "-q", "origin", check=False).returncode == 0
+    remote = None
+    for ref in (["origin/master"] if fetched else []) + ["HEAD"]:
+        r = subprocess.run(["git", "-C", REPO, "show", f"{ref}:{REL}"], capture_output=True)
+        if r.returncode == 0:
+            remote = decrypt(r.stdout); break
+
+    if "--restore" in sys.argv:
+        if remote is None: raise SystemExit("No hay copia del tracker en el repo.")
+        if os.path.exists(DATA):
+            os.replace(DATA, DATA + ".antes-de-restaurar")
+        write_local(remote); print(f"✔ Tracker restaurado en {DATA}"); return
+
+    local = load_local()
+    if local is None and remote is None:
+        say("Aún no hay datos del tracker."); return
+
+    merged = merge(local, remote)
+
+    # 2. Actualizar los datos locales si el otro ordenador aportó algo
+    if merged != local:
+        write_local(merged); say("↓ Datos del otro ordenador combinados con los de este")
+
+    # 3. Subir si el repo no tiene ya exactamente esto
+    if merged == remote:
+        say("✔ Tracker sincronizado (sin cambios)"); return
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    encrypt(merged, OUT)
+    git("add", REL)
+    git("commit", "-q", "-m", "tracker: sincronización cifrada", "--", REL, check=False)
+    for _ in range(2):
+        if git("pull", "-q", "--rebase", "--autostash", "-X", "theirs", check=False).returncode != 0:
+            git("rebase", "--abort", check=False)
+            break
+        if git("push", "-q", check=False).returncode == 0:
+            say("✔ Tracker sincronizado y subido a GitHub"); return
+    say("✔ Guardado en local (no se pudo subir: sin conexión o sin permisos de GitHub)")
+
+
+if __name__ == "__main__":
+    main()

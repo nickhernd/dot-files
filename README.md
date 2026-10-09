@@ -19,7 +19,7 @@ Dotfiles personales para Arch Linux con [Omarchy 4](https://omarchy.org/) (Hyprl
 | `config/termshark/themes/` | Tema Moon Pink para termshark (Wireshark en terminal); `install.sh` lo deja activo |
 | `config/omarchy/shell.json` | Shell de Omarchy (barra oculta; notificaciones/OSD/fondo los da el rice) |
 | `config/rclone/` `config/systemd/user/` | Google Drive montado en `~/GoogleDrive` (`gdrive-mount.service`); `gdrive-sync` bidireccional como alternativa |
-| `wallpapers/` | Fondo actual (Malaz en Moon Pink, créditos en `wallpapers/CREDITOS.md`) |
+| `wallpapers/` | Fondos Malaz en Moon Pink: el actual (*The Longest Sword*) y uno preparado para otro ordenador (*Ascendiente*); créditos en `wallpapers/CREDITOS.md` |
 | `home/` | `.bashrc`, `.bash_profile`, scripts de `~/.local/bin` |
 
 ### Widgets de escritorio (tema *Still*, en español)
@@ -34,9 +34,14 @@ Rachas (sin fap, sin Monster), hidratación, lectura, deporte, sueño, estudio (
 marcapáginas. Se usa desde el panel izquierdo o con `tracker` en la terminal (`tracker week`, `tracker add-book`,
 `tracker start nofap AAAA-MM-DD`, `tracker edit` para añadir hábitos…).
 
-Datos en `~/.local/share/tracker/tracker.json`. Copia **cifrada** (AES-256) en `data/tracker/tracker.json.enc`,
-actualizada sola cada hora y tras cada cambio. La clave (`~/.config/tracker/backup.key`) **no está en el repo**:
-sin ella no se puede leer la copia. En un ordenador nuevo: copia la clave y ejecuta `tracker restore`.
+Datos en `~/.local/share/tracker/tracker.json`, **sincronizados entre ordenadores** a través de este repo
+con una copia cifrada (AES-256) en `data/tracker/tracker.json.enc`. `tracker-backup` baja la copia del repo,
+la **combina** con la local (contadores → el mayor, casillas → hecho en cualquiera, rachas → la recaída más
+reciente, libros → la página más avanzada) y sube el resultado. Se ejecuta al encender, cada 15 min y 2 min
+después de cada cambio en el panel; a mano: `tracker sync`.
+
+La clave (`~/.config/tracker/backup.key`) **no está en el repo** y tiene que ser **la misma** en todos los
+ordenadores. En uno nuevo: copia la clave y ejecuta `tracker sync`.
 
 ### Atajos principales
 

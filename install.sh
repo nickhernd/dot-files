@@ -28,7 +28,7 @@ link() {
 
 # Carpetas de ~/.config
 for dir in hypr quickshell matugen rofi cava scripts kitty foot ghostty alacritty nvim nvim-classic tmux git \
-           lazygit lazydocker gh-dash btop yazi micro ranger ripgrep mise imv xournalpp opencode newsboat atuin ZapZap \
+           lazygit lazydocker gh-dash btop yazi micro ranger ripgrep mise imv xournalpp opencode newsboat atuin ZapZap voxtype \
            okular texstudio qalculate wiremix crossnote OpenTabletDriver fontconfig; do
     link "$DOTFILES_DIR/config/$dir" "$CONFIG_DIR/$dir"
 done
@@ -36,7 +36,7 @@ done
 # Archivos sueltos de ~/.config
 for f in starship.toml mimeapps.list omarchy/shell.json rclone/gdrive-filters.txt \
          systemd/user/gdrive-sync.service systemd/user/gdrive-sync.timer systemd/user/gdrive-mount.service \
-         systemd/user/tracker-backup.service systemd/user/tracker-backup.timer \
+         systemd/user/tracker-backup.service systemd/user/tracker-backup.timer systemd/user/voxtype.service \
          okularrc okularpartrc xdg-terminals.list; do
     link "$DOTFILES_DIR/config/$f" "$CONFIG_DIR/$f"
 done

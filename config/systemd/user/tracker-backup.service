@@ -1,5 +1,5 @@
 [Unit]
-Description=Copia cifrada del tracker de hábitos en ~/dot-files
+Description=Sincronizar el tracker de hábitos con ~/dot-files (cifrado)
 
 [Service]
 Type=oneshot

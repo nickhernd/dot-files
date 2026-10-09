@@ -1,9 +1,9 @@
 [Unit]
-Description=Copia cifrada del tracker cada hora
+Description=Sincronizar el tracker (cifrado) cada 15 min
 
 [Timer]
-OnBootSec=10min
-OnUnitActiveSec=1h
+OnBootSec=2min
+OnUnitActiveSec=15min
 Persistent=true
 
 [Install]

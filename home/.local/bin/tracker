@@ -9,7 +9,7 @@
   tracker relapse ID   reiniciar una racha (nofap, nomonster...)
   tracker start ID AAAA-MM-DD   indicar desde cuándo llevas una racha
   tracker edit         abrir el JSON en Neovim (añadir/quitar hábitos)
-  tracker backup       copia cifrada a ~/dot-files ahora mismo
+  tracker sync         sincronizar ahora con el otro ordenador (vía ~/dot-files, cifrado)
   tracker restore      recuperar los datos desde la copia cifrada de ~/dot-files
 """
 import json, os, subprocess, sys
@@ -165,7 +165,7 @@ def main():
     elif cmd == "edit":
         if not os.path.exists(PATH): save(d)
         subprocess.call(["nvim", PATH])
-    elif cmd in ("backup", "restore"):
+    elif cmd in ("sync", "backup", "restore"):
         os.execvp("tracker-backup", ["tracker-backup"] + (["--restore"] if cmd == "restore" else []))
     else:
         print(__doc__)

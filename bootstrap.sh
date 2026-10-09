@@ -82,8 +82,8 @@ first=$(ls "$DOTFILES_DIR"/wallpapers/*.{jpg,png} 2>/dev/null | head -1)
 [[ -n $first && ! -e $HOME/.cache/current_wallpaper ]] && ln -sfn "$HOME/Pictures/wallpapers/$(basename "$first")" "$HOME/.cache/current_wallpaper"
 # Tracker de hábitos: restaurar la copia cifrada si está la clave
 mkdir -p "$HOME/.local/share/tracker"
-if [[ -f $HOME/.config/tracker/backup.key && -f $DOTFILES_DIR/data/tracker/tracker.json.enc && ! -f $HOME/.local/share/tracker/tracker.json ]]; then
-  "$HOME/.local/bin/tracker-backup" --restore || true
+if [[ -f $HOME/.config/tracker/backup.key ]]; then
+  "$HOME/.local/bin/tracker-backup" || true     # baja y combina los datos del otro ordenador
 fi
 systemctl --user enable --now tracker-backup.timer 2>/dev/null || true
 [[ -f $HOME/todo.md ]] || printf '# Tareas\n\n- [ ] Primera tarea\n' > "$HOME/todo.md"
@@ -100,6 +100,6 @@ cat <<'MSG'
   3. Google Drive: rclone config create gdrive drive scope=drive
      systemctl --user enable --now gdrive-mount.service   (monta Drive en ~/GoogleDrive)
   4. Cierra sesión y vuelve a entrar (grupos docker, wireshark y libvirt).
-  5. Tracker: copia tu clave a ~/.config/tracker/backup.key y ejecuta: tracker restore
+  5. Tracker: copia la MISMA clave a ~/.config/tracker/backup.key y ejecuta: tracker sync
   6. Abre nvim una vez para que Mason termine de instalar los servidores de lenguaje.
 MSG
