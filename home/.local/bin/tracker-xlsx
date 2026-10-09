@@ -1,0 +1,268 @@
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# dependencies = ["openpyxl"]
+# ///
+"""tracker-xlsx — genera el Excel del tracker de hábitos (semanas de SÁBADO a viernes).
+
+Se regenera solo en cada sincronización (tracker-backup) y con `tracker excel`.
+Salida: ~/Documents/Tracker/habitos.xlsx  (+ copia en ~/GoogleDrive/Tracker/ si Drive está montado)
+Hojas: Semanas (cuadrícula por semana) · Resumen (% por semana, con fórmulas) · Periódicas ·
+       Registro (una fila por día) · Libros · Leyenda
+"""
+import os, shutil, sys
+from datetime import date, timedelta
+from importlib.machinery import SourceFileLoader
+
+from openpyxl import Workbook
+from openpyxl.formatting.rule import CellIsRule, FormulaRule
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.utils import get_column_letter
+
+T = SourceFileLoader("tracker", os.path.expanduser("~/.local/bin/tracker")).load_module()
+
+OUT = os.path.expanduser("~/Documents/Tracker/habitos.xlsx")
+DRIVE = os.path.expanduser("~/GoogleDrive")
+DIAS = ["Sáb", "Dom", "Lun", "Mar", "Mié", "Jue", "Vie"]
+MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+
+# ── Estilo (Moon Pink sobre fondo claro para que se lea bien en Excel/Sheets) ──
+F = "Arial"
+PINK, LAV, DARK, LIGHT, OKF, BADF = "FF9ED2", "E8E0FF", "1A1625", "FBF5FF", "D7F5E8", "FFD6E0"
+f_title = Font(name=F, size=14, bold=True, color=DARK)
+f_head = Font(name=F, size=10, bold=True, color=DARK)
+f_cat = Font(name=F, size=9, bold=True, color="6A3550")
+f_body = Font(name=F, size=10, color=DARK)
+f_dim = Font(name=F, size=9, italic=True, color="8A7A9E")
+fill_head = PatternFill("solid", fgColor=PINK)
+fill_cat = PatternFill("solid", fgColor=LAV)
+fill_week = PatternFill("solid", fgColor=LIGHT)
+fill_ok = PatternFill("solid", fgColor=OKF)
+fill_bad = PatternFill("solid", fgColor=BADF)
+thin = Side(style="thin", color="D9CCE6")
+box = Border(left=thin, right=thin, top=thin, bottom=thin)
+center = Alignment(horizontal="center", vertical="center")
+PCT = '0%;-0%;"-"'
+
+
+def cell(ws, r, c, v=None, font=f_body, fill=None, align=None, fmt=None, border=True):
+    x = ws.cell(row=r, column=c, value=v)
+    x.font = font
+    if fill: x.fill = fill
+    if align: x.alignment = align
+    if fmt: x.number_format = fmt
+    if border: x.border = box
+    return x
+
+
+def mark(d, h, day):
+    """Valor de un hábito en un día, tal como se escribe en la hoja."""
+    if day > T.today():
+        return None
+    if h["type"] == "streak":
+        st = d["streaks"].get(h["id"], {})
+        if day in st.get("relapses", []): return "✗"
+        return "✓" if day >= st.get("start", day) or T.done(d, h, day) else None
+    v = T.value(d, h, day)
+    if h["type"] == "count":
+        return v if v else None
+    return "✓" if v else None
+
+
+def nice(day):
+    x = date.fromisoformat(day)
+    return f"{x.day:02d} {MESES[x.month - 1]}"
+
+
+def main():
+    d = T.load()
+    habits = d["habits"]
+    cats = list(dict.fromkeys(h.get("cat", "Otros") for h in habits))
+    ordered = [h for c in cats for h in habits if h.get("cat", "Otros") == c]
+    daily = [h for h in ordered if not h.get("freq")]
+    weekly = [h for h in ordered if h.get("freq") == "weekly"]
+    monthly = [h for h in ordered if h.get("freq") == "monthly"]
+
+    starts = [v["start"] for v in d["streaks"].values()] + list(d["log"].keys())
+    first = min(starts) if starts else T.today()
+    first_week = date.fromisoformat(T.week_start(first))
+    today = date.fromisoformat(T.today())
+    days = [(first_week + timedelta(n)).isoformat() for n in range((today - first_week).days + 1)]
+    weeks = sorted({T.week_start(x) for x in days}, reverse=True)
+
+    wb = Workbook()
+
+    # ── Registro: una fila por día (base de las fórmulas del Resumen) ──
+    reg = wb.active
+    reg.title = "Registro"
+    heads = ["Fecha", "Día", "Semana (sáb)"] + [h["name"] for h in daily]
+    for c, t in enumerate(heads, 1):
+        cell(reg, 1, c, t, f_head, fill_head, Alignment(horizontal="center", vertical="center", wrap_text=True))
+    for r, day in enumerate(days, 2):
+        x = date.fromisoformat(day)
+        cell(reg, r, 1, x, fmt="dd/mm/yyyy", align=center)
+        cell(reg, r, 2, DIAS[(x.weekday() + 2) % 7], align=center)
+        cell(reg, r, 3, date.fromisoformat(T.week_start(day)), fmt="dd/mm/yyyy", align=center)
+        for c, h in enumerate(daily, 4):
+            cell(reg, r, c, mark(d, h, day), align=center)
+    reg.freeze_panes = "D2"
+    reg.auto_filter.ref = f"A1:{get_column_letter(len(heads))}{len(days) + 1}"
+    reg.row_dimensions[1].height = 42
+    for c in range(1, len(heads) + 1):
+        reg.column_dimensions[get_column_letter(c)].width = 12 if c > 3 else 13
+    last = len(days) + 1
+    reg.conditional_formatting.add(f"D2:{get_column_letter(len(heads))}{last}", CellIsRule(operator="equal", formula=['"✓"'], fill=fill_ok))
+    reg.conditional_formatting.add(f"D2:{get_column_letter(len(heads))}{last}", CellIsRule(operator="equal", formula=['"✗"'], fill=fill_bad))
+
+    # ── Semanas: cuadrícula por semana (la más reciente arriba) ──
+    ws = wb.create_sheet("Semanas", 0)
+    cell(ws, 1, 1, "Tracker de hábitos · semanas de sábado a viernes", f_title, border=False)
+    cell(ws, 2, 1, f"Actualizado automáticamente el {nice(T.today())} — no edites aquí (se regenera); marca en el panel o con `tracker`.", f_dim, border=False)
+    ws.column_dimensions["A"].width = 40
+    ws.column_dimensions["B"].width = 11
+    for c in range(3, 10): ws.column_dimensions[get_column_letter(c)].width = 9
+    ws.column_dimensions["J"].width = 11
+    ws.column_dimensions["K"].width = 9
+    r = 4
+    for wk in weeks:
+        wdays = [(date.fromisoformat(wk) + timedelta(n)).isoformat() for n in range(7)]
+        elapsed = sum(1 for x in wdays if x <= T.today())
+        cell(ws, r, 1, f"Semana del sáb {nice(wdays[0])} al vie {nice(wdays[6])}", Font(name=F, size=11, bold=True, color=DARK), fill_week)
+        for c in range(2, 12): cell(ws, r, c, None, fill=fill_week)
+        cell(ws, r, 10, "Días", f_dim, fill_week, center)
+        cell(ws, r, 11, elapsed, f_head, fill_week, center)
+        days_ref = f"$K${r}"
+        r += 1
+        for c, t in enumerate(["Hábito", "Objetivo"] + [f"{DIAS[i]} {date.fromisoformat(wdays[i]).day}" for i in range(7)] + ["Cumplido", "%"], 1):
+            cell(ws, r, c, t, f_head, fill_head, center if c > 1 else None)
+        r += 1
+        cat = None
+        for h in daily + weekly:
+            if h.get("cat") != cat:
+                cat = h.get("cat")
+                cell(ws, r, 1, (cat or "Otros").upper(), f_cat, fill_cat)
+                for c in range(2, 12): cell(ws, r, c, None, fill=fill_cat)
+                r += 1
+            cell(ws, r, 1, h["name"])
+            per = h.get("freq") == "weekly"
+            goal = 1 if per else (h.get("goal", 1) if h["type"] == "count" else 1)
+            cell(ws, r, 2, goal, align=center, fmt='0" /sem"' if per else ('0" ' + h.get("unit", "") + '"' if h["type"] == "count" else '"cada día"'))
+            for i, day in enumerate(wdays):
+                cell(ws, r, 3 + i, mark(d, h, day), align=center)
+            rng = f"C{r}:I{r}"
+            if h["type"] == "count":
+                cell(ws, r, 10, f'=COUNTIF({rng},">="&B{r})', align=center)
+            else:
+                cell(ws, r, 10, f'=COUNTIF({rng},"✓")', align=center)
+            den = "1" if per else days_ref
+            cell(ws, r, 11, f"=IFERROR(MIN(1,J{r}/{den}),0)", align=center, fmt=PCT)
+            r += 1
+        r += 1
+    ws.freeze_panes = "B4"
+    ws.conditional_formatting.add(f"C4:I{r}", CellIsRule(operator="equal", formula=['"✓"'], fill=fill_ok))
+    ws.conditional_formatting.add(f"C4:I{r}", CellIsRule(operator="equal", formula=['"✗"'], fill=fill_bad))
+    ws.conditional_formatting.add(f"K4:K{r}", CellIsRule(operator="greaterThanOrEqual", formula=["0.8"], fill=fill_ok))
+
+    # ── Resumen: % por semana y hábito, calculado con fórmulas sobre el Registro ──
+    rs = wb.create_sheet("Resumen", 1)
+    cell(rs, 1, 1, "Cumplimiento por semana (sábado a viernes)", f_title, border=False)
+    cell(rs, 2, 1, "Fila 3 = objetivo diario (contadores). Cada % = días cumplidos / días transcurridos de esa semana.", f_dim, border=False)
+    cell(rs, 4, 1, "Semana (sáb)", f_head, fill_head, center)
+    rs.column_dimensions["A"].width = 14
+    for c, h in enumerate(daily, 2):
+        L = get_column_letter(c)
+        rs.column_dimensions[L].width = 12
+        cell(rs, 4, c, h["name"], f_head, fill_head, Alignment(horizontal="center", vertical="center", wrap_text=True))
+        cell(rs, 3, c, h.get("goal", 1) if h["type"] == "count" else None, f_dim, align=center)
+    cell(rs, 3, 1, "Objetivo", f_dim, align=center)
+    rs.row_dimensions[4].height = 42
+    for i, wk in enumerate(weeks):
+        rr = 5 + i
+        cell(rs, rr, 1, date.fromisoformat(wk), fmt="dd/mm/yyyy", align=center)
+        for c, h in enumerate(daily, 2):
+            col = get_column_letter(3 + daily.index(h) + 1)  # columna del hábito en Registro
+            crit = f'">="&{get_column_letter(c)}$3' if h["type"] == "count" else '"✓"'
+            f = (f"=IFERROR(COUNTIFS(Registro!$C:$C,$A{rr},Registro!{col}:{col},{crit})"
+                 f"/COUNTIFS(Registro!$C:$C,$A{rr}),0)")
+            cell(rs, rr, c, f, align=center, fmt=PCT)
+    end = 4 + len(weeks)
+    lastc = get_column_letter(1 + len(daily))
+    rs.conditional_formatting.add(f"B5:{lastc}{end}", CellIsRule(operator="greaterThanOrEqual", formula=["0.8"], fill=fill_ok))
+    rs.conditional_formatting.add(f"B5:{lastc}{end}", CellIsRule(operator="lessThan", formula=["0.3"], fill=fill_bad))
+    rs.freeze_panes = "B5"
+
+    # ── Periódicas: domingo (por semana) y día 1 (por mes) ──
+    pe = wb.create_sheet("Periódicas", 2)
+    cell(pe, 1, 1, "Tareas de cada domingo (por semana) y de cada día 1 (por mes)", f_title, border=False)
+    r = 3
+    cell(pe, r, 1, "Semana (sáb)", f_head, fill_head, center)
+    for c, h in enumerate(weekly, 2):
+        cell(pe, r, c, h["name"], f_head, fill_head, Alignment(horizontal="center", wrap_text=True))
+        pe.column_dimensions[get_column_letter(c)].width = 18
+    pe.row_dimensions[r].height = 42
+    for wk in weeks:
+        r += 1
+        cell(pe, r, 1, date.fromisoformat(wk), fmt="dd/mm/yyyy", align=center)
+        for c, h in enumerate(weekly, 2):
+            cell(pe, r, c, "✓" if T.done(d, h, wk) else ("…" if wk == T.week_start(T.today()) else ""), align=center)
+    r += 2
+    cell(pe, r, 1, "Mes", f_head, fill_head, center)
+    for c, h in enumerate(monthly, 2):
+        cell(pe, r, c, h["name"], f_head, fill_head, Alignment(horizontal="center", wrap_text=True))
+    pe.row_dimensions[r].height = 42
+    months = sorted({x[:7] for x in days}, reverse=True)
+    for m in months:
+        r += 1
+        y, mo = map(int, m.split("-"))
+        cell(pe, r, 1, f"{MESES[mo - 1]} {y}", align=center)
+        for c, h in enumerate(monthly, 2):
+            cell(pe, r, c, "✓" if T.done(d, h, m + "-01") else ("…" if m == T.today()[:7] else ""), align=center)
+    pe.column_dimensions["A"].width = 14
+    pe.conditional_formatting.add(f"B4:{get_column_letter(1 + max(len(weekly), len(monthly), 1))}{r}", CellIsRule(operator="equal", formula=['"✓"'], fill=fill_ok))
+
+    # ── Libros ──
+    lb = wb.create_sheet("Libros", 3)
+    for c, t in enumerate(["Título", "Página", "Total", "Progreso", "Actualizado", "Terminado"], 1):
+        cell(lb, 1, c, t, f_head, fill_head, center)
+    for r, b in enumerate(d["books"], 2):
+        cell(lb, r, 1, b["title"])
+        cell(lb, r, 2, b.get("page", 0), align=center)
+        cell(lb, r, 3, b.get("total", 1), align=center)
+        cell(lb, r, 4, f"=IFERROR(B{r}/C{r},0)", align=center, fmt="0%")
+        cell(lb, r, 5, b.get("updated"), align=center)
+        cell(lb, r, 6, b.get("finished") or "", align=center)
+    lb.column_dimensions["A"].width = 44
+    for c in "BCDEF": lb.column_dimensions[c].width = 13
+
+    # ── Leyenda ──
+    lg = wb.create_sheet("Leyenda")
+    rows = [
+        ("Leyenda", f_title),
+        ("✓  hecho / día limpio en una racha      ✗  recaída      número  valor del contador (agua, lectura, pomodoros)", f_body),
+        ("Las semanas van de SÁBADO a VIERNES. Las tareas de domingo cuentan para su semana; las del día 1, para su mes.", f_body),
+        ("Este archivo se regenera solo en cada sincronización del tracker (al encender, cada 15 min y tras cada cambio).", f_body),
+        ("No lo edites aquí: los cambios se perderían. Marca hábitos en el panel izquierdo o con `tracker` en la terminal.", f_body),
+        ("Resumen: % = días cumplidos / días transcurridos de la semana (fórmulas sobre la hoja Registro).", f_body),
+        ("Datos: ~/.local/share/tracker/tracker.json · copia cifrada en ~/dot-files/data/tracker/.", f_dim),
+    ]
+    for i, (t, fnt) in enumerate(rows, 1):
+        cell(lg, i, 1, t, fnt, border=False)
+    lg.column_dimensions["A"].width = 120
+
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    tmp = OUT + ".tmp.xlsx"
+    wb.save(tmp)
+    os.replace(tmp, OUT)
+    copies = [OUT]
+    if os.path.ismount(DRIVE):
+        try:
+            os.makedirs(f"{DRIVE}/Tracker", exist_ok=True)
+            shutil.copyfile(OUT, f"{DRIVE}/Tracker/habitos.xlsx")
+            copies.append(f"{DRIVE}/Tracker/habitos.xlsx")
+        except OSError:
+            pass
+    if "--quiet" not in sys.argv:
+        print("✔ Excel actualizado: " + "  ·  ".join(copies))
+
+
+if __name__ == "__main__":
+    main()

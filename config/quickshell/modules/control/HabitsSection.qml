@@ -102,23 +102,26 @@ ColumnLayout {
                         }
 
                         StyledText {
-                            text: row.hb.type === "streak"
+                            text: row.hb.freq === "weekly" || row.hb.freq === "monthly"
+                                ? (root.h.dueToday(row.hb) ? "¡hoy!" : row.ok ? (row.hb.freq === "weekly" ? "hecho esta semana" : "hecho este mes") : "pendiente")
+                                    + "  ·  racha " + root.h.dailyStreak(row.hb) + (row.hb.freq === "weekly" ? " sem." : " meses")
+                                : row.hb.type === "streak"
                                 ? root.h.streakDays(row.hb.id) + " días · mejor " + Math.max(root.h.streak(row.hb.id).best || 0, root.h.streakDays(row.hb.id))
                                 : row.hb.type === "count"
                                     ? root.h.value(row.hb.id) + " / " + row.hb.goal + " " + (row.hb.unit || "") + "  ·  racha " + root.h.dailyStreak(row.hb)
                                     : (row.ok ? "hecho hoy" : "pendiente") + "  ·  racha " + root.h.dailyStreak(row.hb)
                             font.pixelSize: 11
-                            color: Colors.withAlpha(Colors.on_surface, 0.6)
+                            color: root.h.dueToday(row.hb) ? Colors.error : Colors.withAlpha(Colors.on_surface, 0.6)
                         }
 
-                        // Últimos 7 días
+                        // Últimos 7 días (7 semanas / 7 meses en las periódicas)
                         Row {
                             spacing: 4
                             Repeater {
                                 model: 7
                                 Rectangle {
                                     required property int index
-                                    readonly property string d: root.h.dayOffset(6 - index)
+                                    readonly property string d: root.h.periodOffset(row.hb, 6 - index)
                                     width: 8
                                     height: 8
                                     radius: 4

@@ -24,9 +24,24 @@ Singleton {
         { id: "swim", name: "Natación", icon: "pool", type: "check", cat: "Salud" },
         { id: "reading", name: "Lectura", icon: "menu_book", type: "count", goal: 30, step: 5, unit: "min", cat: "Mente" },
         { id: "study", name: "Estudio", icon: "school", type: "count", goal: 4, step: 1, unit: "pomodoros", auto: "pomodoros", cat: "Mente" },
+        { id: "rae", name: "RAE", icon: "spellcheck", type: "check", cat: "Mente", open: "xdg-open https://dle.rae.es" },
+        { id: "wotd", name: "Palabra del día", icon: "match_word", type: "check", cat: "Mente", open: "xdg-open https://www.rae.es/palabra-del-dia" },
+        { id: "wikipedia", name: "Wikipedia diaria", icon: "travel_explore", type: "check", cat: "Mente", open: "xdg-open https://es.wikipedia.org/wiki/Especial:Aleatoria" },
+        { id: "knowledge", name: "Conocimiento diario", icon: "lightbulb", type: "check", cat: "Mente" },
+        { id: "journal", name: "Escribir diario", icon: "edit_note", type: "check", cat: "Mente" },
         { id: "gmail", name: "Mirar Gmail", icon: "mail", type: "check", cat: "Comunicación", open: "omarchy-launch-webapp https://mail.google.com" },
         { id: "whatsapp", name: "Mirar WhatsApp", icon: "chat", type: "check", cat: "Comunicación", open: "omarchy-launch-or-focus '^com.rtosta.zapzap$' 'uwsm-app -- zapzap'" },
         { id: "telegram", name: "Mirar Telegram", icon: "send", type: "check", cat: "Comunicación", open: "omarchy-launch-or-focus '^(TelegramDesktop|org.telegram.desktop)$' 'uwsm-app -- Telegram'" },
+        { id: "meals", name: "Preparar comidas", icon: "skillet", type: "check", cat: "Organización" },
+        { id: "agenda", name: "Agenda: escribir, mirar y organizar", icon: "event_note", type: "check", cat: "Organización" },
+        { id: "nextweek", name: "Preparar la semana siguiente", icon: "date_range", type: "check", freq: "weekly", day: 0, cat: "Cada domingo" },
+        { id: "pc_laptop", name: "Limpiar y actualizar el portátil", icon: "laptop", type: "check", freq: "weekly", day: 0, cat: "Cada domingo" },
+        { id: "pc_desktop", name: "Limpiar y actualizar el sobremesa", icon: "desktop_windows", type: "check", freq: "weekly", day: 0, cat: "Cada domingo" },
+        { id: "expenses", name: "Revisar gastos de la semana", icon: "account_balance_wallet", type: "check", freq: "weekly", day: 0, cat: "Cada domingo" },
+        { id: "media", name: "Organizar series, películas, libros y teatro", icon: "theaters", type: "check", freq: "monthly", day: 1, cat: "Cada día 1 del mes" },
+        { id: "github", name: "Proyectos de GitHub", icon: "code", type: "check", freq: "monthly", day: 1, cat: "Cada día 1 del mes", open: "xdg-open https://github.com/nickhernd?tab=repositories" },
+        { id: "bookclubs", name: "Clubes de lectura", icon: "groups", type: "check", freq: "monthly", day: 1, cat: "Cada día 1 del mes" },
+        { id: "subscriptions", name: "Revisar suscripciones", icon: "subscriptions", type: "check", freq: "monthly", day: 1, cat: "Cada día 1 del mes" },
         { id: "shave", name: "Depilación", icon: "content_cut", type: "check", cat: "Cuidado personal" },
         { id: "skincare", name: "Skin care", icon: "face", type: "check", cat: "Cuidado personal" },
         { id: "haircare", name: "Hair care", icon: "face_retouching_natural", type: "check", cat: "Cuidado personal" }
@@ -57,6 +72,46 @@ Singleton {
         return Qt.formatDate(d, "yyyy-MM-dd");
     }
 
+    // Semanas de sábado a viernes
+    function weekStart(day) {
+        const d = new Date(day + "T12:00");
+        d.setDate(d.getDate() - (d.getDay() + 1) % 7);
+        return Qt.formatDate(d, "yyyy-MM-dd");
+    }
+
+    function periodStart(h, day) {
+        return h.freq === "weekly" ? weekStart(day) : h.freq === "monthly" ? day.slice(0, 8) + "01" : day;
+    }
+
+    function periodEnd(h, day) {
+        const s = new Date(periodStart(h, day) + "T12:00");
+        if (h.freq === "weekly") s.setDate(s.getDate() + 6);
+        else if (h.freq === "monthly") { s.setMonth(s.getMonth() + 1); s.setDate(0); }
+        return Qt.formatDate(s, "yyyy-MM-dd");
+    }
+
+    // Fecha que cae dentro del periodo i-ésimo hacia atrás (para los puntitos)
+    function periodOffset(h, i) {
+        const d = new Date();
+        if (h.freq === "weekly") d.setDate(d.getDate() - 7 * i);
+        else if (h.freq === "monthly") { d.setDate(1); d.setMonth(d.getMonth() - i); }
+        else d.setDate(d.getDate() - i);
+        return Qt.formatDate(d, "yyyy-MM-dd");
+    }
+
+    function doneInPeriod(h, day) {
+        const a = periodStart(h, day), b = periodEnd(h, day);
+        return Object.keys(data.log).some(k => k >= a && k <= b && !!data.log[k][h.id]);
+    }
+
+    // ¿Le toca hoy y no está hecha? (tareas de domingo / día 1)
+    function dueToday(h) {
+        const now = new Date();
+        if (h.freq === "weekly") return now.getDay() === (h.day || 0) && !doneInPeriod(h, today());
+        if (h.freq === "monthly") return now.getDate() === (h.day || 1) && !doneInPeriod(h, today());
+        return false;
+    }
+
     function daysBetween(a, b) {
         return Math.round((new Date(b + "T12:00") - new Date(a + "T12:00")) / 86400000);
     }
@@ -73,6 +128,8 @@ Singleton {
     }
 
     function done(h, day) {
+        if (h.freq === "weekly" || h.freq === "monthly")
+            return doneInPeriod(h, day);
         if (h.type === "check")
             return !!value(h.id, day);
         if (h.type === "count")
@@ -100,7 +157,7 @@ Singleton {
             return streakDays(h.id);
         let n = 0;
         for (let i = done(h, today()) ? 0 : 1; i < 365; i++) {
-            if (!done(h, dayOffset(i)))
+            if (!done(h, periodOffset(h, i)))
                 break;
             n++;
         }
@@ -128,6 +185,20 @@ Singleton {
     }
 
     function toggle(h) {
+        if (h.freq === "weekly" || h.freq === "monthly") {
+            // Tarea periódica: marcar hoy, o desmarcar todo el periodo
+            const was = doneInPeriod(h, today());
+            const a = periodStart(h, today()), b = periodEnd(h, today());
+            mutate(d => {
+                if (was)
+                    Object.keys(d.log).forEach(k => { if (k >= a && k <= b && d.log[k][h.id]) d.log[k][h.id] = false; });
+                else {
+                    d.log[today()] = d.log[today()] || {};
+                    d.log[today()][h.id] = true;
+                }
+            });
+            return;
+        }
         setValue(h.id, !value(h.id));
     }
 

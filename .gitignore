@@ -26,3 +26,6 @@ home/.pulse-cookie
 data/tracker/*.json
 data/tracker/*.key
 backup.key
+
+# El Excel del tracker no va al repo (datos personales sin cifrar)
+*.xlsx

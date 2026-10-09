@@ -3,6 +3,7 @@
 
   tracker              resumen de hoy (hábitos, rachas, libros, pomodoros)
   tracker week         tabla de los últimos 7 días
+  tracker excel        regenerar el Excel (~/Documents/Tracker/habitos.xlsx y en Google Drive)
   tracker add-book     añadir un libro (título y páginas)
   tracker page         ir a una página de un libro
   tracker log ID N     fijar el valor de hoy de un hábito (p. ej. tracker log water 5)
@@ -27,9 +28,24 @@ DEFAULT = [
     {"id": "swim", "name": "Natación", "icon": "pool", "type": "check", "cat": "Salud"},
     {"id": "reading", "name": "Lectura", "icon": "menu_book", "type": "count", "goal": 30, "step": 5, "unit": "min", "cat": "Mente"},
     {"id": "study", "name": "Estudio", "icon": "school", "type": "count", "goal": 4, "step": 1, "unit": "pomodoros", "auto": "pomodoros", "cat": "Mente"},
+    {"id": "rae", "name": "RAE", "icon": "spellcheck", "type": "check", "cat": "Mente"},
+    {"id": "wotd", "name": "Palabra del día", "icon": "match_word", "type": "check", "cat": "Mente"},
+    {"id": "wikipedia", "name": "Wikipedia diaria", "icon": "travel_explore", "type": "check", "cat": "Mente"},
+    {"id": "knowledge", "name": "Conocimiento diario", "icon": "lightbulb", "type": "check", "cat": "Mente"},
+    {"id": "journal", "name": "Escribir diario", "icon": "edit_note", "type": "check", "cat": "Mente"},
     {"id": "gmail", "name": "Mirar Gmail", "icon": "mail", "type": "check", "cat": "Comunicación"},
     {"id": "whatsapp", "name": "Mirar WhatsApp", "icon": "chat", "type": "check", "cat": "Comunicación"},
     {"id": "telegram", "name": "Mirar Telegram", "icon": "send", "type": "check", "cat": "Comunicación"},
+    {"id": "meals", "name": "Preparar comidas", "icon": "skillet", "type": "check", "cat": "Organización"},
+    {"id": "agenda", "name": "Agenda: escribir, mirar y organizar", "icon": "event_note", "type": "check", "cat": "Organización"},
+    {"id": "nextweek", "name": "Preparar la semana siguiente", "icon": "date_range", "type": "check", "freq": "weekly", "day": 0, "cat": "Cada domingo"},
+    {"id": "pc_laptop", "name": "Limpiar y actualizar el portátil", "icon": "laptop", "type": "check", "freq": "weekly", "day": 0, "cat": "Cada domingo"},
+    {"id": "pc_desktop", "name": "Limpiar y actualizar el sobremesa", "icon": "desktop_windows", "type": "check", "freq": "weekly", "day": 0, "cat": "Cada domingo"},
+    {"id": "expenses", "name": "Revisar gastos de la semana", "icon": "account_balance_wallet", "type": "check", "freq": "weekly", "day": 0, "cat": "Cada domingo"},
+    {"id": "media", "name": "Organizar series, películas, libros y teatro", "icon": "theaters", "type": "check", "freq": "monthly", "day": 1, "cat": "Cada día 1 del mes"},
+    {"id": "github", "name": "Proyectos de GitHub", "icon": "code", "type": "check", "freq": "monthly", "day": 1, "cat": "Cada día 1 del mes"},
+    {"id": "bookclubs", "name": "Clubes de lectura", "icon": "groups", "type": "check", "freq": "monthly", "day": 1, "cat": "Cada día 1 del mes"},
+    {"id": "subscriptions", "name": "Revisar suscripciones", "icon": "subscriptions", "type": "check", "freq": "monthly", "day": 1, "cat": "Cada día 1 del mes"},
     {"id": "shave", "name": "Depilación", "icon": "content_cut", "type": "check", "cat": "Cuidado personal"},
     {"id": "skincare", "name": "Skin care", "icon": "face", "type": "check", "cat": "Cuidado personal"},
     {"id": "haircare", "name": "Hair care", "icon": "face_retouching_natural", "type": "check", "cat": "Cuidado personal"},
@@ -42,9 +58,17 @@ def load():
         d = {"version": 1}
     d.setdefault("habits", DEFAULT); d.setdefault("streaks", {}); d.setdefault("log", {}); d.setdefault("books", [])
     ids = [h["id"] for h in d["habits"]]
-    for h in DEFAULT:
-        if h["id"] not in ids:
-            d["habits"].append(h)
+    for i, h in enumerate(DEFAULT):
+        if h["id"] in ids:
+            continue
+        prev = next((x["id"] for x in reversed(DEFAULT[:i]) if x["id"] in [y["id"] for y in d["habits"]]), None)
+        pos = [y["id"] for y in d["habits"]].index(prev) + 1 if prev else len(d["habits"])
+        d["habits"].insert(pos, dict(h))
+    for h in d["habits"]:
+        df = next((x for x in DEFAULT if x["id"] == h["id"]), {})
+        for k in ("freq", "day"):
+            if k in df and k not in h:
+                h[k] = df[k]
     for h in d["habits"]:
         h.setdefault("cat", next((x["cat"] for x in DEFAULT if x["id"] == h["id"]), "Otros"))
         if h["type"] == "streak" and h["id"] not in d["streaks"]:
@@ -68,7 +92,23 @@ def streak_days(d, hid):
     s = d["streaks"].get(hid, {"start": today()})
     return (date.today() - date.fromisoformat(s["start"])).days
 
+def week_start(day):
+    x = date.fromisoformat(day)
+    return (x - timedelta(days=(x.weekday() + 2) % 7)).isoformat()   # semanas de sábado a viernes
+
+def period(h, day):
+    x = date.fromisoformat(day)
+    if h.get("freq") == "weekly":
+        a = date.fromisoformat(week_start(day)); return a.isoformat(), (a + timedelta(days=6)).isoformat()
+    if h.get("freq") == "monthly":
+        a = x.replace(day=1); b = (a.replace(year=a.year + (a.month == 12), month=a.month % 12 + 1) - timedelta(days=1))
+        return a.isoformat(), b.isoformat()
+    return day, day
+
 def done(d, h, day):
+    if h.get("freq") in ("weekly", "monthly"):
+        a, b = period(h, day)
+        return any(a <= k <= b and v.get(h["id"]) for k, v in d["log"].items())
     if h["type"] == "check": return bool(value(d, h, day))
     if h["type"] == "count": return value(d, h, day) >= h.get("goal", 1)
     if h["type"] == "streak":
@@ -93,9 +133,12 @@ def summary(d):
         elif h["type"] == "count":
             v = value(d, h, today()); g = h.get("goal", 1)
             info = f"{bar(v / g, 12)} {v}/{g} {h.get('unit', '')}"
+        elif h.get("freq") in ("weekly", "monthly"):
+            per = "esta semana" if h["freq"] == "weekly" else "este mes"
+            info = f"hecho {per}" if done(d, h, today()) else f"{DIM}pendiente {per}{R}"
         else:
             info = "hecho" if done(d, h, today()) else f"{DIM}pendiente{R}"
-        print(f"  {mark}{R} {h['name']:<14} {info}")
+        print(f"  {mark}{R} {h['name'][:30]:<30} {info}")
     l = d["log"].get(today(), {})
     print(f"\n  {LAV}Pomodoros hoy:{R} {l.get('pomodoros', 0)}  ·  {l.get('focusMinutes', 0)} min de foco")
     if d["books"]:
@@ -108,11 +151,11 @@ def summary(d):
 def week(d):
     days = [today(n) for n in range(6, -1, -1)]
     head = "".join(f"{'DLMXJVS'[(date.fromisoformat(x).weekday() + 1) % 7]:>3}" for x in days)
-    print(f"\n{B}{PINK}  Últimos 7 días{R}\n  {'':<14}{head}")
+    print(f"\n{B}{PINK}  Últimos 7 días{R}\n  {'':<30}{head}")
     cats = list(dict.fromkeys(h.get("cat", "Otros") for h in d["habits"]))
     for h in [h for c in cats for h in d["habits"] if h.get("cat", "Otros") == c]:
         cells = "".join(f"  {OK + '●' if done(d, h, x) else DIM + '·'}{R}" for x in days)
-        print(f"  {h['name']:<14}{cells}")
+        print(f"  {h['name'][:30]:<30}{cells}")
     print()
 
 def ask(prompt, cast=str, default=None):
@@ -165,6 +208,8 @@ def main():
     elif cmd == "edit":
         if not os.path.exists(PATH): save(d)
         subprocess.call(["nvim", PATH])
+    elif cmd == "excel":
+        os.execvp("tracker-xlsx", ["tracker-xlsx"])
     elif cmd in ("sync", "backup", "restore"):
         os.execvp("tracker-backup", ["tracker-backup"] + (["--restore"] if cmd == "restore" else []))
     else:

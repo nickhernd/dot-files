@@ -102,7 +102,28 @@ def merge(a, b):
     return out
 
 
+def refresh_excel():
+    """Regenera el Excel si cambiaron los datos o cambió el día (fechas y '% de la semana')."""
+    xlsx = f"{HOME}/Documents/Tracker/habitos.xlsx"
+    try:
+        from datetime import date
+        fresh = (os.path.getmtime(xlsx) >= os.path.getmtime(DATA)
+                 and date.fromtimestamp(os.path.getmtime(xlsx)) == date.today())
+    except OSError:
+        fresh = False
+    if not fresh:
+        subprocess.run([f"{HOME}/.local/bin/tracker-xlsx", "--quiet"], check=False)
+
+
 def main():
+    try:
+        sync()
+    finally:
+        if os.path.exists(DATA) and "--restore" not in sys.argv:
+            refresh_excel()
+
+
+def sync():
     if not os.path.exists(KEY):
         os.makedirs(os.path.dirname(KEY), exist_ok=True)
         old = os.umask(0o077)

@@ -30,8 +30,15 @@ Borde izquierdo de la pantalla: centro de control, con **Enfoque** (pomodoro con
 
 ### Tracker de hábitos
 
-Rachas (sin fap, sin Monster), hidratación, lectura, deporte, sueño, estudio (pomodoros automáticos) y libros con
-marcapáginas. Se usa desde el panel izquierdo o con `tracker` en la terminal (`tracker week`, `tracker add-book`,
+Diarios: rachas (sin fap, sin Monster), sin redes, hidratación, sueño, deporte, natación, lectura, estudio
+(pomodoros automáticos), RAE, palabra del día, Wikipedia, conocimiento diario, escribir diario, Gmail/WhatsApp/
+Telegram, preparar comidas, agenda y cuidado personal. **Cada domingo**: preparar la semana, limpiar y actualizar
+portátil y sobremesa, revisar gastos. **Cada día 1**: organizar series/películas/libros/teatro, proyectos de
+GitHub, clubes de lectura, suscripciones. Más libros con marcapáginas.
+
+**Excel** (semanas de **sábado a viernes**): `~/Documents/Tracker/habitos.xlsx` y copia en
+`~/GoogleDrive/Tracker/`, regenerado solo en cada sincronización (`tracker excel` para forzarlo). Hojas: Semanas,
+Resumen (% con fórmulas), Periódicas, Registro, Libros y Leyenda. Se usa desde el panel izquierdo o con `tracker` en la terminal (`tracker week`, `tracker add-book`,
 `tracker start nofap AAAA-MM-DD`, `tracker edit` para añadir hábitos…).
 
 Datos en `~/.local/share/tracker/tracker.json`, **sincronizados entre ordenadores** a través de este repo
