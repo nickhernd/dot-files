@@ -1,0 +1,106 @@
+# Moon Pink para termshark — misma paleta que el tema de Omarchy (config/omarchy/themes/moon-pink/colors.toml)
+# Se aplica con: termshark → ':' → theme moon-pink   (install.sh ya lo deja puesto)
+
+unused = "#1a1625"
+
+[moonpink]
+  bg      = "#1a1625"
+  bg2     = "#2a1f38"
+  darker  = "#100d17"
+  sel     = "#3a2a4d"
+  muted   = "#5b4a6e"
+  fg      = "#e6d5f0"
+  dimfg   = "#8a7a9e"
+  pink    = "#ff9ed2"
+  lavender = "#c8b6ff"
+  red     = "#ff6b9d"
+  orange  = "#ffb38a"
+  yellow  = "#ffd3a5"
+  green   = "#a8e6cf"
+  cyan    = "#9ad8f0"
+
+[dark]
+  button = ["moonpink.fg","moonpink.bg2"]
+  button-focus = ["moonpink.bg","moonpink.pink"]
+  button-selected = ["moonpink.fg","moonpink.sel"]
+  cmdline = ["moonpink.fg","moonpink.bg2"]
+  cmdline-button = ["moonpink.bg","moonpink.lavender"]
+  cmdline-border = ["moonpink.lavender","moonpink.bg2"]
+  copy-mode = ["moonpink.bg","moonpink.yellow"]
+  copy-mode-alt = ["moonpink.yellow","moonpink.bg"]
+  copy-mode-label = ["moonpink.bg","moonpink.red"]
+  current-capture = ["moonpink.pink","moonpink.bg"]
+  dialog = ["moonpink.fg","moonpink.bg2"]
+  dialog-button = ["moonpink.bg","moonpink.pink"]
+  default = ["moonpink.fg","moonpink.bg"]
+  filter-empty = ["moonpink.fg","moonpink.sel"]
+  filter-intermediate = ["moonpink.bg","moonpink.orange"]
+  filter-invalid = ["moonpink.bg","moonpink.red"]
+  filter-menu = ["moonpink.fg","moonpink.bg2"]
+  filter-valid = ["moonpink.bg","moonpink.green"]
+  hex-byte-selected = ["moonpink.bg","moonpink.pink"]
+  hex-byte-unselected = ["moonpink.fg","moonpink.bg"]
+  hex-field-selected = ["moonpink.bg","moonpink.lavender"]
+  hex-field-unselected = ["moonpink.fg","moonpink.bg2"]
+  hex-interval-selected = ["moonpink.fg","moonpink.muted"]
+  hex-interval-unselected = ["moonpink.dimfg","moonpink.bg2"]
+  hex-layer-selected = ["moonpink.fg","moonpink.sel"]
+  hex-layer-unselected = ["moonpink.dimfg","moonpink.bg2"]
+  packet-list-cell-focus = ["moonpink.bg","moonpink.pink"]
+  packet-list-cell-selected = ["moonpink.fg","moonpink.muted"]
+  packet-list-row-focus = ["moonpink.bg","moonpink.lavender"]
+  packet-list-row-selected = ["moonpink.fg","moonpink.sel"]
+  packet-struct-focus = ["moonpink.bg","moonpink.pink"]
+  packet-struct-selected = ["moonpink.fg","moonpink.sel"]
+  progress-complete = ["moonpink.bg","moonpink.pink"]
+  progress-default = ["moonpink.fg","moonpink.bg2"]
+  progress-spinner = ["moonpink.yellow","moonpink.pink"]
+  spinner = ["moonpink.pink","moonpink.bg"]
+  stream-client = ["moonpink.bg","moonpink.red"]
+  stream-match = ["moonpink.bg","moonpink.yellow"]
+  stream-search = ["moonpink.bg","moonpink.fg"]
+  stream-server = ["moonpink.bg","moonpink.cyan"]
+  title = ["moonpink.pink","moonpink.bg"]
+
+[light]
+  button = ["moonpink.fg","moonpink.bg2"]
+  button-focus = ["moonpink.bg","moonpink.pink"]
+  button-selected = ["moonpink.fg","moonpink.sel"]
+  cmdline = ["moonpink.fg","moonpink.bg2"]
+  cmdline-button = ["moonpink.bg","moonpink.lavender"]
+  cmdline-border = ["moonpink.lavender","moonpink.bg2"]
+  copy-mode = ["moonpink.bg","moonpink.yellow"]
+  copy-mode-alt = ["moonpink.yellow","moonpink.bg"]
+  copy-mode-label = ["moonpink.bg","moonpink.red"]
+  current-capture = ["moonpink.pink","moonpink.bg"]
+  dialog = ["moonpink.fg","moonpink.bg2"]
+  dialog-button = ["moonpink.bg","moonpink.pink"]
+  default = ["moonpink.fg","moonpink.bg"]
+  filter-empty = ["moonpink.fg","moonpink.sel"]
+  filter-intermediate = ["moonpink.bg","moonpink.orange"]
+  filter-invalid = ["moonpink.bg","moonpink.red"]
+  filter-menu = ["moonpink.fg","moonpink.bg2"]
+  filter-valid = ["moonpink.bg","moonpink.green"]
+  hex-byte-selected = ["moonpink.bg","moonpink.pink"]
+  hex-byte-unselected = ["moonpink.fg","moonpink.bg"]
+  hex-field-selected = ["moonpink.bg","moonpink.lavender"]
+  hex-field-unselected = ["moonpink.fg","moonpink.bg2"]
+  hex-interval-selected = ["moonpink.fg","moonpink.muted"]
+  hex-interval-unselected = ["moonpink.dimfg","moonpink.bg2"]
+  hex-layer-selected = ["moonpink.fg","moonpink.sel"]
+  hex-layer-unselected = ["moonpink.dimfg","moonpink.bg2"]
+  packet-list-cell-focus = ["moonpink.bg","moonpink.pink"]
+  packet-list-cell-selected = ["moonpink.fg","moonpink.muted"]
+  packet-list-row-focus = ["moonpink.bg","moonpink.lavender"]
+  packet-list-row-selected = ["moonpink.fg","moonpink.sel"]
+  packet-struct-focus = ["moonpink.bg","moonpink.pink"]
+  packet-struct-selected = ["moonpink.fg","moonpink.sel"]
+  progress-complete = ["moonpink.bg","moonpink.pink"]
+  progress-default = ["moonpink.fg","moonpink.bg2"]
+  progress-spinner = ["moonpink.yellow","moonpink.pink"]
+  spinner = ["moonpink.pink","moonpink.bg"]
+  stream-client = ["moonpink.bg","moonpink.red"]
+  stream-match = ["moonpink.bg","moonpink.yellow"]
+  stream-search = ["moonpink.bg","moonpink.fg"]
+  stream-server = ["moonpink.bg","moonpink.cyan"]
+  title = ["moonpink.pink","moonpink.bg"]

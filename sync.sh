@@ -34,6 +34,9 @@ for d in extensions hooks branding themed plugins themes; do
   [[ -d $C/omarchy/$d ]] && "${RSYNC[@]}" --exclude 'backgrounds/' "$C/omarchy/$d/" "$R/omarchy/$d/"
 done
 
+# termshark: solo los temas (termshark.toml guarda archivos recientes)
+[[ -d $C/termshark/themes ]] && mkdir -p "$R/termshark/themes" && "${RSYNC[@]}" "$C/termshark/themes/" "$R/termshark/themes/"
+
 # Archivos sueltos
 cp "$C/starship.toml" "$R/"
 [[ -f $C/mimeapps.list ]] && cp "$C/mimeapps.list" "$R/"

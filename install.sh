@@ -49,6 +49,17 @@ for t in "$DOTFILES_DIR"/config/omarchy/themes/*/; do
     for f in "$t"*; do link "$f" "$CONFIG_DIR/omarchy/themes/$name/$(basename "$f")"; done
 done
 
+# termshark (Wireshark en terminal): tema Moon Pink. Solo se enlazan los temas;
+# termshark.toml lo reescribe el propio programa (archivos recientes), así que solo se fijan las claves del tema.
+link "$DOTFILES_DIR/config/termshark/themes" "$CONFIG_DIR/termshark/themes"
+TS="$CONFIG_DIR/termshark/termshark.toml"
+[[ -f $TS ]] || printf '[main]\n' > "$TS"
+for kv in 'dark-mode = true' 'colors = false' 'theme-256 = "moon-pink"' 'theme-truecolor = "moon-pink"'; do
+    key=${kv%% =*}
+    if grep -q "^ *$key *=" "$TS"; then sed -i "s|^ *$key *=.*|  $kv|" "$TS"; else sed -i "/^\[main\]/a\  $kv" "$TS"; fi
+done
+echo "  [tema] termshark -> moon-pink"
+
 # Dotfiles de $HOME (solo archivos, nunca carpetas enteras como ~/.local)
 for f in .bashrc .bash_profile .bash_logout .nanorc; do
     link "$DOTFILES_DIR/home/$f" "$HOME/$f"

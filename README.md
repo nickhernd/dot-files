@@ -16,6 +16,7 @@ Dotfiles personales para Arch Linux con [Omarchy 4](https://omarchy.org/) (Hyprl
 | `config/gh-dash/` | TUI de issues y PRs de GitHub |
 | `config/omarchy/themes/moon-pink/` | Tema Moon Pink (rosa `#ff9ed2`, lavanda `#c8b6ff`, fondo `#1a1625`) |
 | `config/yazi/` | yazi con plugins (git, previews con glow/hexyl/eza, ouch, mount, chmod…) y flavor Moon Pink |
+| `config/termshark/themes/` | Tema Moon Pink para termshark (Wireshark en terminal); `install.sh` lo deja activo |
 | `config/omarchy/shell.json` | Shell de Omarchy (barra oculta; notificaciones/OSD/fondo los da el rice) |
 | `config/rclone/` `config/systemd/user/` | Google Drive montado en `~/GoogleDrive` (`gdrive-mount.service`); `gdrive-sync` bidireccional como alternativa |
 | `wallpapers/` | Fondo actual (Malaz en Moon Pink, créditos en `wallpapers/CREDITOS.md`) |
