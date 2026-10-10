@@ -7,6 +7,10 @@ echo ":: Sistema"
 #  nvtop: uso de GPU · bluetui / impala: bluetooth y wifi
 instalar lazyjournal isd nvtop bluetui impala
 
+echo ":: Git"
+#  serie: grafo de commits y ramas del repo con imágenes en la terminal (va bien en kitty)
+instalar serie
+
 echo ":: Redes y seguridad"
 #  termshark: Wireshark en terminal · bandwhich: ancho de banda por proceso/conexión
 #  trippy (trip): traceroute + ping con gráficas · gping: ping con gráfica
@@ -38,6 +42,6 @@ echo ":: Productividad y seguridad"
 instalar television lnav sshs dysk
 
 echo ""
-echo "Listo ✔  Prueba: newsboat · lazyjournal · trip 1.1.1.1 · sudo bandwhich · ytermusic · kalker · tv"
+echo "Listo ✔  Prueba: serie (dentro de un repo) · newsboat · lazyjournal · trip 1.1.1.1 · sudo bandwhich · ytermusic · kalker · tv"
 
 resumen

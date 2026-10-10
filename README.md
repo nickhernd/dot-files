@@ -57,6 +57,7 @@ ordenadores. En uno nuevo: copia la clave y ejecuta `tracker sync`.
 | `SUPER+ALT+C / N / W / P` | Centro de control / red / wallpaper / apagado |
 | `SUPER+ALT+O` | Pomodoro iniciar/pausar |
 | `SUPER+SHIFT+I` | gh-dash (issues/PRs) |
+| `serie` | grafo de commits y ramas del repo actual (TUI, imágenes en kitty) |
 | `SUPER+SHIFT+D` | lazydocker |
 | `SUPER+SHIFT+J` | mathpad (IPython + SymPy) |
 | `SUPER+SHIFT+Q` | calculadora qalc |
