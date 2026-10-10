@@ -21,6 +21,7 @@ PINK, LAV, DIM, OK, BAD, B, R = "\033[38;2;255;158;210m", "\033[38;2;200;182;255
 DEFAULT = [
     {"id": "nofap", "name": "Sin fap", "icon": "self_improvement", "type": "streak", "cat": "Salud"},
     {"id": "nomonster", "name": "Sin Monster", "icon": "no_drinks", "type": "streak", "cat": "Salud"},
+    {"id": "noalcohol", "name": "Sin alcohol", "icon": "no_bar", "type": "streak", "cat": "Salud"},
     {"id": "nosocial", "name": "Sin redes", "icon": "phonelink_erase", "type": "check", "cat": "Salud"},
     {"id": "water", "name": "Hidratación", "icon": "water_drop", "type": "count", "goal": 8, "step": 1, "unit": "vasos", "cat": "Salud"},
     {"id": "sleep", "name": "Dormir 7 h", "icon": "bedtime", "type": "check", "cat": "Salud"},
@@ -35,6 +36,7 @@ DEFAULT = [
     {"id": "journal", "name": "Escribir diario", "icon": "edit_note", "type": "check", "cat": "Mente"},
     {"id": "gmail", "name": "Mirar Gmail", "icon": "mail", "type": "check", "cat": "Comunicación"},
     {"id": "whatsapp", "name": "Mirar WhatsApp", "icon": "chat", "type": "check", "cat": "Comunicación"},
+    {"id": "discord", "name": "Mirar Discord", "icon": "forum", "type": "check", "cat": "Comunicación"},
     {"id": "telegram", "name": "Mirar Telegram", "icon": "send", "type": "check", "cat": "Comunicación"},
     {"id": "meals", "name": "Preparar comidas", "icon": "skillet", "type": "check", "cat": "Organización"},
     {"id": "agenda", "name": "Agenda: escribir, mirar y organizar", "icon": "event_note", "type": "check", "cat": "Organización"},

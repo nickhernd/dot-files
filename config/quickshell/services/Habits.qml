@@ -17,6 +17,7 @@ Singleton {
     readonly property var defaultHabits: [
         { id: "nofap", name: "Sin fap", icon: "self_improvement", type: "streak", cat: "Salud" },
         { id: "nomonster", name: "Sin Monster", icon: "no_drinks", type: "streak", cat: "Salud" },
+        { id: "noalcohol", name: "Sin alcohol", icon: "no_bar", type: "streak", cat: "Salud" },
         { id: "nosocial", name: "Sin redes", icon: "phonelink_erase", type: "check", cat: "Salud" },
         { id: "water", name: "Hidratación", icon: "water_drop", type: "count", goal: 8, step: 1, unit: "vasos", cat: "Salud" },
         { id: "sleep", name: "Dormir 7 h", icon: "bedtime", type: "check", cat: "Salud" },
@@ -31,6 +32,7 @@ Singleton {
         { id: "journal", name: "Escribir diario", icon: "edit_note", type: "check", cat: "Mente" },
         { id: "gmail", name: "Mirar Gmail", icon: "mail", type: "check", cat: "Comunicación", open: "omarchy-launch-webapp https://mail.google.com" },
         { id: "whatsapp", name: "Mirar WhatsApp", icon: "chat", type: "check", cat: "Comunicación", open: "omarchy-launch-or-focus '^com.rtosta.zapzap$' 'uwsm-app -- zapzap'" },
+        { id: "discord", name: "Mirar Discord", icon: "forum", type: "check", cat: "Comunicación", open: "omarchy-launch-or-focus-webapp Discord https://discord.com/channels/@me" },
         { id: "telegram", name: "Mirar Telegram", icon: "send", type: "check", cat: "Comunicación", open: "omarchy-launch-or-focus '^(TelegramDesktop|org.telegram.desktop)$' 'uwsm-app -- Telegram'" },
         { id: "meals", name: "Preparar comidas", icon: "skillet", type: "check", cat: "Organización" },
         { id: "agenda", name: "Agenda: escribir, mirar y organizar", icon: "event_note", type: "check", cat: "Organización" },
