@@ -17,6 +17,7 @@ Scope{
         property bool animation: false
         sourceComponent:PanelWindow{
             id: panelWindow
+            screen: Screens.primary
             implicitHeight: 600
             anchors.bottom: true
             anchors.left: true

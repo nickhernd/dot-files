@@ -35,7 +35,7 @@ PanelWindow {
     readonly property real restY: Math.round(frac.y * Math.max(0, sh - bh))
     readonly property bool full: width >= sw - 1 && height >= sh - 1
 
-    screen: Quickshell.screens[0] ?? null
+    screen: Services.Screens.primary
     visible: Services.DesktopWidgets.enabled(widgetId)
     WlrLayershell.layer: WlrLayer.Bottom
     WlrLayershell.namespace: "quickshell:widget"

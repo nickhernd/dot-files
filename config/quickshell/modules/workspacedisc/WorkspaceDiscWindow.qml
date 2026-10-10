@@ -8,6 +8,7 @@ import qs.services
 // itself is interactive and everything else clicks through.
 PanelWindow {
     id: win
+    screen: Screens.primary
 
     readonly property string corner: WorkspaceDiscService.corner
 

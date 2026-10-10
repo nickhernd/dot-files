@@ -58,6 +58,7 @@ ShellRoot {
     Expose {}
     CavaWidget { id: cavaWidget }
     PanelWindow {
+        screen: Services.Screens.primary
         focusable: true
         WlrLayershell.layer: WlrLayer.Bottom
         exclusionMode: ExclusionMode.Ignore
@@ -83,6 +84,7 @@ ShellRoot {
     }
     PanelWindow {
         id: rootPanel
+        screen: Services.Screens.primary
         exclusionMode: ExclusionMode.Ignore
         implicitHeight: screen.height
         implicitWidth: screen.width
@@ -384,6 +386,7 @@ ShellRoot {
     // open. The layer changes in place (layer-shell set_layer), no remap.
     PanelWindow {
         id: barWindow
+        screen: Services.Screens.primary
 
         readonly property bool coveredByPanel: notesDrawer.opened
             || launcherWindow.isOpen

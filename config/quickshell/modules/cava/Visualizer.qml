@@ -5,9 +5,11 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Effects
 import qs.colors
+import qs.services as Services
 
 PanelWindow {
     id: musicVis
+    screen: Services.Screens.primary
 
     property bool anchorBottom: true
     property bool flipped: !anchorBottom

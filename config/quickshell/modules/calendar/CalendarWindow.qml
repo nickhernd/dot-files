@@ -6,6 +6,7 @@ import Quickshell.Io
 
 PanelWindow {
     id: calendarWindow
+    screen: Services.Screens.primary
 
     // Stay mapped while the close animation plays out, then unmap.
     visible: Services.CalendarState.open || wrapper.opacity > 0.001

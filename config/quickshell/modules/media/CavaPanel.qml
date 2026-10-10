@@ -8,6 +8,7 @@ import QtQuick.Layouts
 
 PanelWindow {
     id: cavaPanel
+    screen: Services.Screens.primary
     visible: false
 
     implicitWidth: 320

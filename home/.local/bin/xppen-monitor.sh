@@ -2,10 +2,15 @@
 # Aplica el área correcta de OTD y la reaplica al reconectar la tablet USB.
 # Se lanza desde Hyprland autostart.
 
+# Centro de la pantalla en el escritorio virtual: en el sobremesa (perfil de
+# install.sh) la tableta va al Samsung, que está a la derecha del AOC (x 1920-3840).
+cx=960
+[[ $(cat "$HOME/.config/dotfiles/perfil" 2>/dev/null) == sobremesa ]] && cx=2880
+
 apply_area() {
     sleep 2
     for tablet in "XP-Pen Deco L" "XP-Pen Deco LW"; do
-        otd setdisplayarea "$tablet" 1920 1080 960 540 2>/dev/null
+        otd setdisplayarea "$tablet" 1920 1080 $cx 540 2>/dev/null
         otd settabletarea  "$tablet" 254 142.875 127 76.2 0 2>/dev/null
     done
 }

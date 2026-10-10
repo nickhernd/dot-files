@@ -2,14 +2,12 @@
 hl.config({
   input = {
     kb_layout = "es",
-    kb_options = "compose:caps",
+    -- Bloq Mayús normal (Omarchy lo usa como tecla Compose: no se quedaba fijo y
+    -- salía un puntito). Compose pasa a la tecla Menú.
+    kb_options = "compose:menu",
     repeat_rate = 40,
     repeat_delay = 600,
     numlock_by_default = true,
-
-    tablet = {
-      output = "eDP-1",
-    },
 
     touchpad = {
       scroll_factor = 0.4,

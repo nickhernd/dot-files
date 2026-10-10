@@ -115,6 +115,7 @@ Scope {
     // ---- display (desktop, click-through) --------------------------------
     PanelWindow {
         id: displayWin
+        screen: Services.Screens.primary
         visible: Services.CavaWidget.enabled && !root.editMode
         color: "transparent"
         WlrLayershell.layer: WlrLayer.Bottom
@@ -281,6 +282,7 @@ Scope {
     // ---- edit (above windows, interactive) -------------------------------
     PanelWindow {
         id: editWin
+        screen: Services.Screens.primary
         visible: root.editMode
         color: "transparent"
         WlrLayershell.layer: WlrLayer.Top

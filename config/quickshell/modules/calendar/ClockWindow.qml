@@ -2,9 +2,11 @@ import QtQuick
 import Quickshell
 import qs.components
 import Quickshell.Io
+import qs.services as Services
 
 PanelWindow {
     id: clockWindow
+    screen: Services.Screens.primary
 
     visible: false
     color: "transparent"

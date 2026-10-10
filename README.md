@@ -6,7 +6,7 @@ Dotfiles personales para Arch Linux con [Omarchy 4](https://omarchy.org/) (Hyprl
 
 | Directorio | Descripción |
 |---|---|
-| `config/hypr/` | Hyprland en Lua: monitores (escala 1), teclado ES, look del rice, atajos, modo ratón |
+| `config/hypr/` | Hyprland en Lua: monitores (escala 1), teclado ES, look del rice, atajos, modo ratón; lo propio de cada máquina en `perfiles/` |
 | `config/quickshell/` | Rice de Quickshell: barra, centro de control, wallpapers, lockscreen y widgets de escritorio |
 | `config/matugen/` | Plantillas de colores generados desde el wallpaper (Quickshell, kitty, Hyprland, rofi, cava) |
 | `config/rofi/` `config/cava/` | Menús y visualizador de audio del rice |
@@ -18,13 +18,13 @@ Dotfiles personales para Arch Linux con [Omarchy 4](https://omarchy.org/) (Hyprl
 | `config/yazi/` | yazi con plugins (git, previews con glow/hexyl/eza, ouch, mount, chmod…) y flavor Moon Pink |
 | `config/termshark/themes/` | Tema Moon Pink para termshark (Wireshark en terminal); `install.sh` lo deja activo |
 | `config/omarchy/shell.json` | Shell de Omarchy (barra oculta; notificaciones/OSD/fondo los da el rice) |
-| `config/rclone/` `config/systemd/user/` | Google Drive montado en `~/GoogleDrive` (`gdrive-mount.service`); `gdrive-sync` bidireccional como alternativa |
-| `wallpapers/` | Fondos Malaz en Moon Pink: el actual (*The Longest Sword*) y uno preparado para otro ordenador (*Ascendiente*); créditos en `wallpapers/CREDITOS.md` |
+| `config/rclone/` `config/systemd/user/` | Google Drive montado en `~/GoogleDrive` (`gdrive-setup` + `gdrive-mount.service`); `gdrive-sync` bidireccional como alternativa |
+| `wallpapers/` | Fondos Malaz en Moon Pink: *Ascendiente* (sobremesa) y *The Longest Sword* (portátil); créditos en `wallpapers/CREDITOS.md` |
 | `home/` | `.bashrc`, `.bash_profile`, scripts de `~/.local/bin` |
 
 ### Widgets de escritorio (tema *Still*, en español)
 
-Reloj · tiempo (wttr.in) · seguridad (cortafuegos, puertos, CVEs) · fórmula del día (Typst) · noticias de El País ·
+Reloj · tiempo (wttr.in) · seguridad (cortafuegos, puertos, CVEs) · fórmula del día (Typst) · ciencia de El País y palabra del día (Wikcionario) ·
 tiempo programando · pomodoro · música · sistema · batería · red · desarrollo (Docker, git, GitHub).
 Borde izquierdo de la pantalla: centro de control, con **Enfoque** (pomodoro con historial semanal) y **Hábitos**.
 
@@ -63,6 +63,23 @@ ordenadores. En uno nuevo: copia la clave y ejecuta `tracker sync`.
 | `SUPER+SHIFT+U` / `K` | yazi / gdu |
 | `SUPER+ALT+M` | modo ratón con teclado |
 
+## Perfiles: portátil y sobremesa
+
+Lo que cambia entre ordenadores se elige con un perfil, guardado en `~/.config/dotfiles/perfil` (fuera del
+repo). `install.sh` lo pregunta la primera vez; para cambiarlo: `./install.sh --perfil sobremesa|portatil`.
+
+| | Portátil | Sobremesa |
+|---|---|---|
+| Monitores (`config/hypr/perfiles/`) | pantalla interna `eDP-1` | AOC (`DP-4`) a la izquierda, Samsung (`HDMI-A-1`) a la derecha |
+| Barra, reloj, widgets, tracker y paneles | en la pantalla interna | en el AOC; el Samsung solo con el fondo |
+| Fondo inicial | *The Longest Sword* | *Ascendiente* |
+| Tableta | `eDP-1` | Samsung |
+
+La pantalla del rice se define en `config/quickshell/services/Screens.qml`. Si cambias de monitor, actualiza
+ese archivo y `config/hypr/perfiles/sobremesa.lua`.
+
+**Teclado**: Bloq Mayús funciona normal (Omarchy lo usa como tecla Compose); Compose está en la tecla Menú.
+
 ## Instalación en un ordenador nuevo (automática)
 
 Requisito: [Omarchy](https://omarchy.org/) instalado.
@@ -75,7 +92,7 @@ git clone https://github.com/nickhernd/dot-files.git ~/dot-files
 
 `bootstrap.sh` hace, en orden:
 
-1. `install.sh` — enlaces de la config (backup `.bak` de lo existente; nunca reemplaza `~/.local` entero)
+1. `install.sh` — perfil de la máquina y enlaces de la config (backup `.bak` de lo existente; nunca reemplaza `~/.local` entero)
 2. `instalar-rice.sh` — rice de Quickshell, TUIs, LaTeX/Typst, Python científico, Docker, rclone
 3. `instalar-extras.sh` — TeXstudio, sioyek, Zotero, Anki, Lean 4, atuin, direnv, just…
 4. `instalar-seguridad.sh` — bajo nivel (nasm, pwndbg, qemu, cross-compiladores), ingeniería inversa (ghidra, rizin/cutter, imhex), redes (wireshark, nmap), protección (arch-audit, lynis, opensnitch) y laboratorio de VMs
@@ -84,7 +101,11 @@ git clone https://github.com/nickhernd/dot-files.git ~/dot-files
 El fondo actual está en `wallpapers/` (*The Longest Sword* de Ina Wong, [artofinca.com](https://artofinca.com),
 recoloreado en Moon Pink). El resto se descargan de wallhaven.cc.
 
-Pasos manuales al final: `~/.config/secrets.env`, `gh auth login`, `rclone config create gdrive drive` y `systemctl --user enable --now gdrive-mount.service`.
+Los instaladores de paquetes no se paran si uno falla: siguen y al final dicen cuáles no se instalaron. Se pueden
+repetir cuando quieras (lo ya instalado se salta); para todos de una vez: `./instalar-todo.sh`.
+
+Pasos manuales al final: `~/.config/secrets.env`, `gh auth login` y `gdrive-setup` (autoriza Google Drive en el
+navegador y lo deja montado en `~/GoogleDrive` en cada arranque; `gdrive-setup --reauth` si caduca el permiso).
 
 ## Actualizar el repo
 

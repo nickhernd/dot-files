@@ -5,6 +5,7 @@
 #   gdrive-sync --status    últimas líneas del log             (alias gsync-log)
 #   gdrive-sync --resync    primera vez / tras un conflicto gordo
 #   gdrive-sync --setup     configura la cuenta y hace la primera sincronización
+# Alternativa a montar Drive (gdrive-setup / gdrive-mount.service, lo que se usa normalmente).
 set -euo pipefail
 
 REMOTE="${GDRIVE_REMOTE:-gdrive:}"
@@ -21,6 +22,9 @@ case "${1:-}" in
     rclone config create gdrive drive scope=drive
     exec "$0" --resync ;;
 esac
+
+# Si Drive está montado (gdrive-mount, lo normal) no hay nada que sincronizar
+mountpoint -q "$LOCAL" && { echo "$LOCAL es el montaje de Drive (gdrive-mount): no hace falta bisync."; exit 0; }
 
 rclone listremotes | grep -qx "${REMOTE%%:*}:" || { echo "Falta el remoto. Ejecuta: gdrive-sync --setup"; exit 1; }
 

@@ -13,6 +13,7 @@ import qs.components
 
 PanelWindow {
     id: root
+    screen: Svc.Screens.primary
 
     property bool liveCapture: false
     property bool moveCursorToActiveWindow: false

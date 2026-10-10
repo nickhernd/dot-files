@@ -42,7 +42,7 @@ Singleton {
         battery: { "": "Batería", hud: "Power", terminal: "~ $ upower", cosmos: "Power cells", zen: "batería", xianxia: "電 · Power" },
         network: { "": "Red", hud: "Network", terminal: "~ $ ip a", cosmos: "Comms", zen: "red", xianxia: "網 · Net" },
         security: { "": "Seguridad", hud: "Defense", terminal: "~ $ sec-status", cosmos: "Shields", zen: "seguridad", xianxia: "盾 · Shield" },
-        news: { "": "Noticias", hud: "Intel", terminal: "~ $ curl hn", cosmos: "Transmissions", zen: "noticias · el país", xianxia: "報 · News" },
+        news: { "": "Ciencia", hud: "Science", terminal: "~ $ curl ciencia", cosmos: "Transmissions", zen: "ciencia · palabra del día", xianxia: "學 · Science" },
         notifications: { "": "Notificaciones", hud: "Alerts", terminal: "~ $ journalctl -f", cosmos: "Incoming", zen: "notificaciones", xianxia: "知 · Messages" },
         processes: { "": "Procesos", hud: "Processes", terminal: "~ $ ps aux", cosmos: "Crew", zen: "procesos", xianxia: "程 · Processes" },
         maintenance: { "": "Mantenimiento", hud: "Maintenance", terminal: "~ $ du -sh", cosmos: "Maintenance", zen: "mantenimiento", xianxia: "掃 · Cleaning" },

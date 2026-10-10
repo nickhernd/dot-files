@@ -6,6 +6,13 @@
 hl.env("GDK_SCALE", "1")
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })
 
--- Monitores de sobremesa (de dot-files)
-hl.monitor({ output = "DP-4", mode = "1920x1080@60", position = "0x0", scale = 1 })
-hl.monitor({ output = "HDMI-A-1", mode = "1920x1080@75", position = "auto-right", scale = 1 })
+-- Lo que cambia entre ordenadores (monitores, tableta...) va en hypr/perfiles/<perfil>.lua.
+-- El perfil de esta máquina está en ~/.config/dotfiles/perfil (lo pregunta install.sh;
+-- para cambiarlo: ~/dot-files/install.sh --perfil sobremesa|portatil).
+local perfiles = { portatil = true, sobremesa = true }
+local f = io.open(os.getenv("HOME") .. "/.config/dotfiles/perfil")
+local perfil = f and f:read("l") or ""
+if f then f:close() end
+perfil = perfil:match("^%s*(.-)%s*$")
+if not perfiles[perfil] then perfil = "portatil" end
+require("hypr.perfiles." .. perfil)

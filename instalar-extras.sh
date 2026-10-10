@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Extras: quita Obsidian, instala TeXstudio y herramientas para ingeniería/matemáticas.
-set -e
+source "$(dirname "${BASH_SOURCE[0]}")/lib-paquetes.sh"
 
 echo ":: Quitando Obsidian"
 if pacman -Q obsidian >/dev/null 2>&1; then
@@ -10,25 +10,27 @@ else
 fi
 
 echo ":: TeXstudio (+ LaTeX si aún no está)"
-yay -S --needed texstudio texlive-basic texlive-latexextra texlive-mathscience texlive-langspanish texlive-fontsrecommended
+instalar texstudio texlive-basic texlive-latexextra texlive-mathscience texlive-langspanish texlive-fontsrecommended
 
 echo ":: Terminal y flujo de trabajo"
 #  atuin: historial de comandos buscable (Ctrl+R)   direnv: variables por proyecto
 #  just: tareas por proyecto (justfile)              watchexec: re-ejecutar al guardar
-yay -S --needed atuin bash-preexec direnv just watchexec tectonic tree-sitter-cli
+instalar atuin bash-preexec direnv just watchexec tectonic tree-sitter-cli
 
 echo ":: Mensajería"
 #  zapzap: WhatsApp con icono en la bandeja (como Telegram)
-yay -S --needed zapzap
+instalar zapzap
 
 echo ":: Estudio e investigación"
 #  sioyek: visor de PDF para papers/libros de mates   zotero: gestor de bibliografía
 #  anki: tarjetas de repaso                           localsend: pasar archivos al móvil
-yay -S --needed sioyek-appimage zotero-bin anki localsend-bin
+instalar sioyek-appimage zotero-bin anki localsend-bin
 
 echo ":: Lean 4 (demostrador de teoremas, con soporte en Neovim)"
-yay -S --needed elan-lean
+instalar elan-lean
 elan default stable || true
 
 echo ""
 echo "Listo ✔  Abre una terminal nueva para activar atuin (Ctrl+R) y direnv."
+
+resumen

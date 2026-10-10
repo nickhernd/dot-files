@@ -5,9 +5,11 @@ import Quickshell
 import Quickshell.Wayland
 import qs.colors
 import qs.components
+import qs.services as Services
 
 PanelWindow {
     id: root
+    screen: Services.Screens.primary
 
     property var menuHandle: null
     property real menuX: 0

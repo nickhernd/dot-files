@@ -1,23 +1,52 @@
 {
-  "on": {
-    "clock": true,
-    "music": true,
-    "sysmon": true,
-    "weather": true,
-    "dev": true,
-    "todo": false,
-    "formula": true,
-    "deadlines": false,
-    "coding": true,
-    "pomodoro": true,
-    "battery": true,
-    "network": true,
-    "quote": false,
-    "security": true,
-    "news": true,
-    "notifications": true,
-    "processes": true,
-    "maintenance": true
-  },
-  "positions": {}
+    "on": {
+        "battery": true,
+        "clock": true,
+        "coding": true,
+        "deadlines": false,
+        "dev": true,
+        "formula": true,
+        "maintenance": true,
+        "music": true,
+        "network": true,
+        "news": true,
+        "notifications": true,
+        "pomodoro": true,
+        "processes": true,
+        "quote": false,
+        "security": true,
+        "sysmon": true,
+        "todo": false,
+        "weather": true
+    },
+    "positions": {
+        "coding": {
+            "x": 0.28550983297413796,
+            "y": 0.05126389289838337
+        },
+        "maintenance": {
+            "x": 0.2224663628472222,
+            "y": 0.6954242401668653
+        },
+        "network": {
+            "x": 0.9786082915145985,
+            "y": 0.6650999566974596
+        },
+        "news": {
+            "x": 0.7392025902157738,
+            "y": 1
+        },
+        "notifications": {
+            "x": 0.806853772271715,
+            "y": 0.037319183349609375
+        },
+        "pomodoro": {
+            "x": 0.9621747525494901,
+            "y": 0.4383565611758475
+        },
+        "processes": {
+            "x": 0.22624191130050506,
+            "y": 0.3561175073099415
+        }
+    }
 }

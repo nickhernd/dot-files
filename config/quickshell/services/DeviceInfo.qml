@@ -140,7 +140,7 @@ Singleton {
         secProc.running = true;
     }
 
-    // ── Noticias: portada de El País, cada 15 min ──
+    // ── Noticias: Ciencia de El País, cada 15 min ──
     property var news: []
 
     Timer {
@@ -153,13 +153,39 @@ Singleton {
 
     Process {
         id: newsProc
-        command: ["sh", "-c", "$HOME/.local/bin/news-top 6"]
+        command: ["sh", "-c", "$HOME/.local/bin/news-top 5"]
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
                     const n = JSON.parse(text);
                     if (n.length)
                         root.news = n;
+                } catch (e) {}
+            }
+        }
+    }
+
+    // ── Palabra del día (~/.local/bin/palabra-del-dia, Wikcionario): {word, pos, def, url} ──
+    // Cambia una vez al día; se mira cada hora para pillar el cambio de fecha.
+    property var word: ({})
+
+    Timer {
+        interval: 60 * 60 * 1000
+        repeat: true
+        running: true
+        triggeredOnStart: true
+        onTriggered: wordProc.running = true
+    }
+
+    Process {
+        id: wordProc
+        command: ["sh", "-c", "$HOME/.local/bin/palabra-del-dia"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    const w = JSON.parse(text);
+                    if (w.word)
+                        root.word = w;
                 } catch (e) {}
             }
         }

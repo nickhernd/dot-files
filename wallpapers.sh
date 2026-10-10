@@ -39,6 +39,9 @@ for pair in mlg7qm.png:1-topografia.png 7j9wle.png:2-curvas.png 6lykzx.png:3-gal
   s="$W/wallhaven-${pair%%:*}"; [[ -s $s ]] && cp -n "$s" "$T/${pair##*:}"
 done
 
-# Fondo inicial del rice
-[[ -e $HOME/.cache/current_wallpaper ]] || { mkdir -p "$HOME/.cache"; ln -sfn "$out" "$HOME/.cache/current_wallpaper"; }
+# Fondo inicial del rice según el perfil (install.sh): Ascendiente en el sobremesa,
+# The Longest Sword en el portátil
+perfil=$(cat "$HOME/.config/dotfiles/perfil" 2>/dev/null || true)
+inicial=$out; [[ $perfil == sobremesa ]] && inicial="$W/malaz-ascendiente-moonpink.jpg"
+[[ -e $HOME/.cache/current_wallpaper || ! -s $inicial ]] || { mkdir -p "$HOME/.cache"; ln -sfn "$inicial" "$HOME/.cache/current_wallpaper"; }
 echo "==> Fondos listos en $W"

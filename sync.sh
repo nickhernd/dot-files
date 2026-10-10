@@ -11,6 +11,18 @@ R="$DOTFILES_DIR/config"
 
 RSYNC=(rsync -a --delete --exclude '*.bak*' --exclude '*.log' --exclude '__pycache__/')
 
+# copiar [-P] origen... destino/ — copia lo que exista y salta lo que ya es el mismo
+# archivo (lo enlazado por install.sh apunta al repo y cp fallaría con "same file").
+copiar() {
+  local opt=(); [[ $1 == -P ]] && { opt=(-P); shift; }
+  local dest=${*: -1} f
+  for f in "${@:1:$#-1}"; do
+    [[ -e $f || -L $f ]] || continue
+    [[ $f -ef $dest/$(basename "$f") ]] && continue
+    cp "${opt[@]}" "$f" "$dest/"
+  done
+}
+
 # Carpetas de ~/.config
 DIRS=(
   hypr quickshell matugen rofi cava scripts
@@ -29,40 +41,35 @@ done
 
 # Omarchy: solo lo que es configuración del usuario (no el tema actual)
 mkdir -p "$R/omarchy"
-cp "$C/omarchy/shell.json" "$R/omarchy/"
+copiar "$C/omarchy/shell.json" "$R/omarchy"
 for d in extensions hooks branding themed plugins themes; do
-  [[ -d $C/omarchy/$d ]] && "${RSYNC[@]}" --exclude 'backgrounds/' "$C/omarchy/$d/" "$R/omarchy/$d/"
+  # --copy-links: los archivos del tema son enlaces al repo; sin él se copiaría el
+  # enlace encima del archivo de verdad y quedaría apuntándose a sí mismo
+  [[ -d $C/omarchy/$d ]] && "${RSYNC[@]}" --copy-links --exclude 'backgrounds/' "$C/omarchy/$d/" "$R/omarchy/$d/"
 done
 
 # termshark: solo los temas (termshark.toml guarda archivos recientes)
 [[ -d $C/termshark/themes ]] && mkdir -p "$R/termshark/themes" && "${RSYNC[@]}" "$C/termshark/themes/" "$R/termshark/themes/"
 
 # Archivos sueltos
-cp "$C/starship.toml" "$R/"
-[[ -f $C/mimeapps.list ]] && cp "$C/mimeapps.list" "$R/"
+copiar "$C/starship.toml" "$C/mimeapps.list" "$C/okularrc" "$C/okularpartrc" "$C/xdg-terminals.list" "$R"
 mkdir -p "$R/rclone" "$R/systemd/user"
-[[ -f $C/rclone/gdrive-filters.txt ]] && cp "$C/rclone/gdrive-filters.txt" "$R/rclone/"
-cp "$C"/systemd/user/{gdrive-sync.service,gdrive-sync.timer,gdrive-mount.service,tracker-backup.service,tracker-backup.timer,voxtype.service} "$R/systemd/user/" 2>/dev/null || true
-for f in okularrc okularpartrc xdg-terminals.list; do [[ -f $C/$f ]] && cp "$C/$f" "$R/"; done
+copiar "$C/rclone/gdrive-filters.txt" "$R/rclone"
+copiar "$C"/systemd/user/{gdrive-sync.service,gdrive-sync.timer,gdrive-mount.service,tracker-backup.service,tracker-backup.timer,voxtype.service} "$R/systemd/user"
 
 # Fondo de pantalla actual (el que está puesto) -> wallpapers/
 mkdir -p "$DOTFILES_DIR/wallpapers"
 cur=$(readlink -f "$HOME/.cache/current_wallpaper" 2>/dev/null)
-[[ -f $cur ]] && cp -u "$cur" "$DOTFILES_DIR/wallpapers/"
+[[ -f $cur ]] && copiar "$cur" "$DOTFILES_DIR/wallpapers"
 
 # Home
 H="$DOTFILES_DIR/home"
-cp ~/.bashrc ~/.bash_profile "$H/"
-[[ -f ~/.nanorc ]] && cp ~/.nanorc "$H/"
+copiar ~/.bashrc ~/.bash_profile ~/.nanorc "$H"
 mkdir -p "$H/.local/bin"
-for s in setwall mathpad gdrive-sync dev-status battery-status net-info formula-of-day sec-status news-top hn-top maint-status maint-clean tracker tracker-backup tracker-xlsx \
+for s in mathpad gdrive-sync gdrive-setup dev-status battery-status net-info formula-of-day sec-status news-top palabra-del-dia hn-top maint-status maint-clean tracker tracker-backup tracker-xlsx \
          fzf-files fzf-grep git-pull-all git-push-all git-scan rg-pink tabletscreen xppen-monitor.sh; do
-  f=~/.local/bin/$s
-  [[ -e $f ]] && cp -P "$f" "$H/.local/bin/"
+  copiar -P ~/.local/bin/$s "$H/.local/bin"
 done
-
-# Script de dependencias
-for s in instalar-rice.sh instalar-extras.sh instalar-seguridad.sh instalar-tuis.sh instalar-todo.sh; do [[ -f ~/$s ]] && cp ~/$s "$DOTFILES_DIR/"; done
 
 # Comprobación de seguridad: que no se cuele ningún secreto
 if grep -rIlE 'AIza[0-9A-Za-z_-]{30,}|ghp_[0-9A-Za-z]{30,}|gho_[0-9A-Za-z]{30,}|sk-[0-9A-Za-z]{30,}|"refresh_token"' \

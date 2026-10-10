@@ -1,6 +1,10 @@
 #!/bin/bash
 # install.sh — Enlaza (symlinks) la configuración del repo en el sistema.
 # Hace backup (.bak) de lo que ya exista. Lo llama bootstrap.sh; también se puede usar solo.
+#
+#   ./install.sh                     pregunta el perfil de la máquina la primera vez
+#   ./install.sh --perfil sobremesa  fija el perfil: sobremesa | portatil
+#   ./install.sh --auto              sin preguntar (portátil si hay batería, si no sobremesa)
 
 set -e
 
@@ -8,6 +12,41 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$HOME/.config"
 
 echo "==> Enlazando dotfiles desde: $DOTFILES_DIR"
+
+# --- Perfil de la máquina ------------------------------------------------------
+# Lo que cambia entre el portátil y el sobremesa (monitores, pantalla principal del
+# rice, fondo inicial, tableta) se elige con ~/.config/dotfiles/perfil. Lo leen
+# hypr/monitors.lua, quickshell/services/Screens.qml, wallpapers.sh y xppen-monitor.sh.
+PERFIL_FILE="$CONFIG_DIR/dotfiles/perfil"
+perfil=""; auto=0
+while (($#)); do
+    case $1 in
+        --perfil) perfil=${2:-}; shift ;;
+        --perfil=*) perfil=${1#*=} ;;
+        --auto) auto=1 ;;
+    esac
+    shift
+done
+[[ -z $perfil && -s $PERFIL_FILE ]] && perfil=$(<"$PERFIL_FILE")
+if [[ -z $perfil ]]; then
+    sugerido=sobremesa; compgen -G "/sys/class/power_supply/BAT*" >/dev/null && sugerido=portatil
+    if ((auto)) || [[ ! -t 0 ]]; then
+        perfil=$sugerido
+    else
+        echo "  ¿Qué ordenador es este?"
+        echo "    1) sobremesa  (dos monitores: el principal a la derecha, fondo Ascendiente)"
+        echo "    2) portatil   (pantalla interna, fondo The Longest Sword)"
+        read -rp "  Elige [1/2] (Enter = $sugerido): " r
+        case $r in 1|sobremesa) perfil=sobremesa ;; 2|portatil) perfil=portatil ;; *) perfil=$sugerido ;; esac
+    fi
+fi
+case $perfil in
+    sobremesa|portatil) ;;
+    *) echo "Perfil desconocido: $perfil (usa sobremesa o portatil)" >&2; exit 1 ;;
+esac
+mkdir -p "$(dirname "$PERFIL_FILE")"
+echo "$perfil" > "$PERFIL_FILE"
+echo "  [perfil] $perfil"
 
 backup() {
     local target="$1"

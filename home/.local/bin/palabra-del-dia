@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""Palabra del día para el widget de ciencia, en JSON: {word, pos, def, url}.
+
+La web de la RAE está detrás de Cloudflare y no se puede leer automáticamente, así que
+la palabra sale del Wikcionario: cada día una de sus "términos cultos" y "términos
+literarios" en español (la misma para todo el día), con su primera acepción.
+Se guarda en ~/.cache/palabra-del-dia/ para no repetir la consulta.
+"""
+import datetime, hashlib, html, json, re, time, urllib.parse, urllib.request
+from pathlib import Path
+
+API = "https://es.wiktionary.org/w/api.php"
+CATS = ["Categoría:ES:Términos cultos", "Categoría:ES:Términos literarios"]
+CACHE = Path.home() / ".cache" / "palabra-del-dia"
+UA = {"User-Agent": "dotfiles-widget/1.0 (palabra-del-dia)"}
+
+
+def api(**params):
+    params.update(format="json", formatversion="2")
+    req = urllib.request.Request(API + "?" + urllib.parse.urlencode(params), headers=UA)
+    return json.load(urllib.request.urlopen(req, timeout=10))
+
+
+def words():
+    f = CACHE / "lista.json"
+    if f.exists() and f.stat().st_mtime > datetime.datetime.now().timestamp() - 30 * 86400:
+        return json.loads(f.read_text())
+    out = set()
+    for cat in CATS:
+        cont = {}
+        while True:
+            r = api(action="query", list="categorymembers", cmtitle=cat, cmnamespace=0, cmlimit=500, **cont)
+            out.update(t for t in (m["title"] for m in r["query"]["categorymembers"])
+                       if " " not in t and not re.search(r"ísim[oa]s?$", t))
+            if "continue" not in r:
+                break
+            cont = {"cmcontinue": r["continue"]["cmcontinue"]}
+    lst = sorted(out)
+    f.write_text(json.dumps(lst, ensure_ascii=False))
+    return lst
+
+
+def text(fragment):
+    t = re.sub(r"<(sup|style)\b.*?</\1>", "", fragment, flags=re.S)
+    t = re.sub(r"<[^>]+>", "", t)
+    return re.sub(r"\s+", " ", html.unescape(t)).strip()
+
+
+def define(word):
+    page = api(action="parse", page=word, prop="text", redirects=1)["parse"]["text"]
+    # Solo la sección de español (hasta la siguiente lengua)
+    m = re.search(r'id="Español".*?(?=<h2|\Z)', page, re.S)
+    sec = m.group(0) if m else page
+    # Categoría gramatical: el primer <h3> que no sea etimología, pronunciación...
+    heads = [text(h).lower() for h in re.findall(r"<h3[^>]*>(.*?)</h3>", sec, re.S)]
+    pos = next((h for h in heads if not h.startswith(("etimología", "pronunciación", "información"))), "")
+    d = re.search(r"<dt>\s*1\s*</dt>\s*<dd>(.*?)</dd>", sec, re.S)
+    d = text(d.group(1)) if d else ""
+    # Formas de otra palabra (superlativos, plurales, conjugaciones...) no valen
+    if re.match(r"(superlativo|forma|plural|femenino|participio|gerundio|primera|segunda|tercera)\b", d, re.I):
+        d = ""
+    return pos, d
+
+
+def main():
+    CACHE.mkdir(parents=True, exist_ok=True)
+    today = datetime.date.today().isoformat()
+    f = CACHE / f"{today}.json"
+    if f.exists():
+        print(f.read_text()); return
+    try:
+        lst = words()
+        for k in range(8):                       # salta entradas sin definición legible
+            if k:
+                time.sleep(1)                    # sin prisas: Wikimedia limita las peticiones
+            word = lst[int(hashlib.sha1(f"{today}/{k}".encode()).hexdigest(), 16) % len(lst)]
+            pos, d = define(word)
+            if d:
+                break
+        out = json.dumps({"word": word, "pos": pos, "def": d,
+                          "url": "https://es.wiktionary.org/wiki/" + urllib.parse.quote(word)}, ensure_ascii=False)
+    except Exception:
+        print("{}"); return
+    for old in CACHE.glob("????-??-??.json"):
+        old.unlink()
+    f.write_text(out)
+    print(out)
+
+
+main()

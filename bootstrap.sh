@@ -42,7 +42,7 @@ sudo pacman -S --needed --noconfirm rsync jq imagemagick curl git
 
 # --- 1. Enlaces --------------------------------------------------------------
 info "1/7 Enlazando configuración"
-./install.sh
+if ((ALL)); then ./install.sh --auto; else ./install.sh; fi
 
 # --- 2. Paquetes -------------------------------------------------------------
 info "2/7 Paquetes"
@@ -77,9 +77,6 @@ command -v nvim >/dev/null && timeout 900 nvim --headless "+Lazy! sync" +qa >/de
 info "7/7 Servicios"
 systemctl --user daemon-reload
 mkdir -p "$HOME/.local/state/quickshell"
-# Fondo inicial: el guardado en el repo
-first=$(ls "$DOTFILES_DIR"/wallpapers/*.{jpg,png} 2>/dev/null | head -1)
-[[ -n $first && ! -e $HOME/.cache/current_wallpaper ]] && ln -sfn "$HOME/Pictures/wallpapers/$(basename "$first")" "$HOME/.cache/current_wallpaper"
 # Tracker de hábitos: restaurar la copia cifrada si está la clave
 mkdir -p "$HOME/.local/share/tracker"
 if [[ -f $HOME/.config/tracker/backup.key ]]; then
@@ -89,7 +86,7 @@ systemctl --user enable --now tracker-backup.timer 2>/dev/null || true
 [[ -f $HOME/todo.md ]] || printf '# Tareas\n\n- [ ] Primera tarea\n' > "$HOME/todo.md"
 if pgrep -x Hyprland >/dev/null; then
   hyprctl reload >/dev/null 2>&1 || true
-  pkill -x qs || true; (uwsm-app -- qs >/dev/null 2>&1 &)
+  pkill -f "^(/usr/bin/)?(qs|quickshell)$" || true; (uwsm-app -- qs >/dev/null 2>&1 &)
 fi
 
 cat <<'MSG'
@@ -97,8 +94,7 @@ cat <<'MSG'
 ==> ¡Listo! Pasos manuales:
   1. Rellena ~/.config/secrets.env con tus API keys.
   2. gh auth login  &&  gh extension install dlvhdr/gh-dash
-  3. Google Drive: rclone config create gdrive drive scope=drive
-     systemctl --user enable --now gdrive-mount.service   (monta Drive en ~/GoogleDrive)
+  3. Google Drive: gdrive-setup   (autoriza en el navegador y monta Drive en ~/GoogleDrive)
   4. Cierra sesión y vuelve a entrar (grupos docker, wireshark y libvirt).
   5. Tracker: copia la MISMA clave a ~/.config/tracker/backup.key y ejecuta: tracker sync
   6. Abre nvim una vez para que Mason termine de instalar los servidores de lenguaje.

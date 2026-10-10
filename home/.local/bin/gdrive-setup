@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# gdrive-setup — Deja Google Drive listo en este ordenador: crea el remoto "gdrive"
+# de rclone (autorizas en el navegador) y monta Drive en ~/GoogleDrive con
+# gdrive-mount.service, que arranca solo al iniciar sesión.
+#   gdrive-setup           configura (si ya está el remoto, solo monta)
+#   gdrive-setup --reauth  vuelve a autorizar (token caducado o revocado)
+set -euo pipefail
+
+REMOTE=gdrive
+MNT="$HOME/GoogleDrive"
+
+command -v rclone >/dev/null || { echo "Falta rclone: yay -S rclone fuse3"; exit 1; }
+command -v fusermount3 >/dev/null || { echo "Falta fuse3: yay -S fuse3"; exit 1; }
+
+if [[ ${1:-} == --reauth ]] && rclone listremotes | grep -qx "$REMOTE:"; then
+  echo "==> Reautorizando Google Drive (se abre el navegador)"
+  rclone config reconnect "$REMOTE:"
+elif ! rclone listremotes | grep -qx "$REMOTE:"; then
+  echo "==> Autoriza rclone en el navegador que se va a abrir (cuenta de Google Drive)"
+  rclone config create "$REMOTE" drive scope=drive
+fi
+
+rclone about "$REMOTE:" >/dev/null || { echo "!! No puedo acceder a Drive. Prueba: gdrive-setup --reauth"; exit 1; }
+
+echo "==> Montando Drive en $MNT"
+# El montaje sustituye a gdrive-sync (bisync sobre la misma carpeta los pelearía)
+systemctl --user disable --now gdrive-sync.timer 2>/dev/null || true
+systemctl --user daemon-reload
+systemctl --user enable gdrive-mount.service
+systemctl --user restart gdrive-mount.service
+
+for _ in $(seq 30); do mountpoint -q "$MNT" && break; sleep 1; done
+if mountpoint -q "$MNT"; then
+  echo "✔ Google Drive montado en $MNT ($(ls "$MNT" | wc -l) elementos)"
+else
+  echo "!! No se ha montado. Mira: journalctl --user -u gdrive-mount -n 30  y  ~/.local/state/gdrive-mount.log"
+  exit 1
+fi

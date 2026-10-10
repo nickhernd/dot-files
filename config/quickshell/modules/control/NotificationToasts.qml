@@ -10,6 +10,7 @@ import qs.components
 
 PanelWindow {
     id: win
+    screen: Services.Screens.primary
 
     color: "transparent"
 

@@ -11,6 +11,7 @@ import qs.colors
 // `qs ipc call expose toggle`. Ported from Nebula's WorkspaceOverview.
 PanelWindow {
     id: root
+    screen: Svc.Screens.primary
     implicitWidth: (5 * 300) + 40 + 60   // grid width + wrapper padding
     implicitHeight: (2 * 200) + 10 + 60  // grid height + wrapper padding
 
