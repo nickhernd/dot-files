@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# perf-flame — Perfila un programa con perf (pilas con frame pointers) y lo abre en hotspot
+# (flame graph, top-down, bottom-up). Compila con el preset relwithdeb para tener símbolos.
+#   perf-flame ./build/relwithdeb/programa [args...]
+set -euo pipefail
+(($#)) || { echo "Uso: perf-flame ./programa [args...]" >&2; exit 1; }
+command -v perf >/dev/null || { echo "Falta perf: sudo pacman -S perf" >&2; exit 1; }
+out="perf-$(date +%H%M%S).data"
+perf record --call-graph fp -F 999 -o "$out" -- "$@"
+if command -v hotspot >/dev/null; then
+  hotspot "$out" >/dev/null 2>&1 &
+else
+  perf report -i "$out"
+fi

@@ -17,7 +17,7 @@ echo ":: C++ avanzado"
 #  ninja + mold + ccache: compilar y enlazar mucho más rápido · lldb · rr: grabar una ejecución y
 #  depurarla hacia atrás · catch2/gtest + benchmark: tests y microbenchmarks
 #  include-what-you-use: limpiar includes · bear: compile_commands.json para clangd · conan: paquetes
-instalar ninja mold ccache lldb rr catch2 gtest benchmark include-what-you-use bear
+instalar ninja mold ccache lldb rr catch2 gtest benchmark include-what-you-use bear perf
 uv tool install --upgrade conan || FALLIDOS+=(conan)
 # rr necesita poder leer los contadores de rendimiento
 [[ $(cat /proc/sys/kernel/perf_event_paranoid 2>/dev/null) -le 1 ]] || {

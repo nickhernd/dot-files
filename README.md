@@ -69,6 +69,19 @@ ordenadores. En uno nuevo: copia la clave y ejecuta `tracker sync`.
 | `get_idf` | activar ESP-IDF en la terminal |
 | `webodm start` | WebODM en http://localhost:8000 (fotogrametría de dron) |
 
+### C/C++
+
+`cpp-new nombre` crea un proyecto C++23 compilado y con git: CMakePresets (`debug` con ASan+UBSan, `release`
+-O3+LTO, `relwithdeb` para perf/rr, `tsan`), ninja + mold + ccache, warnings estrictos, `.clang-tidy` (clangd lo
+aplica al escribir), `.clang-format`, Catch2 y Google Benchmark. `cpp-new --c nombre`: C11 para embebido con
+cppcheck + MISRA en cada compilación y un ejemplo con ACSL para Frama-C.
+
+| Terminal | Neovim (`<leader>m…`) |
+|---|---|
+| `cb` / `ct` / `cr` / `cbench` — compilar / tests / ejecutar / benchmarks (`CPRESET=release cb`) | `p` preset · `b` compilar · `r` ejecutar · `t` tests · `d` depurar |
+| `perf-flame ./build/relwithdeb/prog` — perf + flame graph en hotspot | `a` ensamblador (Compiler Explorer) |
+| `asm-diff archivo.cpp -O2 -O3` — diferencias del ensamblador | `R` reproducir la última grabación de `rr record` y depurar hacia atrás |
+
 ## Perfiles: portátil y sobremesa
 
 Lo que cambia entre ordenadores se elige con un perfil, guardado en `~/.config/dotfiles/perfil` (fuera del

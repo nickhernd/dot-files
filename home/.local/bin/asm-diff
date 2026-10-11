@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# asm-diff — Compara el ensamblador que genera un archivo con dos niveles de optimización.
+#   asm-diff archivo.cpp [-O2] [-O3] [más flags...]     (por defecto -O2 frente a -O3, con g++)
+#   CXX=clang++ asm-diff archivo.cpp -O3 "-O3 -march=native"
+set -euo pipefail
+src=${1:?Uso: asm-diff archivo.cpp [flagsA] [flagsB]}
+a=${2:--O2}; b=${3:--O3}
+cxx=${CXX:-g++}; [[ $src == *.c ]] && cxx=${CC:-gcc}
+tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+gen() { $cxx $1 -std=c++23 -S -masm=intel -fno-asynchronous-unwind-tables -fno-dwarf2-cfi-asm \
+          -o - "$src" 2>/dev/null || $cxx $1 -S -masm=intel -o - "$src"; }
+gen "$a" | grep -vE '^\s*\.(file|ident|section|size|type|p2align|globl|align)' | c++filt > "$tmp/A.s"
+gen "$b" | grep -vE '^\s*\.(file|ident|section|size|type|p2align|globl|align)' | c++filt > "$tmp/B.s"
+echo "$a: $(grep -c '^\s' "$tmp/A.s") líneas · $b: $(grep -c '^\s' "$tmp/B.s") líneas"
+if command -v delta >/dev/null; then
+  diff -u --label "$a" --label "$b" "$tmp/A.s" "$tmp/B.s" | delta --side-by-side || true
+else
+  diff -u --label "$a" --label "$b" "$tmp/A.s" "$tmp/B.s" || true
+fi

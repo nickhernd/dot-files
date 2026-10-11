@@ -1,0 +1,298 @@
+#!/usr/bin/env bash
+# cpp-new — Crea un proyecto C++23 listo para trabajar.
+#   cpp-new nombre           C++23: presets debug (ASan+UBSan) / release (-O3+LTO) / tsan / relwithdeb,
+#                            ninja + mold + ccache, warnings estrictos, clang-tidy, Catch2 y Google Benchmark
+#   cpp-new --c nombre       C11 para embebido: sin memoria dinámica y cppcheck con MISRA al compilar
+# Luego: cd nombre && cb (compilar) · ct (tests) · cr (ejecutar) · cbench (benchmarks)
+set -euo pipefail
+
+LANG_C=0
+[[ ${1:-} == --c ]] && { LANG_C=1; shift; }
+name=${1:?Uso: cpp-new [--c] nombre}
+[[ $name =~ ^[A-Za-z_][A-Za-z0-9_-]*$ ]] || { echo "Nombre no válido: $name" >&2; exit 1; }
+[[ -e $name ]] && { echo "Ya existe: $name" >&2; exit 1; }
+id=${name//-/_}
+mkdir -p "$name"/{src,tests,bench}
+cd "$name"
+
+# ---------------------------------------------------------------- comunes
+cat > .gitignore <<'EOF'
+build/
+compile_commands.json
+.cache/
+perf.data*
+EOF
+
+# Presets: los cuatro perfiles comparten ninja, ccache, mold y compile_commands.json
+cat > CMakePresets.json <<'EOF'
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_C_COMPILER_LAUNCHER": "ccache",
+        "CMAKE_CXX_COMPILER_LAUNCHER": "ccache",
+        "CMAKE_LINKER_TYPE": "MOLD"
+      }
+    },
+    {
+      "name": "debug", "inherits": "base", "displayName": "Debug + ASan + UBSan",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "SANITIZE": "address,undefined" }
+    },
+    {
+      "name": "release", "inherits": "base", "displayName": "Release -O3 + LTO",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON" }
+    },
+    {
+      "name": "relwithdeb", "inherits": "base", "displayName": "Release con símbolos (perf, rr)",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo" }
+    },
+    {
+      "name": "tsan", "inherits": "base", "displayName": "Debug + ThreadSanitizer",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "SANITIZE": "thread" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "debug", "configurePreset": "debug" },
+    { "name": "release", "configurePreset": "release" },
+    { "name": "relwithdeb", "configurePreset": "relwithdeb" },
+    { "name": "tsan", "configurePreset": "tsan" }
+  ],
+  "testPresets": [
+    { "name": "debug", "configurePreset": "debug", "output": { "outputOnFailure": true } },
+    { "name": "release", "configurePreset": "release", "output": { "outputOnFailure": true } },
+    { "name": "tsan", "configurePreset": "tsan", "output": { "outputOnFailure": true } }
+  ]
+}
+EOF
+
+cat > .clang-format <<'EOF'
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 100
+PointerAlignment: Left
+AllowShortFunctionsOnASingleLine: Inline
+EOF
+
+if ((LANG_C)); then
+# ---------------------------------------------------------------- C embebido
+cat > CMakeLists.txt <<EOF
+cmake_minimum_required(VERSION 3.29)
+project($id LANGUAGES C)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
+set(SANITIZE "" CACHE STRING "Sanitizers (address,undefined,thread)")
+
+add_compile_options(-Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wcast-align
+                    -Wstrict-prototypes -Wmissing-prototypes -Wundef -Wdouble-promotion -Werror=vla)
+if(SANITIZE)
+  add_compile_options(-fsanitize=\${SANITIZE} -fno-omit-frame-pointer)
+  add_link_options(-fsanitize=\${SANITIZE})
+endif()
+
+# cppcheck con el addon MISRA en cada compilación (los avisos salen junto a los del compilador)
+find_program(CPPCHECK cppcheck)
+if(CPPCHECK)
+  set(CMAKE_C_CPPCHECK \${CPPCHECK} --addon=misra --enable=warning,style,performance,portability
+      --inline-suppr --quiet --error-exitcode=0)
+endif()
+
+add_library(${id}_core src/$id.c)
+target_include_directories(${id}_core PUBLIC src)
+add_executable($id src/main.c)
+target_link_libraries($id PRIVATE ${id}_core)
+
+enable_testing()
+add_executable(${id}_tests tests/test_$id.c)
+target_link_libraries(${id}_tests PRIVATE ${id}_core)
+add_test(NAME ${id}_tests COMMAND ${id}_tests)
+EOF
+cat > src/$id.h <<EOF
+#ifndef ${id^^}_H
+#define ${id^^}_H
+
+#include <stdint.h>
+
+/* Suma con saturación: nunca desborda (ACSL para Frama-C: frama-c -wp -wp-rte src/$id.c) */
+/*@ ensures \result == (a + b > INT32_MAX ? INT32_MAX : a + b < INT32_MIN ? INT32_MIN : a + b); */
+int32_t ${id}_sat_add(int32_t a, int32_t b);
+
+#endif
+EOF
+cat > src/$id.c <<EOF
+#include "$id.h"
+
+int32_t ${id}_sat_add(int32_t a, int32_t b) {
+    int64_t s = (int64_t)a + (int64_t)b;
+    if (s > INT32_MAX) {
+        return INT32_MAX;
+    }
+    if (s < INT32_MIN) {
+        return INT32_MIN;
+    }
+    return (int32_t)s;
+}
+EOF
+cat > src/main.c <<EOF
+#include <stdio.h>
+#include "$id.h"
+
+int main(void) {
+    (void)printf("%d\n", (int)${id}_sat_add(INT32_MAX, 1));
+    return 0;
+}
+EOF
+cat > tests/test_$id.c <<EOF
+#include <assert.h>
+#include <stdint.h>
+#include "$id.h"
+
+int main(void) {
+    assert(${id}_sat_add(2, 3) == 5);
+    assert(${id}_sat_add(INT32_MAX, 1) == INT32_MAX);
+    assert(${id}_sat_add(INT32_MIN, -1) == INT32_MIN);
+    return 0;
+}
+EOF
+rmdir bench
+cat > .clang-tidy <<'EOF'
+Checks: >
+  bugprone-*, cert-*, clang-analyzer-*, misc-*, performance-*, readability-*,
+  -readability-magic-numbers, -readability-identifier-length, -bugprone-easily-swappable-parameters
+WarningsAsErrors: ''
+HeaderFilterRegex: 'src/.*'
+EOF
+
+else
+# ---------------------------------------------------------------- C++23
+cat > CMakeLists.txt <<EOF
+cmake_minimum_required(VERSION 3.29)
+project($id LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(SANITIZE "" CACHE STRING "Sanitizers (address,undefined,thread)")
+
+add_compile_options(-Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow
+                    -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual
+                    -Wnull-dereference -Wdouble-promotion -Wimplicit-fallthrough)
+if(SANITIZE)
+  add_compile_options(-fsanitize=\${SANITIZE} -fno-omit-frame-pointer)
+  add_link_options(-fsanitize=\${SANITIZE})
+endif()
+# perf y hotspot necesitan los frame pointers para pilas fiables
+add_compile_options(-fno-omit-frame-pointer)
+
+add_library(${id}_core src/$id.cpp)
+target_include_directories(${id}_core PUBLIC src)
+
+add_executable($id src/main.cpp)
+target_link_libraries($id PRIVATE ${id}_core)
+
+# Tests: Catch2 (ct)
+find_package(Catch2 3 QUIET)
+if(Catch2_FOUND)
+  enable_testing()
+  add_executable(${id}_tests tests/test_$id.cpp)
+  target_link_libraries(${id}_tests PRIVATE ${id}_core Catch2::Catch2WithMain)
+  include(Catch)
+  catch_discover_tests(${id}_tests)
+endif()
+
+# Benchmarks: Google Benchmark (cbench, mejor con el preset release)
+find_package(benchmark QUIET)
+if(benchmark_FOUND)
+  add_executable(${id}_bench bench/bench_$id.cpp)
+  target_link_libraries(${id}_bench PRIVATE ${id}_core benchmark::benchmark_main)
+endif()
+EOF
+cat > src/$id.hpp <<EOF
+#pragma once
+
+#include <cstdint>
+#include <span>
+
+namespace $id {
+
+// Suma de los elementos (ejemplo: cámbialo por lo tuyo)
+[[nodiscard]] std::int64_t sum(std::span<const std::int32_t> values) noexcept;
+
+} // namespace $id
+EOF
+cat > src/$id.cpp <<EOF
+#include "$id.hpp"
+
+#include <numeric>
+
+namespace $id {
+
+std::int64_t sum(std::span<const std::int32_t> values) noexcept {
+    return std::accumulate(values.begin(), values.end(), std::int64_t{0});
+}
+
+} // namespace $id
+EOF
+cat > src/main.cpp <<EOF
+#include <print>
+#include <vector>
+
+#include "$id.hpp"
+
+int main() {
+    const std::vector<std::int32_t> v{1, 2, 3, 4};
+    std::println("{}", $id::sum(v));
+}
+EOF
+cat > tests/test_$id.cpp <<EOF
+#include <catch2/catch_test_macros.hpp>
+#include <vector>
+
+#include "$id.hpp"
+
+TEST_CASE("sum") {
+    REQUIRE($id::sum({}) == 0);
+    const std::vector<std::int32_t> v{1, 2, 3};
+    REQUIRE($id::sum(v) == 6);
+}
+EOF
+cat > bench/bench_$id.cpp <<EOF
+#include <benchmark/benchmark.h>
+#include <numeric>
+#include <vector>
+
+#include "$id.hpp"
+
+static void BM_sum(benchmark::State& state) {
+    std::vector<std::int32_t> v(static_cast<std::size_t>(state.range(0)));
+    std::iota(v.begin(), v.end(), 0);
+    for (auto _ : state) {
+        benchmark::DoNotOptimize($id::sum(v));
+    }
+    state.SetItemsProcessed(state.iterations() * state.range(0));
+}
+BENCHMARK(BM_sum)->Range(1 << 10, 1 << 20);
+EOF
+cat > .clang-tidy <<'EOF'
+Checks: >
+  bugprone-*, clang-analyzer-*, cppcoreguidelines-*, modernize-*, performance-*, readability-*, misc-*,
+  -modernize-use-trailing-return-type, -readability-magic-numbers, -cppcoreguidelines-avoid-magic-numbers,
+  -readability-identifier-length, -bugprone-easily-swappable-parameters, -misc-include-cleaner,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic
+WarningsAsErrors: ''
+HeaderFilterRegex: 'src/.*'
+EOF
+fi
+
+ln -s build/debug/compile_commands.json compile_commands.json
+git init -q && git add -A && git commit -qm "Proyecto inicial (cpp-new)" 2>/dev/null || true
+cmake --preset debug >/dev/null && cmake --build --preset debug >/dev/null \
+  && echo "✔ $name creado y compilado (preset debug). cd $name · cb · ct · cr" \
+  || echo "!! $name creado, pero la primera compilación ha fallado: cd $name && cb"

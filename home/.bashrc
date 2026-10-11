@@ -80,3 +80,9 @@ command -v direnv >/dev/null && eval "$(direnv hook bash)"
 alias get_idf='. /opt/esp-idf/export.sh'   # activa ESP-IDF en esta terminal
 alias nb='marimo edit'                      # notebook marimo (nb archivo.py)
 alias sql='harlequin'                       # TUI de SQL: sql datos.duckdb · sql -a postgres "postgresql://..."
+
+# ---- C/C++ (proyectos de cpp-new con CMakePresets; preset: CPRESET o debug) ----
+cb()     { cmake --preset "${CPRESET:-debug}" >/dev/null && cmake --build --preset "${CPRESET:-debug}" "$@"; }
+ct()     { cb && ctest --preset "${CPRESET:-debug}" "$@"; }
+cr()     { cb && "build/${CPRESET:-debug}/$(basename "$PWD" | tr - _)" "$@"; }
+cbench() { CPRESET=release cb && "build/release/$(basename "$PWD" | tr - _)_bench" "$@"; }
