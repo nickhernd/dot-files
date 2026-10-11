@@ -43,6 +43,8 @@ Singleton {
         network: { "": "Red", hud: "Network", terminal: "~ $ ip a", cosmos: "Comms", zen: "red", xianxia: "網 · Net" },
         security: { "": "Seguridad", hud: "Defense", terminal: "~ $ sec-status", cosmos: "Shields", zen: "seguridad", xianxia: "盾 · Shield" },
         news: { "": "Ciencia", hud: "Science", terminal: "~ $ curl ciencia", cosmos: "Transmissions", zen: "ciencia · palabra del día", xianxia: "學 · Science" },
+        gpu: { "": "GPU", hud: "GPU", terminal: "~ $ nvidia-smi", cosmos: "Thrusters", zen: "gpu", xianxia: "炉 · Furnace" },
+        github: { "": "GitHub", hud: "Commits", terminal: "~ $ gh-contrib", cosmos: "Flight log", zen: "contribuciones", xianxia: "迹 · Traces" },
         notifications: { "": "Notificaciones", hud: "Alerts", terminal: "~ $ journalctl -f", cosmos: "Incoming", zen: "notificaciones", xianxia: "知 · Messages" },
         processes: { "": "Procesos", hud: "Processes", terminal: "~ $ ps aux", cosmos: "Crew", zen: "procesos", xianxia: "程 · Processes" },
         maintenance: { "": "Mantenimiento", hud: "Maintenance", terminal: "~ $ du -sh", cosmos: "Maintenance", zen: "mantenimiento", xianxia: "掃 · Cleaning" },

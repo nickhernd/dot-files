@@ -1,11 +1,13 @@
 {
     "on": {
-        "battery": true,
+        "battery": false,
         "clock": true,
         "coding": true,
         "deadlines": false,
         "dev": true,
         "formula": true,
+        "github": true,
+        "gpu": true,
         "maintenance": true,
         "music": true,
         "network": true,
@@ -23,6 +25,14 @@
         "coding": {
             "x": 0.28550983297413796,
             "y": 0.05126389289838337
+        },
+        "github": {
+            "x": 0.2541188350340136,
+            "y": 0.9282372007978723
+        },
+        "gpu": {
+            "x": 0.47,
+            "y": 0.47
         },
         "maintenance": {
             "x": 0.2224663628472222,

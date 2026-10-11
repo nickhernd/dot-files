@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# tlc — model checker de TLA+ (TLC) desde la terminal: tlc Spec.tla [opciones de TLC]
+# Baja el tla2tools.jar oficial la primera vez. Otras herramientas: tlc --sany Spec.tla (parser),
+# tlc --pcal Spec.tla (traduce PlusCal).
+set -euo pipefail
+JAR="$HOME/.local/share/tlaplus/tla2tools.jar"
+if [[ ! -s $JAR ]]; then
+  mkdir -p "$(dirname "$JAR")"
+  echo "==> Bajando tla2tools.jar" >&2
+  curl -fsSL -o "$JAR" https://github.com/tlaplus/tlaplus/releases/latest/download/tla2tools.jar
+fi
+command -v java >/dev/null || { echo "Falta Java: sudo pacman -S jdk-openjdk" >&2; exit 1; }
+case ${1:-} in
+  --sany) shift; exec java -cp "$JAR" tla2sany.SANY "$@" ;;
+  --pcal) shift; exec java -cp "$JAR" pcal.trans "$@" ;;
+  *)      exec java -XX:+UseParallelGC -cp "$JAR" tlc2.TLC -workers auto "$@" ;;
+esac

@@ -7,6 +7,7 @@
 #
 # Bloques:  enlaces (install.sh) · rice + TUIs + mates (instalar-rice.sh)
 #           extras de estudio (instalar-extras.sh) · bajo nivel y seguridad (instalar-seguridad.sh)
+#           perfil de trabajo (instalar-perfil.sh)
 #           fondos (wallpapers.sh) · fuentes de iconos · tema Moon Pink · plugins de Neovim y yazi
 
 set -e
@@ -50,6 +51,7 @@ ask "¿Rice de Quickshell, TUIs, LaTeX/Typst, Python científico, Docker y Drive
 ask "¿Extras de estudio (TeXstudio, sioyek, Zotero, Anki, Lean, atuin...)?" && ./instalar-extras.sh
 ask "¿Bajo nivel y seguridad (pwndbg, ghidra, wireshark, qemu, lynis...)?" && ./instalar-seguridad.sh
 ask "¿TUIs extra (lazyjournal, termshark, newsboat, ytermusic, kalker, visidata...)?" && ./instalar-tuis.sh
+ask "¿Perfil de trabajo (C++ avanzado, Frama-C/TLA+, ESP32, FPGA, GameBoy, Java, datos, drones)?" && ./instalar-perfil.sh
 
 # --- 3. Fuentes de iconos ------------------------------------------------------
 info "3/7 Fuentes de iconos"

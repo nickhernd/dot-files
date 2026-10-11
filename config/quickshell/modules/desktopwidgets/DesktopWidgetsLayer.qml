@@ -88,6 +88,16 @@ Scope {
 
 
     WidgetWindow {
+        widgetId: "gpu"
+        widget: Component { GpuWidget {} }
+    }
+
+    WidgetWindow {
+        widgetId: "github"
+        widget: Component { GithubWidget {} }
+    }
+
+    WidgetWindow {
         widgetId: "processes"
         widget: Component { ProcessesWidget {} }
     }

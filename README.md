@@ -24,7 +24,7 @@ Dotfiles personales para Arch Linux con [Omarchy 4](https://omarchy.org/) (Hyprl
 
 ### Widgets de escritorio (tema *Still*, en español)
 
-Reloj · tiempo (wttr.in) · seguridad (cortafuegos, puertos, CVEs) · fórmula del día (Typst) · ciencia de El País y palabra del día (Wikcionario) ·
+Reloj · tiempo (wttr.in) · seguridad (cortafuegos, puertos, CVEs) · GPU NVIDIA · contribuciones de GitHub · fórmula del día (Typst) · ciencia de El País y palabra del día (Wikcionario) ·
 tiempo programando · pomodoro · música · sistema · batería · red · desarrollo (Docker, git, GitHub).
 Borde izquierdo de la pantalla: centro de control, con **Enfoque** (pomodoro con historial semanal) y **Hábitos**.
 
@@ -63,6 +63,11 @@ ordenadores. En uno nuevo: copia la clave y ejecuta `tracker sync`.
 | `SUPER+SHIFT+Q` | calculadora qalc |
 | `SUPER+SHIFT+U` / `K` | yazi / gdu |
 | `SUPER+ALT+M` | modo ratón con teclado |
+| `nb archivo.py` / `sql` | notebook marimo / harlequin (SQL sobre DuckDB o Postgres) |
+| `tlc Spec.tla` | model checker de TLA+ (en Neovim: `\m` TLC, `\p` PlusCal, `\s` SANY) |
+| `<leader>cM` (Neovim) | activar/desactivar MISRA en cppcheck |
+| `get_idf` | activar ESP-IDF en la terminal |
+| `webodm start` | WebODM en http://localhost:8000 (fotogrametría de dron) |
 
 ## Perfiles: portátil y sobremesa
 
@@ -97,7 +102,12 @@ git clone https://github.com/nickhernd/dot-files.git ~/dot-files
 2. `instalar-rice.sh` — rice de Quickshell, TUIs, LaTeX/Typst, Python científico, Docker, rclone
 3. `instalar-extras.sh` — TeXstudio, sioyek, Zotero, Anki, Lean 4, atuin, direnv, just…
 4. `instalar-seguridad.sh` — bajo nivel (nasm, pwndbg, qemu, cross-compiladores), ingeniería inversa (ghidra, rizin/cutter, imhex), redes (wireshark, nmap), protección (arch-audit, lynis, opensnitch) y laboratorio de VMs
-5. Fuentes de iconos, `wallpapers.sh` (descarga los fondos de `wallpapers.txt` y genera los del tema), tema **Moon Pink** y plugins de Neovim/yazi
+5. `instalar-perfil.sh` — mi perfil de trabajo: C++ avanzado (ninja, mold, ccache, rr, lldb, catch2, benchmark,
+   include-what-you-use, conan), verificación (cppcheck + MISRA, Frama-C/Why3/Alt-Ergo con opam, z3, cvc5, TLA+ con
+   `tlc`), ESP32 (esp-idf, platformio, picocom), FPGA (verilator, iverilog, gtkwave, yosys), GameBoy (rgbds, sameboy,
+   mgba, `bgb` con wine), Java (jdk + jdtls), datos (marimo, pgcli, harlequin, duckdb), perfilado (heaptrack,
+   hotspot), zeal, TUIs (binsider, dive, mprocs, jqp, navi, doxx) y drones (QGroundControl, MAVProxy, `webodm`)
+6. Fuentes de iconos, `wallpapers.sh` (descarga los fondos de `wallpapers.txt` y genera los del tema), tema **Moon Pink** y plugins de Neovim/yazi
 
 El fondo actual está en `wallpapers/` (*The Longest Sword* de Ina Wong, [artofinca.com](https://artofinca.com),
 recoloreado en Moon Pink). El resto se descargan de wallhaven.cc.

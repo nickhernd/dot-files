@@ -12,7 +12,7 @@ sudo -v || exit 1
 trap 'kill $KEEP 2>/dev/null' EXIT
 
 ok=(); fail=()
-for s in instalar-rice.sh instalar-extras.sh instalar-seguridad.sh instalar-tuis.sh; do
+for s in instalar-rice.sh instalar-extras.sh instalar-seguridad.sh instalar-tuis.sh instalar-perfil.sh; do
   printf '\n\033[1;35m################ %s ################\033[0m\n' "$s"
   if bash "$DOTFILES_DIR/$s"; then ok+=("$s"); else fail+=("$s"); fi
 done

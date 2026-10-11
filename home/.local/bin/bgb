@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# bgb — emulador de GameBoy con depurador (Windows, con wine): bgb rom.gb
+# Se baja de bgb.bircd.org la primera vez a ~/.local/share/bgb.
+set -euo pipefail
+D="$HOME/.local/share/bgb"
+if [[ ! -f $D/bgb64.exe ]]; then
+  command -v unzip >/dev/null || { echo "Falta unzip" >&2; exit 1; }
+  mkdir -p "$D"; tmp=$(mktemp --suffix .zip)
+  echo "==> Bajando bgb" >&2
+  curl -fsSL -o "$tmp" https://bgb.bircd.org/bgbw64.zip
+  unzip -oq "$tmp" -d "$D"; rm -f "$tmp"
+fi
+command -v wine >/dev/null || { echo "Falta wine: sudo pacman -S wine" >&2; exit 1; }
+exec wine "$D/bgb64.exe" "$@" 2>/dev/null

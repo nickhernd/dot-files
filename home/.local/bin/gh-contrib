@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# gh-contrib — Contribuciones de GitHub del último año en JSON para el widget:
+#   {"user": "...", "total": N, "weeks": [[n,n,n,n,n,n,n], ...]}   (semanas de domingo a sábado)
+# Usa la sesión de `gh`; si falla imprime {}.
+gh api graphql -f query='query{viewer{login contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{contributionCount}}}}}}' \
+  --jq '.data.viewer | {user: .login, total: .contributionsCollection.contributionCalendar.totalContributions,
+        weeks: [.contributionsCollection.contributionCalendar.weeks[] | [.contributionDays[].contributionCount]]}' 2>/dev/null || echo '{}'

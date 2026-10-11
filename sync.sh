@@ -66,7 +66,7 @@ cur=$(readlink -f "$HOME/.cache/current_wallpaper" 2>/dev/null)
 H="$DOTFILES_DIR/home"
 copiar ~/.bashrc ~/.bash_profile ~/.nanorc "$H"
 mkdir -p "$H/.local/bin"
-for s in mathpad gdrive-sync gdrive-setup dev-status battery-status net-info formula-of-day sec-status news-top palabra-del-dia hn-top maint-status maint-clean tracker tracker-backup tracker-xlsx \
+for s in mathpad gdrive-sync gdrive-setup dev-status battery-status net-info formula-of-day sec-status news-top palabra-del-dia gh-contrib tlc bgb webodm hn-top maint-status maint-clean tracker tracker-backup tracker-xlsx \
          fzf-files fzf-grep git-pull-all git-push-all git-scan rg-pink tabletscreen xppen-monitor.sh; do
   copiar -P ~/.local/bin/$s "$H/.local/bin"
 done

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# webodm — WebODM (fotogrametría de dron: ortofotos, MDS/MDT, nubes de puntos) en Docker.
+#   webodm start | stop | update | down     (luego abre http://localhost:8000)
+# El repo oficial se clona la primera vez en ~/.local/share/WebODM.
+set -euo pipefail
+D="$HOME/.local/share/WebODM"
+[[ -d $D ]] || git clone --depth 1 https://github.com/OpenDroneMap/WebODM "$D"
+cd "$D"
+exec ./webodm.sh "${@:-start}"

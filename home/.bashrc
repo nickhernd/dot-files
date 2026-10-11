@@ -74,3 +74,9 @@ if command -v atuin >/dev/null && [[ -r /usr/share/bash-preexec/bash-preexec.sh 
   eval "$(atuin init bash --disable-up-arrow)"
 fi
 command -v direnv >/dev/null && eval "$(direnv hook bash)"
+
+# ---- Perfil (instalar-perfil.sh) ----
+[[ -d $HOME/.opam/frama/bin ]] && export PATH="$PATH:$HOME/.opam/frama/bin"   # frama-c, why3, alt-ergo
+alias get_idf='. /opt/esp-idf/export.sh'   # activa ESP-IDF en esta terminal
+alias nb='marimo edit'                      # notebook marimo (nb archivo.py)
+alias sql='harlequin'                       # TUI de SQL: sql datos.duckdb · sql -a postgres "postgresql://..."
