@@ -5,7 +5,22 @@
 
 FALLIDOS=()
 
+# Paquetes que se saltan según el perfil de la máquina (~/.config/dotfiles/perfil).
+# En el portátil nada de LLVM: include-what-you-use obliga a compilar LLVM/Clang entero.
+PERFIL_MAQUINA=$(cat "$HOME/.config/dotfiles/perfil" 2>/dev/null)
+case $PERFIL_MAQUINA in
+  portatil) SALTAR=(include-what-you-use clang-static-git lldb clang) ;;
+  *)        SALTAR=() ;;
+esac
+
 instalar() {
+  local keep=() x s
+  for x in "$@"; do
+    for s in "${SALTAR[@]}"; do [[ $x == "$s" ]] && continue 2; done
+    keep+=("$x")
+  done
+  set -- "${keep[@]}"
+  (($#)) || return 0
   yay -S --needed "$@" && return 0
   local p
   for p in "$@"; do

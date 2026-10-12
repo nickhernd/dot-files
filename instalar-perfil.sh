@@ -27,7 +27,7 @@ uv tool install --upgrade conan || FALLIDOS+=(conan)
 echo ":: Verificación formal"
 #  cppcheck (con el addon MISRA desde Neovim) · z3/cvc5: probadores SMT para Why3/Frama-C
 #  tlc: TLA+ (el jar oficial, lo baja ~/.local/bin/tlc la primera vez; necesita Java)
-instalar cppcheck clang z3 cvc5 jdk-openjdk
+instalar cppcheck clang z3 cvc5 jdk-openjdk asm-lsp
 tlc -h >/dev/null 2>&1 || true
 if ((OPAM)); then
   #  Frama-C (WP con ACSL), Why3 y Alt-Ergo no están en Arch: van con opam (OCaml)

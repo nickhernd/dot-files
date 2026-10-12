@@ -24,7 +24,7 @@ instalar zapzap
 echo ":: Estudio e investigación"
 #  sioyek: visor de PDF para papers/libros de mates   zotero: gestor de bibliografía
 #  anki: tarjetas de repaso                           localsend: pasar archivos al móvil
-instalar sioyek-appimage zotero-bin anki localsend-bin
+instalar sioyek-appimage zotero-bin anki localsend
 
 echo ":: Lean 4 (demostrador de teoremas, con soporte en Neovim)"
 instalar elan-lean

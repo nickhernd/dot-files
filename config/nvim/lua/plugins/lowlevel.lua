@@ -9,15 +9,7 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
-    opts = { servers = { asm_lsp = {} } },
-  },
-  {
-    "mason-org/mason.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      if not vim.tbl_contains(opts.ensure_installed, "asm-lsp") then
-        table.insert(opts.ensure_installed, "asm-lsp")
-      end
-    end,
+    -- asm-lsp viene del sistema (AUR, instalar-perfil.sh): Mason lo compilaría con Rust
+    opts = { servers = { asm_lsp = { mason = false } } },
   },
 }
