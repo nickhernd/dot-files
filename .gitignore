@@ -29,3 +29,6 @@ backup.key
 
 # El Excel del tracker no va al repo (datos personales sin cifrar)
 *.xlsx
+
+# aerc: la cuenta de correo nunca va al repo
+**/accounts.conf

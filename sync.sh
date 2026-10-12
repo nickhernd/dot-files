@@ -53,6 +53,9 @@ done
 
 # Archivos sueltos
 copiar "$C/starship.toml" "$C/mimeapps.list" "$C/okularrc" "$C/okularpartrc" "$C/xdg-terminals.list" "$R"
+# aerc: configuración y atajos (accounts.conf NO: lleva la cuenta de correo)
+mkdir -p "$R/aerc"
+copiar "$C/aerc/aerc.conf" "$C/aerc/binds.conf" "$R/aerc"
 mkdir -p "$R/rclone" "$R/systemd/user"
 copiar "$C/rclone/gdrive-filters.txt" "$R/rclone"
 copiar "$C"/systemd/user/{gdrive-sync.service,gdrive-sync.timer,gdrive-mount.service,tracker-backup.service,tracker-backup.timer,voxtype.service} "$R/systemd/user"
