@@ -14,9 +14,9 @@ instalar aarch64-linux-gnu-gcc riscv64-linux-gnu-gcc arm-none-eabi-gcc \
 
 echo ":: Ingeniería inversa y análisis de binarios"
 #  ghidra: decompilador de la NSA · rizin + cutter: desensamblador con interfaz
-#  radare2: clásico en terminal · imhex: editor hexadecimal con patrones
+#  radare2: clásico en terminal · imhex-bin: editor hexadecimal con patrones
 #  binwalk: analizar firmware · checksec: ver protecciones de un binario (NX, PIE, canary, RELRO)
-instalar ghidra rizin rz-cutter radare2 imhex binwalk checksec
+instalar ghidra rizin rz-cutter radare2 imhex-bin binwalk checksec
 
 echo ":: Redes (analizar tu propia red y tus servicios)"
 #  wireshark: capturar y entender tráfico · nmap: inventario de tu red y tus puertos

@@ -44,7 +44,20 @@ Singleton {
         return widgets.find(w => w.id === id);
     }
 
+    // El widget de GPU solo tiene sentido con NVIDIA (sobremesa); en el portátil se oculta solo
+    property bool hasNvidia: false
+
+    Process {
+        running: true
+        command: ["sh", "-c", "command -v nvidia-smi >/dev/null && nvidia-smi -L >/dev/null 2>&1 && echo si"]
+        stdout: StdioCollector {
+            onStreamFinished: root.hasNvidia = text.trim() === "si"
+        }
+    }
+
     function enabled(id) {
+        if (id === "gpu" && !hasNvidia)
+            return false;
         if (id === "cava")
             return CavaWidget.enabled;
         const v = adapter.on[id];

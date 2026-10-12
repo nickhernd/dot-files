@@ -18,7 +18,7 @@ WidgetFrame {
     Timer {
         interval: 2000
         repeat: true
-        running: root.visible
+        running: root.visible && Services.DesktopWidgets.hasNvidia
         triggeredOnStart: true
         onTriggered: smi.running = true
     }
