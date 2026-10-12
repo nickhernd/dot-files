@@ -55,9 +55,27 @@ Singleton {
         }
     }
 
+    // Widgets que dependen del ordenador (~/.config/dotfiles/perfil). Lo de aquí manda
+    // sobre desktopwidgets.json, que es compartido entre los dos.
+    readonly property var perProfile: ({
+        portatil: { github: false, news: false, pomodoro: false, battery: true },
+        sobremesa: { battery: false }
+    })
+    property string perfil: ""
+
+    FileView {
+        path: Quickshell.env("HOME") + "/.config/dotfiles/perfil"
+        watchChanges: true
+        onFileChanged: reload()
+        onLoaded: root.perfil = text().trim()
+    }
+
     function enabled(id) {
         if (id === "gpu" && !hasNvidia)
             return false;
+        const forced = (perProfile[perfil] || {})[id];
+        if (forced !== undefined)
+            return forced;
         if (id === "cava")
             return CavaWidget.enabled;
         const v = adapter.on[id];
