@@ -32,6 +32,7 @@ row "d" "borrar (pregunta)" "D" "borrar sin preguntar"
 row "a" "archivar" "Espacio / v" "marcar"
 row "V" "marcar todos" "A" "archivar el hilo entero"
 row "T" "activar / quitar hilos" "Tab / za" "plegar / desplegar hilo"
+row "M" "mover a otra carpeta (Tab)" "y" "copiar a otra carpeta"
 
 h "BUSCAR"
 row "/" "buscar" "n / N" "resultado siguiente / anterior"
