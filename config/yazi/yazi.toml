@@ -12,11 +12,13 @@ edit = [
 display = [
   { run = 'xdg-open %s', desc = "Abrir", orphan = true },
 ]
+# Enter abre con el primero; con "o" se elige otro. Zathura primero: lo instala instalar-rice.sh
+# en todos los ordenadores (si el primero no existe, yazi falla sin avisar).
 pdf = [
-  { run = 'okular %s', desc = "Okular", orphan = true },
   { run = 'zathura %s', desc = "Zathura", orphan = true },
-  { run = 'xournalpp %s', desc = "Xournal++", orphan = true },
-  { run = 'rnote %s', desc = "Rnote", orphan = true },
+  { run = 'sioyek %s', desc = "Sioyek", orphan = true },
+  { run = 'okular %s', desc = "Okular", orphan = true },
+  { run = 'xournalpp %s', desc = "Xournal++ (anotar)", orphan = true },
 ]
 xournal = [
   { run = 'xournalpp %s', desc = "Xournal++", orphan = true },

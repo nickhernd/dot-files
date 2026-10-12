@@ -24,7 +24,14 @@ instalar zapzap
 echo ":: Estudio e investigación"
 #  sioyek: visor de PDF para papers/libros de mates   zotero: gestor de bibliografía
 #  anki: tarjetas de repaso                           localsend: pasar archivos al móvil
+<<<<<<< HEAD
 instalar sioyek-appimage zotero-bin anki localsend
+||||||| parent of 7922153 (yazi: abrir PDFs con Zathura primero (Okular no estaba instalado y fallaba sin avisar))
+instalar sioyek-appimage zotero-bin anki localsend-bin
+=======
+#  okular: PDFs con anotaciones (su config está en el repo)
+instalar sioyek-appimage zotero-bin anki localsend-bin okular
+>>>>>>> 7922153 (yazi: abrir PDFs con Zathura primero (Okular no estaba instalado y fallaba sin avisar))
 
 echo ":: Lean 4 (demostrador de teoremas, con soporte en Neovim)"
 instalar elan-lean
