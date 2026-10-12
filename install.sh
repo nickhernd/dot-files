@@ -73,7 +73,7 @@ for dir in hypr quickshell matugen rofi cava scripts kitty foot ghostty alacritt
 done
 
 # Archivos sueltos de ~/.config
-for f in aerc/aerc.conf aerc/binds.conf starship.toml mimeapps.list omarchy/shell.json rclone/gdrive-filters.txt \
+for f in aerc/aerc.conf aerc/binds.conf aerc/stylesets starship.toml mimeapps.list omarchy/shell.json rclone/gdrive-filters.txt \
          systemd/user/gdrive-sync.service systemd/user/gdrive-sync.timer systemd/user/gdrive-mount.service \
          systemd/user/tracker-backup.service systemd/user/tracker-backup.timer systemd/user/voxtype.service \
          okularrc okularpartrc xdg-terminals.list; do

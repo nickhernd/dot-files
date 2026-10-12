@@ -14,6 +14,7 @@ Dotfiles personales para Arch Linux con [Omarchy 4](https://omarchy.org/) (Hyprl
 | `config/kitty/` `foot/` `ghostty/` `alacritty/` | Terminales |
 | `config/nvim/` | LazyVim + extras (Python, C/C++, LaTeX, Typst, Markdown, SQL, Docker) y mis atajos |
 | `config/nvim-classic/` | Mi config antigua con vim-plug (`nvim-classic`) |
+| `config/aerc/` | aerc (Gmail en la terminal) con tema Moon Pink, hilos y carpetas en árbol. La cuenta (`accounts.conf`) no está en el repo: la contraseña de aplicación de Google va en el llavero (`secret-tool store --label="aerc Gmail" service aerc account gmail`) |
 | `config/gh-dash/` | TUI de issues y PRs de GitHub |
 | `config/omarchy/themes/moon-pink/` | Tema Moon Pink (rosa `#ff9ed2`, lavanda `#c8b6ff`, fondo `#1a1625`) |
 | `config/yazi/` | yazi con plugins (git, previews con glow/hexyl/eza, ouch, mount, chmod…) y flavor Moon Pink |
