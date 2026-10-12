@@ -1,4 +1,5 @@
 # dot-files
+![Uploading image.png…]()
 
 Dotfiles personales para Arch Linux con [Omarchy 4](https://omarchy.org/) (Hyprland con configuración en Lua) y el rice de Quickshell [dhrruvsharma/shell](https://github.com/dhrruvsharma/shell), adaptado.
 
