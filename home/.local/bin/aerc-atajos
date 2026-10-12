@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# aerc-atajos — chuleta de atajos de aerc (Moon Pink). La abre aerc al arrancar y con «?».
+# q para cerrarla y volver al correo · F1 en aerc = lista completa de atajos.
+P=$'\e[38;2;255;158;210m'; L=$'\e[38;2;200;182;255m'; T=$'\e[38;2;230;213;240m'; D=$'\e[38;2;138;122;158m'
+B=$'\e[1m'; R=$'\e[0m'
+k() { printf "  ${P}${B}%-11s${R} ${T}%-30s${R}" "$1" "$2"; }
+h() { printf "\n ${L}${B}%s${R}\n" "$1"; }
+row() { k "$1" "$2"; [[ -n ${3:-} ]] && k "$3" "$4"; echo; }
+
+{
+printf "\n ${P}${B}✉  aerc · chuleta de atajos${R}   ${D}(q cierra · ? la vuelve a abrir · F1 lista completa)${R}\n"
+
+h "MOVERSE"
+row "j / k" "correo siguiente / anterior" "g / G" "primero / último"
+row "Ctrl-d / u" "media página abajo / arriba" "J / K" "carpeta siguiente / anterior"
+row "L / H" "abrir / cerrar carpeta" "Ctrl-n / p" "pestaña siguiente / anterior"
+
+h "LEER"
+row "Enter" "abrir el correo" "q" "cerrar el correo"
+row "J / K" "(dentro) siguiente / anterior" "Ctrl-j / k" "parte siguiente / anterior"
+row "o" "abrir adjunto / HTML" "S" "guardar adjunto"
+row "Ctrl-l" "abrir un enlace" "H" "ver todas las cabeceras"
+
+h "ESCRIBIR Y RESPONDER"
+row "m / C" "correo nuevo" "rr" "responder a todos"
+row "Rr" "responder solo al remitente" "rq / Rq" "responder citando"
+row "f" "reenviar" "Enter" "(en Borradores) retomar"
+row "Tab" "(al escribir) campo siguiente" "Ctrl-x" "(al escribir) modo comando"
+
+h "ORGANIZAR"
+row "d" "borrar (pregunta)" "D" "borrar sin preguntar"
+row "a" "archivar" "Espacio / v" "marcar"
+row "V" "marcar todos" "A" "archivar el hilo entero"
+row "T" "activar / quitar hilos" "Tab / za" "plegar / desplegar hilo"
+
+h "BUSCAR"
+row "/" "buscar" "n / N" "resultado siguiente / anterior"
+row "\\" "filtrar la lista" "Esc" "quitar búsqueda / filtro"
+row "c" "cambiar de carpeta (:cf)" "| " "pasar el correo a un comando"
+
+h "OTROS"
+row "s / S" "dividir horizontal / vertical" "Ctrl-t" "abrir una terminal"
+row "?" "esta chuleta" "q" "salir de aerc (pregunta)"
+echo
+} | less -R -c --tilde --prompt=">>> q para volver al correo"
